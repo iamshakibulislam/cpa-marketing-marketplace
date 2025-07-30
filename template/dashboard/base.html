@@ -1,0 +1,432 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en" dir="ltr">
+	<head>
+
+		<!-- META DATA -->
+		<meta charset="UTF-8">
+		<meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=0'>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="description" content="Zanex – Bootstrap  Admin & Dashboard Template">
+		<meta name="author" content="Spruko Technologies Private Limited">
+		<meta name="keywords" content="admin, dashboard, dashboard ui, admin dashboard template, admin panel dashboard, admin panel html, admin panel html template, admin panel template, admin ui templates, administrative templates, best admin dashboard, best admin templates, bootstrap 4 admin template, bootstrap admin dashboard, bootstrap admin panel, html css admin templates, html5 admin template, premium bootstrap templates, responsive admin template, template admin bootstrap 4, themeforest html">
+
+		<!-- FAVICON -->
+		<link rel="shortcut icon" type="image/x-icon" href="{% static 'dashboard/assets/images/brand/favicon.ico' %}" />
+
+		<!-- TITLE -->
+		<title> {% block title %} {% endblock title %} </title>
+
+		<!-- BOOTSTRAP CSS -->
+		<link href="{% static 'dashboard/assets/plugins/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" />
+
+		<!-- STYLE CSS -->
+		<link href="{% static 'dashboard/assets/css/style.css' %}" rel="stylesheet"/>
+		<link href="{% static 'dashboard/assets/css/dark-style.css' %}" rel="stylesheet"/>
+		<link href="{% static 'dashboard/assets/css/skin-modes.css' %}" rel="stylesheet" />
+
+		<!-- SIDE-MENU CSS -->
+		<link href="{% static 'dashboard/assets/css/sidemenu.css' %}" rel="stylesheet" id="sidemenu-theme">
+
+		<!--C3 CHARTS CSS -->
+		<link href="{% static 'dashboard/assets/plugins/charts-c3/c3-chart.css' %}" rel="stylesheet"/>
+
+		<!-- P-scroll bar css-->
+		<link href="{% static 'dashboard/assets/plugins/p-scroll/perfect-scrollbar.css' %}" rel="stylesheet" />
+
+		<!--- FONT-ICONS CSS -->
+		<link href="{% static 'dashboard/assets/css/icons.css' %}" rel="stylesheet"/>
+
+		<!-- SIDEBAR CSS -->
+		<link href="{% static 'dashboard/assets/plugins/sidebar/sidebar.css' %}" rel="stylesheet">
+
+		<!-- SELECT2 CSS -->
+		<link href="{% static 'dashboard/assets/plugins/select2/select2.min.css' %}" rel="stylesheet"/>
+
+		<!-- INTERNAL Data table css -->
+		<link href="{% static 'dashboard/assets/plugins/datatable/css/dataTables.bootstrap5.css' %}" rel="stylesheet" />
+		<link href="{% static 'dashboard/assets/plugins/datatable/responsive.bootstrap5.css' %}" rel="stylesheet" />
+
+		<!-- COLOR SKIN CSS -->
+		<link id="theme" rel="stylesheet" type="text/css" media="all" href="{% static 'dashboard/assets/colors/color1.css' %}" />
+
+	</head>
+
+	<body class="app sidebar-mini">
+
+		<!-- GLOBAL-LOADER -->
+		<div id="global-loader">
+			<img src="{% static 'dashboard/assets/images/loader.svg' %}" class="loader-img" alt="Loader">
+		</div>
+		<!-- /GLOBAL-LOADER -->
+
+		<!-- PAGE -->
+		<div class="page">
+			<div class="page-main">
+
+				<!--APP-SIDEBAR-->
+				<div class="app-sidebar__overlay" data-bs-toggle="sidebar"></div>
+				<aside class="app-sidebar">
+					<div class="side-header">
+						<a class="header-brand1" href="index.html">
+							<img src="{% static 'dashboard/assets/images/brand/logo.png' %}" class="header-brand-img desktop-logo" alt="logo">
+							<img src="{% static 'dashboard/assets/images/brand/logo-1.png' %}" class="header-brand-img toggle-logo" alt="logo">
+							<img src="{% static 'dashboard/assets/images/brand/logo-2.png' %}" class="header-brand-img light-logo" alt="logo">
+							<img src="{% static 'dashboard/assets/images/brand/logo-3.png' %}" class="header-brand-img light-logo1" alt="logo">
+						</a><!-- LOGO -->
+					</div>
+					<ul class="side-menu">
+						<li><h3></h3></li>
+						<li class="slide">
+							<a class="side-menu__item"  data-bs-toggle="slide" href="{% url 'dashboard' %}"><i class="side-menu__icon fe fe-home"></i><span class="side-menu__label">Dashboard</span></a>
+						</li>
+						
+						
+						
+						
+					</ul>
+				</aside>
+				<!--/APP-SIDEBAR-->
+
+				<!-- Mobile Header -->
+				<div class="app-header header">
+					<div class="container-fluid">
+						<div class="d-flex">
+							<a aria-label="Hide Sidebar" class="app-sidebar__toggle" data-bs-toggle="sidebar" href="#"></a><!-- sidebar-toggle-->
+							
+							<!-- Time and Date Display -->
+							<div class="d-flex align-items-center ms-3 me-auto">
+								<div class="fw-bold text-dark" id="current-datetime" style="font-size: 14px; white-space: nowrap;"></div>
+							</div>
+							
+							<a class="header-brand1 d-flex d-md-none" href="index.html">
+								<img src="{% static 'dashboard/assets/images/brand/logo.png' %}" class="header-brand-img desktop-logo" alt="logo">
+								<img src="{% static 'dashboard/assets/images/brand/logo-1.png' %}" class="header-brand-img toggle-logo" alt="logo">
+								<img src="{% static 'dashboard/assets/images/brand/logo-2.png' %}" class="header-brand-img light-logo" alt="logo">
+								<img src="{% static 'dashboard/assets/images/brand/logo-3.png' %}" class="header-brand-img light-logo1" alt="logo">
+							</a><!-- LOGO -->
+							
+							<div class="d-flex order-lg-2 ms-auto header-right-icons">
+								<div class="dropdown d-lg-none d-md-block d-none">
+									<a href="#" class="nav-link icon" data-bs-toggle="dropdown">
+										<i class="fe fe-search"></i>
+									</a>
+									<div class="dropdown-menu header-search dropdown-menu-start">
+										<div class="input-group w-100 p-2">
+											<input type="text" class="form-control" placeholder="Search....">
+											<div class="input-group-text btn btn-primary">
+												<i class="fa fa-search" aria-hidden="true"></i>
+											</div>
+										</div>
+									</div>
+								</div><!-- SEARCH -->
+								<button class="navbar-toggler navresponsive-toggler d-md-none ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent-4" aria-controls="navbarSupportedContent-4" aria-expanded="false" aria-label="Toggle navigation">
+									<span class="navbar-toggler-icon fe fe-more-vertical text-dark"></span>
+								</button>
+								<div class="dropdown d-none d-md-flex">
+									<a class="nav-link icon theme-layout nav-link-bg layout-setting">
+										<span class="dark-layout" data-bs-placement="bottom" data-bs-toggle="tooltip" title="Dark Theme"><i class="fe fe-moon"></i></span>
+										<span class="light-layout" data-bs-placement="bottom" data-bs-toggle="tooltip" title="Light Theme"><i class="fe fe-sun"></i></span>
+									</a>
+								</div><!-- Theme-Layout -->
+								<div class="dropdown d-none d-md-flex">
+									<a class="nav-link icon full-screen-link nav-link-bg">
+										<i class="fe fe-minimize fullscreen-button"></i>
+									</a>
+								</div><!-- FULL-SCREEN -->
+								<div class="dropdown d-none d-md-flex notifications">
+									<a class="nav-link icon" data-bs-toggle="dropdown"><i class="fe fe-bell"></i><span class=" pulse"></span>
+									</a>
+									<div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow ">
+										<div class="drop-heading border-bottom">
+											<div class="d-flex">
+												<h6 class="mt-1 mb-0 fs-16 fw-semibold">You have Notification</h6>
+												<div class="ms-auto">
+													<span class="badge bg-success rounded-pill"></span>
+												</div>
+											</div>
+										</div>
+										<div class="notifications-menu">
+											<a class="dropdown-item d-flex" href="#">
+												<div class="me-3 notifyimg  bg-primary-gradient brround box-shadow-primary">
+													<i class="fe fe-mail"></i>
+												</div>
+												<div class="mt-1">
+													<h5 class="notification-label mb-1">New review received</h5>
+													<span class="notification-subtext">2 hours ago</span>
+												</div>
+											</a>
+											<a class="dropdown-item d-flex" href="#">
+												<div class="me-3 notifyimg  bg-secondary-gradient brround box-shadow-primary">
+													<i class="fe fe-check-circle"></i>
+												</div>
+												<div class="mt-1">
+													<h5 class="notification-label mb-1">Project has been approved</h5>
+													<span class="notification-subtext">1 week ago</span>
+												</div>
+											</a>
+											<a class="dropdown-item d-flex" href="#">
+												<div class="me-3 notifyimg  bg-success-gradient brround box-shadow-primary">
+													<i class="fe fe-shopping-cart"></i>
+												</div>
+												<div class="mt-1">
+													<h5 class="notification-label mb-1">New Order Received</h5>
+													<span class="notification-subtext">1 day ago</span>
+												</div>
+											</a>
+										</div>
+										<div class="dropdown-divider m-0"></div>
+										<a href="#" class="dropdown-item text-center p-3 text-muted">View all Notification</a>
+									</div>
+								</div><!-- NOTIFICATIONS -->
+								
+								<div class="dropdown d-none d-md-flex profile-1">
+									<a href="#" data-bs-toggle="dropdown" class="nav-link pe-2 leading-none d-flex">
+										<span>
+											<i class="fe fe-menu fs-25"></i>
+										</span>
+									</a>
+									<div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+										<div class="drop-heading">
+											<div class="text-center">
+												<h5 class="text-dark mb-0">{{request.user.full_name}}</h5>
+												<small class="text-muted">publisher</small>
+											</div>
+										</div>
+										<div class="dropdown-divider m-0"></div>
+										<a class="dropdown-item" href="{% url 'profile' %}">
+											<i class="dropdown-icon fe fe-user"></i> Profile
+										</a>
+
+										<a class="dropdown-item" href="{% url 'change_password' %}">
+											<i class="dropdown-icon fe fe-lock"></i> Change Password
+										</a>
+										
+										
+										
+										<a class="dropdown-item" href="login.html">
+											<i class="dropdown-icon fe fe-alert-circle"></i> Sign out
+										</a>
+									</div>
+								</div>
+								
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="mb-1 navbar navbar-expand-lg  responsive-navbar navbar-dark d-md-none bg-white">
+					<div class="collapse navbar-collapse" id="navbarSupportedContent-4">
+						<div class="d-flex order-lg-2 ms-auto">
+							<div class="dropdown d-sm-flex">
+								<a href="#" class="nav-link icon" data-bs-toggle="dropdown">
+									<i class="fe fe-search"></i>
+								</a>
+								<div class="dropdown-menu header-search dropdown-menu-start">
+									<div class="input-group w-100 p-2">
+										<input type="text" class="form-control" placeholder="Search....">
+										<div class="input-group-text btn btn-primary">
+											<i class="fa fa-search" aria-hidden="true"></i>
+										</div>
+									</div>
+								</div>
+							</div><!-- SEARCH -->
+							<div class="dropdown d-md-flex">
+								<a class="nav-link icon theme-layout nav-link-bg layout-setting">
+									<span class="dark-layout" data-bs-placement="bottom" data-bs-toggle="tooltip" title="Dark Theme"><i class="fe fe-moon"></i></span>
+									<span class="light-layout" data-bs-placement="bottom" data-bs-toggle="tooltip" title="Light Theme"><i class="fe fe-sun"></i></span>
+								</a>
+							</div><!-- Theme-Layout -->
+							<div class="dropdown d-md-flex">
+								<a class="nav-link icon full-screen-link nav-link-bg">
+									<i class="fe fe-minimize fullscreen-button"></i>
+								</a>
+							</div><!-- FULL-SCREEN -->
+							<div class="dropdown  d-md-flex notifications">
+								<a class="nav-link icon" data-bs-toggle="dropdown"><i class="fe fe-bell"></i><span class=" pulse"></span>
+								</a>
+								<div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+									<div class="drop-heading border-bottom">
+										<div class="d-flex">
+											<h6 class="mt-1 mb-0 fs-16 fw-semibold">You have Notification</h6>
+											<div class="ms-auto">
+												<span class="badge bg-success rounded-pill"></span>
+											</div>
+										</div>
+									</div>
+									<div class="notifications-menu">
+										<a class="dropdown-item d-flex" href="#">
+											<div class="me-3 notifyimg  bg-primary-gradient brround box-shadow-primary">
+												<i class="fe fe-mail"></i>
+											</div>
+											<div class="mt-1">
+												<h5 class="notification-label mb-1">New review received</h5>
+												<span class="notification-subtext">2 hours ago</span>
+											</div>
+										</a>
+										<a class="dropdown-item d-flex" href="#">
+											<div class="me-3 notifyimg  bg-secondary-gradient brround box-shadow-primary">
+												<i class="fe fe-check-circle"></i>
+											</div>
+											<div class="mt-1">
+												<h5 class="notification-label mb-1">Project has been approved</h5>
+												<span class="notification-subtext">1 week ago</span>
+											</div>
+										</a>
+										<a class="dropdown-item d-flex" href="#">
+											<div class="me-3 notifyimg  bg-success-gradient brround box-shadow-primary">
+												<i class="fe fe-shopping-cart"></i>
+											</div>
+											<div class="mt-1">
+												<h5 class="notification-label mb-1">New Order Received</h5>
+												<span class="notification-subtext">1 day ago</span>
+											</div>
+										</a>
+									</div>
+									<div class="dropdown-divider m-0"></div>
+									<a href="#" class="dropdown-item text-center p-3 text-muted">View all Notification</a>
+								</div>
+							</div><!-- NOTIFICATIONS -->
+							
+							<div class="dropdown d-md-flex profile-1">
+								<a href="#" data-bs-toggle="dropdown" class="nav-link pe-2 leading-none d-flex">
+									<span>
+										<i class="fe fe-menu fs-25"></i>
+									</span>
+								</a>
+								<div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+									<div class="drop-heading">
+										<div class="text-center">
+											<h5 class="text-dark mb-0">{{request.user.full_name}}</h5>
+											<small class="text-muted">publisher</small>
+										</div>
+									</div>
+									<div class="dropdown-divider m-0"></div>
+									<a class="dropdown-item" href="{% url 'profile' %}">
+										<i class="dropdown-icon fe fe-user"></i> Profile
+									</a>
+
+									<a class="dropdown-item" href="{% url 'change_password' %}">
+										<i class="dropdown-icon fe fe-lock"></i> Change Password
+									</a>
+									
+									
+									<a class="dropdown-item" href="login.html">
+										<i class="dropdown-icon fe fe-alert-circle"></i> Sign out
+									</a>
+								</div>
+							</div>
+							<div class="dropdown d-md-flex header-settings">
+								<a href="#" class="nav-link icon " data-bs-toggle="sidebar-right" data-target=".sidebar-right">
+									<i class="fe fe-menu"></i>
+								</a>
+							</div><!-- SIDE-MENU -->
+						</div>
+					</div>
+				</div>
+				<!-- /Mobile Header -->
+
+				    <!-- here  main codes goes-->
+
+                    {% block content %}
+                    {% endblock content %}
+
+                
+				<!-- CONTAINER END -->
+            </div>
+
+			
+
+			
+		</div>
+
+		<!-- BACK-TO-TOP -->
+		<a href="#top" id="back-to-top"><i class="fa fa-angle-up"></i></a>
+
+		<!-- JQUERY JS -->
+		<script src="{% static 'dashboard/assets/js/jquery.min.js' %}"></script>
+
+		<!-- BOOTSTRAP JS -->
+		<script src="{% static 'dashboard/assets/plugins/bootstrap/js/popper.min.js' %}"></script>
+		<script src="{% static 'dashboard/assets/plugins/bootstrap/js/bootstrap.min.js' %}"></script>
+
+		<!-- SPARKLINE JS-->
+		<script src="{% static 'dashboard/assets/js/jquery.sparkline.min.js' %}"></script>
+
+		<!-- CHART-CIRCLE JS-->
+		<script src="{% static 'dashboard/assets/js/circle-progress.min.js' %}"></script>
+
+		<!-- CHARTJS CHART JS-->
+		<script src="{% static 'dashboard/assets/plugins/chart/Chart.bundle.js' %}"></script>
+		<script src="{% static 'dashboard/assets/plugins/chart/utils.js' %}"></script>
+
+		<!-- PIETY CHART JS-->
+		<script src="{% static 'dashboard/assets/plugins/peitychart/jquery.peity.min.js' %}"></script>
+		<script src="{% static 'dashboard/assets/plugins/peitychart/peitychart.init.js' %}"></script>
+
+		<!-- INTERNAL SELECT2 JS -->
+		<script src="{% static 'dashboard/assets/plugins/select2/select2.full.min.js' %}"></script>
+
+		<!-- INTERNAL Data tables js-->
+		<script src="{% static 'dashboard/assets/plugins/datatable/js/jquery.dataTables.min.js' %}"></script>
+		<script src="{% static 'dashboard/assets/plugins/datatable/js/dataTables.bootstrap5.js' %}"></script>
+		<script src="{% static 'dashboard/assets/plugins/datatable/dataTables.responsive.min.js' %}"></script>
+
+		<!-- ECHART JS-->
+		<script src="{% static 'dashboard/assets/plugins/echarts/echarts.js' %}"></script>
+
+		<!-- SIDE-MENU JS-->
+		<script src="{% static 'dashboard/assets/plugins/sidemenu/sidemenu.js' %}"></script>
+
+		<!-- SIDEBAR JS -->
+		<script src="{% static 'dashboard/assets/plugins/sidebar/sidebar.js' %}"></script>
+
+		<!-- Perfect SCROLLBAR JS-->
+		<script src="{% static 'dashboard/assets/plugins/p-scroll/perfect-scrollbar.js' %}"></script>
+		<script src="{% static 'dashboard/assets/plugins/p-scroll/pscroll.js' %}"></script>
+		<script src="{% static 'dashboard/assets/plugins/p-scroll/pscroll-1.js' %}"></script>
+
+		<!-- APEXCHART JS -->
+		<script src="{% static 'dashboard/assets/js/apexcharts.js' %}"></script>
+
+		<!-- INDEX JS -->
+		<script src="{% static 'dashboard/assets/js/index1.js' %}"></script>
+
+		<!-- CUSTOM JS -->
+		<script src="{% static 'dashboard/assets/js/custom.js' %}"></script>
+
+		<!-- Time and Date Display Script -->
+		<script>
+			function updateDateTime() {
+				const now = new Date();
+				const estTime = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"}));
+				
+				const dateString = estTime.toLocaleDateString('en-US', {
+					month: 'short',
+					day: 'numeric',
+					year: 'numeric'
+				});
+				
+				const timeString = estTime.toLocaleTimeString('en-US', {
+					hour: 'numeric',
+					minute: '2-digit',
+					second: '2-digit',
+					hour12: true
+				});
+				
+				const fullDateTime = `${dateString} ${timeString} (EST)`;
+				
+				// Update datetime display
+				const datetimeElement = document.getElementById('current-datetime');
+				if (datetimeElement) {
+					datetimeElement.textContent = fullDateTime;
+				}
+			}
+			
+			// Update datetime immediately and then every second
+			updateDateTime();
+			setInterval(updateDateTime, 1000);
+		</script>
+
+	</body>
+</html>
