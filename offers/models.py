@@ -102,7 +102,7 @@ class CPANetwork(models.Model):
             return ""
         
         base_url = f"{site_settings.site_url}/offers/postback/?network={self.network_key}"
-        postback_url = f"{base_url}&{self.postback_click_id_parameter}={{{self.click_id_parameter}}}&{self.postback_payout_parameter}={{{{sum}}}}"
+        postback_url = f"{base_url}&{self.postback_click_id_parameter}={{{self.click_id_parameter}}}"
         return postback_url
 
 
