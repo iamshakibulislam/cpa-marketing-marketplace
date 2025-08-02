@@ -87,7 +87,7 @@
 											<span class="badge {{ offer_data.status_class }}">{{ offer_data.status_display }}</span>
 										</td>
 										<td>
-											{% for country in offer_data.offer.get_countries_display %}
+											{% for country in offer_data.offer.countries %}
 												<span class="badge bg-light text-dark me-1">{{ country }}</span>
 											{% endfor %}
 										</td>
