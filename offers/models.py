@@ -2,6 +2,109 @@ from django.db import models
 from django.utils import timezone
 from django import forms
 from user.models import User
+import uuid
+import datetime
+
+def generate_click_id(user_id, offer_id):
+    """Generate unique click ID"""
+    now = timezone.now()
+    date_str = now.strftime('%Y%m%d')
+    time_str = now.strftime('%H%M%S')
+    return f"{user_id}-{offer_id}-{time_str}-{date_str}"
+
+class SiteSettings(models.Model):
+    """Site configuration settings"""
+    site_name = models.CharField(max_length=255, default="CPA Network", verbose_name="Site Name")
+    domain_name = models.CharField(
+        max_length=255, 
+        default="yourdomain.com",
+        verbose_name="Domain Name",
+        help_text="Your domain name without http/https (e.g., yourdomain.com)"
+    )
+    site_url = models.URLField(
+        max_length=500,
+        default="https://yourdomain.com",
+        verbose_name="Site URL",
+        help_text="Full site URL with protocol (e.g., https://yourdomain.com)"
+    )
+    is_active = models.BooleanField(default=True, verbose_name="Is Active")
+    created_at = models.DateTimeField(default=timezone.now, verbose_name="Created At")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Updated At")
+    
+    class Meta:
+        verbose_name = "Site Settings"
+        verbose_name_plural = "Site Settings"
+    
+    def __str__(self):
+        return f"{self.site_name} ({self.domain_name})"
+    
+    @classmethod
+    def get_settings(cls):
+        """Get active site settings"""
+        return cls.objects.filter(is_active=True).first()
+    
+    def get_postback_url(self, network_name):
+        """Generate postback URL for a specific network"""
+        return f"{self.site_url}/offers/postback/?network={network_name}"
+
+
+class CPANetwork(models.Model):
+    """CPA Network configuration"""
+    network_key = models.CharField(
+        max_length=100, 
+        unique=True,
+        verbose_name="Network Key",
+        help_text="Unique identifier for the network (e.g., 'NexusSyner')"
+    )
+    name = models.CharField(
+        max_length=255,
+        verbose_name="Network Name",
+        help_text="Display name of the CPA network"
+    )
+    description = models.TextField(
+        verbose_name="Description",
+        help_text="Description of the network"
+    )
+    click_id_parameter = models.CharField(
+        max_length=100,
+        verbose_name="Click ID Parameter",
+        help_text="Parameter name for sending click ID (e.g., 's2', 'subid')"
+    )
+    postback_click_id_parameter = models.CharField(
+        max_length=100,
+        verbose_name="Postback Click ID Parameter",
+        help_text="Parameter name for receiving click ID in postback"
+    )
+    postback_payout_parameter = models.CharField(
+        max_length=100,
+        verbose_name="Postback Payout Parameter",
+        help_text="Parameter name for receiving payout in postback"
+    )
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name="Is Active",
+        help_text="Whether this network is active"
+    )
+    created_at = models.DateTimeField(default=timezone.now, verbose_name="Created At")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Updated At")
+    
+    class Meta:
+        verbose_name = "CPA Network"
+        verbose_name_plural = "CPA Networks"
+        ordering = ['name']
+    
+    def __str__(self):
+        return f"{self.name} ({self.network_key})"
+    
+    def get_postback_url(self, site_settings):
+        """Generate postback URL with prefilled parameters"""
+        if not site_settings:
+            return ""
+        
+        base_url = f"{site_settings.site_url}/offers/postback/?network={self.network_key}"
+        postback_url = f"{base_url}&{self.postback_click_id_parameter}={{{self.click_id_parameter}}}&{self.postback_payout_parameter}={{{{sum}}}}"
+        return postback_url
+
 
 class Offer(models.Model):
     # Country choices
@@ -21,6 +124,12 @@ class Offer(models.Model):
     
     # Basic offer information
     offer_name = models.CharField(max_length=255, verbose_name="Offer Name")
+    cpa_network = models.ForeignKey(
+        CPANetwork,
+        on_delete=models.CASCADE,
+        verbose_name="CPA Network",
+        help_text="Select the CPA network for this offer"
+    )
     offer_url = models.URLField(
         max_length=500,
         verbose_name="Original Offer URL",
@@ -76,7 +185,7 @@ class Offer(models.Model):
         ordering = ['-created_at']
     
     def __str__(self):
-        return self.offer_name
+        return f"{self.offer_name} ({self.cpa_network.name})"
     
     def get_countries_display(self):
         """Return human-readable country names"""
@@ -137,6 +246,14 @@ class Offer(models.Model):
         from django.conf import settings
         domains = getattr(settings, 'TRACKING_DOMAINS', ['http://localhost:8000'])
         return [f"{domain}/offer/?userid={user_id}&offerid={self.id}" for domain in domains]
+    
+    def build_redirect_url(self, click_id):
+        """Build redirect URL with click ID for the specific CPA network"""
+        # Check if URL already has parameters
+        separator = '&' if '?' in self.offer_url else '?'
+        click_param = f"{self.cpa_network.click_id_parameter}={click_id}"
+        
+        return f"{self.offer_url}{separator}{click_param}"
 
 
 class UserOfferRequest(models.Model):
@@ -181,6 +298,7 @@ class ClickTracking(models.Model):
     """Track offer clicks for analytics and commission tracking"""
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Affiliate User")
     offer = models.ForeignKey(Offer, on_delete=models.CASCADE, verbose_name="Offer")
+    click_id = models.CharField(max_length=100, unique=True, verbose_name="Click ID")
     click_date = models.DateTimeField(default=timezone.now, verbose_name="Click Date")
     ip_address = models.GenericIPAddressField(verbose_name="Visitor IP Address", null=True, blank=True)
     user_agent = models.TextField(verbose_name="User Agent", blank=True, null=True)
@@ -196,15 +314,34 @@ class ClickTracking(models.Model):
             models.Index(fields=['user', 'offer']),
             models.Index(fields=['click_date']),
             models.Index(fields=['ip_address']),
+            models.Index(fields=['click_id']),
         ]
     
     def __str__(self):
-        return f"{self.user.full_name} - {self.offer.offer_name} - {self.click_date.strftime('%Y-%m-%d %H:%M')}"
+        return f"{self.user.full_name} - {self.offer.offer_name} - {self.click_id}"
     
     @property
     def formatted_click_date(self):
         """Return formatted click date"""
         return self.click_date.strftime('%Y-%m-%d %H:%M:%S')
+
+
+class Conversion(models.Model):
+    """Track conversions from CPA networks"""
+    click_tracking = models.ForeignKey(ClickTracking, on_delete=models.CASCADE, verbose_name="Click Tracking")
+    conversion_date = models.DateTimeField(default=timezone.now, verbose_name="Conversion Date")
+    payout = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Payout (USD)")
+    status = models.CharField(max_length=20, default='pending', verbose_name="Status")
+    network_click_id = models.CharField(max_length=100, blank=True, null=True, verbose_name="Network Click ID")
+    network_payout = models.CharField(max_length=100, blank=True, null=True, verbose_name="Network Payout")
+    
+    class Meta:
+        verbose_name = "Conversion"
+        verbose_name_plural = "Conversions"
+        ordering = ['-conversion_date']
+    
+    def __str__(self):
+        return f"{self.click_tracking.offer.offer_name} - ${self.payout} - {self.conversion_date.strftime('%Y-%m-%d')}"
 
 
 # Custom form for admin
@@ -233,6 +370,10 @@ class OfferAdminForm(forms.ModelForm):
             # Convert JSON data to choices for form
             self.fields['countries'].initial = self.instance.countries
             self.fields['devices'].initial = self.instance.devices
+        
+        # Set CPA network choices
+        self.fields['cpa_network'].queryset = CPANetwork.objects.filter(is_active=True).order_by('name')
+        self.fields['cpa_network'].widget.attrs.update({'class': 'form-control'})
     
     def save(self, commit=True):
         instance = super().save(commit=False)

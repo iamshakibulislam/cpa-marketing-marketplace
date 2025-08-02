@@ -1,0 +1,18 @@
+{% extends "admin/index.html" %}
+{% load i18n %}
+
+{% block content %}
+<div id="content-main">
+    <div class="module">
+        <h2>📋 Quick Actions</h2>
+        <div style="padding: 15px; background: #f8f9fa; border-radius: 4px; margin-bottom: 20px;">
+            <h3 style="margin-top: 0;">CPA Network Configuration</h3>
+            <p><strong>Step 1:</strong> Configure your site settings in <a href="{% url 'admin:offers_sitesettings_changelist' %}">Site Settings</a></p>
+            <p><strong>Step 2:</strong> View and copy postback URLs in <a href="{% url 'admin:offers_cpanetwork_changelist' %}">CPA Networks</a></p>
+            <p><strong>Step 3:</strong> Create offers in <a href="{% url 'admin:offers_offer_changelist' %}">Offers</a></p>
+        </div>
+    </div>
+
+    {{ block.super }}
+</div>
+{% endblock %} 
