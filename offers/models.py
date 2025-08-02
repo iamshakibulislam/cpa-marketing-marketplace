@@ -249,11 +249,32 @@ class Offer(models.Model):
     
     def build_redirect_url(self, click_id):
         """Build redirect URL with click ID for the specific CPA network"""
-        # Check if URL already has parameters
-        separator = '&' if '?' in self.offer_url else '?'
-        click_param = f"{self.cpa_network.click_id_parameter}={click_id}"
+        from urllib.parse import urlencode, urlparse, parse_qs
         
-        return f"{self.offer_url}{separator}{click_param}"
+        # Debug info
+        print(f"Building redirect URL for offer: {self.offer_name}")
+        print(f"CPA Network: {self.cpa_network.name if self.cpa_network else 'None'}")
+        print(f"Click ID Parameter: '{self.cpa_network.click_id_parameter if self.cpa_network else 'None'}'")
+        print(f"Original URL: {self.offer_url}")
+        
+        # Determine the click ID parameter to use
+        if not self.cpa_network or not self.cpa_network.click_id_parameter:
+            click_param_name = 'subid'
+            print(f"Using fallback parameter: {click_param_name}")
+        else:
+            click_param_name = self.cpa_network.click_id_parameter
+            print(f"Using network parameter: {click_param_name}")
+        
+        # Simple approach: just append the parameter
+        separator = '&' if '?' in self.offer_url else '?'
+        final_url = f"{self.offer_url}{separator}{click_param_name}={click_id}"
+        
+        print(f"Final URL: {final_url}")
+        print(f"URL length: {len(final_url)}")
+        print(f"Contains click ID: {'click_id' in final_url}")
+        print(f"Contains parameter: '{click_param_name}' in final_url: {'{click_param_name}' in final_url}")
+        
+        return final_url
 
 
 class UserOfferRequest(models.Model):

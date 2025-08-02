@@ -7,4 +7,6 @@ urlpatterns = [
     path('offer/', views.track_click, name='track_click'),
     path('tracking-domains/', views.get_tracking_domains, name='get_tracking_domains'),
     path('postback/', views.handle_postback, name='handle_postback'),
+    path('test-cpa-networks/', views.test_cpa_networks, name='test_cpa_networks'),
+    path('test-redirect/', views.test_redirect_url, name='test_redirect_url'),
 ]

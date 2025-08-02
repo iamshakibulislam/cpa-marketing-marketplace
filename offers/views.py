@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
 from django.utils import timezone
@@ -165,9 +165,26 @@ def track_click(request):
 
         # Build redirect URL with click ID for the specific CPA network
         redirect_url = offer.build_redirect_url(click_id)
+        
+        # Enhanced debug logging (remove in production)
+        print("=" * 50)
+        print("CLICK TRACKING DEBUG INFO:")
+        print(f"User ID: {user.id}")
+        print(f"Offer ID: {offer.id}")
+        print(f"Offer Name: {offer.offer_name}")
+        print(f"Click ID: {click_id}")
+        print(f"CPA Network: {offer.cpa_network.name}")
+        print(f"CPA Network Key: {offer.cpa_network.network_key}")
+        print(f"Click ID Parameter: '{offer.cpa_network.click_id_parameter}'")
+        print(f"Original Offer URL: {offer.offer_url}")
+        print(f"Final Redirect URL: {redirect_url}")
+        print(f"Redirect URL type: {type(redirect_url)}")
+        print(f"Redirect URL length: {len(redirect_url)}")
+        print("=" * 50)
 
-        # Redirect to original offer URL with click ID
-        return redirect(redirect_url)
+        # Use HttpResponseRedirect instead of redirect() for better control
+        print(f"About to redirect to: {redirect_url}")
+        return HttpResponseRedirect(redirect_url)
 
     except (User.DoesNotExist, Offer.DoesNotExist):
         return HttpResponse("Invalid tracking link", status=404)
@@ -250,3 +267,55 @@ def handle_postback(request):
 
     except Exception as e:
         return HttpResponse(f"Error processing postback: {str(e)}", status=500)
+
+def test_cpa_networks(request):
+    """Test view to check CPA network configurations"""
+    networks = CPANetwork.objects.all()
+    offers = Offer.objects.all()
+    
+    debug_info = []
+    debug_info.append("=== CPA NETWORKS ===")
+    for network in networks:
+        debug_info.append(f"Network: {network.name}")
+        debug_info.append(f"  Key: {network.network_key}")
+        debug_info.append(f"  Click ID Parameter: {network.click_id_parameter}")
+        debug_info.append("")
+    
+    debug_info.append("=== OFFERS ===")
+    for offer in offers:
+        debug_info.append(f"Offer: {offer.offer_name}")
+        debug_info.append(f"  URL: {offer.offer_url}")
+        debug_info.append(f"  CPA Network: {offer.cpa_network.name if offer.cpa_network else 'None'}")
+        if offer.cpa_network:
+            debug_info.append(f"  Click ID Parameter: {offer.cpa_network.click_id_parameter}")
+            # Test the build_redirect_url method
+            test_url = offer.build_redirect_url("TEST-CLICK-ID")
+            debug_info.append(f"  Test Redirect URL: {test_url}")
+        debug_info.append("")
+    
+    return HttpResponse("<br>".join(debug_info))
+
+def test_redirect_url(request):
+    """Test view to verify redirect URL building"""
+    offer_id = request.GET.get('offer_id', 1)
+    click_id = request.GET.get('click_id', 'TEST-CLICK-ID')
+    
+    try:
+        offer = Offer.objects.get(id=offer_id)
+        redirect_url = offer.build_redirect_url(click_id)
+        
+        result = f"""
+        <h3>Redirect URL Test</h3>
+        <p><strong>Offer:</strong> {offer.offer_name}</p>
+        <p><strong>CPA Network:</strong> {offer.cpa_network.name}</p>
+        <p><strong>Click ID Parameter:</strong> {offer.cpa_network.click_id_parameter}</p>
+        <p><strong>Original URL:</strong> {offer.offer_url}</p>
+        <p><strong>Click ID:</strong> {click_id}</p>
+        <p><strong>Final Redirect URL:</strong> <a href="{redirect_url}" target="_blank">{redirect_url}</a></p>
+        <p><strong>URL Length:</strong> {len(redirect_url)}</p>
+        <p><strong>Contains Parameter:</strong> {offer.cpa_network.click_id_parameter in redirect_url}</p>
+        """
+        
+        return HttpResponse(result)
+    except Offer.DoesNotExist:
+        return HttpResponse("Offer not found")
