@@ -1,0 +1,434 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}All Offers{% endblock %}
+
+{% block content %}
+
+<!-- Hidden CSRF token for AJAX requests -->
+{% csrf_token %}
+
+<!--app-content open-->
+<div class="app-content">
+	<div class="side-app">
+
+		<div class="page-header">
+			<div>
+				<h1 class="page-title">All Offers</h1>
+				<ol class="breadcrumb">
+					<li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+					<li class="breadcrumb-item active" aria-current="page">All Offers</li>
+				</ol>
+			</div>
+		</div>
+		<!-- PAGE-HEADER END -->
+
+		<!-- ROW-1 -->
+		<div class="row">
+			<div class="col-lg-12 col-md-12 col-sm-12 col-xl-12">
+				<div class="card overflow-hidden">
+					<div class="card-header bg-success-gradient">
+						<h3 class="card-title text-white mb-0">
+							<i class="fa fa-briefcase me-2"></i>CPA Offers Directory
+						</h3>
+					</div>
+					<div class="card-body p-4">
+						
+						<!-- Search Section -->
+						<div class="row mb-4">
+							<div class="col-lg-6 col-md-8 col-sm-12">
+								<div class="input-group">
+									<span class="input-group-text bg-light">
+										<i class="fa fa-search text-primary"></i>
+									</span>
+									<input type="text" class="form-control" id="offerSearch" placeholder="Search offers by name, category, or payout...">
+									<button class="btn btn-primary" type="button">
+										<i class="fa fa-filter me-1"></i>Filter
+									</button>
+								</div>
+							</div>
+							<div class="col-lg-6 col-md-4 col-sm-12 text-end">
+								<span class="badge bg-success fs-12">Total Offers: <span id="totalOffers">{{ total_offers }}</span></span>
+							</div>
+						</div>
+
+						<!-- Offers Table -->
+						<div class="table-responsive">
+							<table class="table table-hover table-striped" id="offersTable">
+								<thead class="table-dark">
+									<tr>
+										<th scope="col" class="text-center text-white fw-bold" style="width: 60px; font-size: 14px;">#</th>
+										<th scope="col" class="text-white fw-bold" style="font-size: 14px;">Offer</th>
+										<th scope="col" class="text-center text-white fw-bold" style="font-size: 14px;">Status</th>
+										<th scope="col" class="text-white fw-bold" style="font-size: 14px;">Countries</th>
+										<th scope="col" class="text-center text-white fw-bold" style="font-size: 14px;">Devices</th>
+										<th scope="col" class="text-center text-white fw-bold" style="font-size: 14px;">Payout</th>
+										<th scope="col" class="text-center text-white fw-bold" style="font-size: 14px;">EPC</th>
+										<th scope="col" class="text-center text-white fw-bold" style="font-size: 14px;">Link</th>
+										<th scope="col" class="text-center text-white fw-bold" style="font-size: 14px;">Action</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for offer_data in offers %}
+									<tr>
+										<td class="text-center fw-bold">{{ forloop.counter }}</td>
+										<td>
+											<div class="d-flex align-items-center">
+												<div class="me-3">
+													<img src="{% static 'dashboard/assets/images/brand/logo.png' %}" class="rounded-circle" width="40" height="40" alt="Offer">
+												</div>
+												<div>
+													<h6 class="mb-0 fw-semibold">{{ offer_data.offer.offer_name }}</h6>
+													<small class="text-muted">CPA Offer</small>
+												</div>
+											</div>
+										</td>
+										<td class="text-center">
+											<span class="badge {{ offer_data.status_class }}">{{ offer_data.status_display }}</span>
+										</td>
+										<td>
+											{% for country in offer_data.offer.countries %}
+												<span class="badge bg-light text-dark me-1">{{ country }}</span>
+											{% endfor %}
+										</td>
+										<td class="text-center">
+											{% for device in offer_data.offer.devices %}
+												{% if device == 'desktop' %}
+													<i class="fa fa-desktop text-primary me-1" title="Desktop"></i>
+												{% elif device == 'mobile' %}
+													<i class="fa fa-mobile text-success me-1" title="Mobile"></i>
+												{% elif device == 'tablet' %}
+													<i class="fa fa-tablet text-warning me-1" title="Tablet"></i>
+												{% else %}
+													<!-- Debug: Show what device value we're getting -->
+													<span class="badge bg-secondary">{{ device }}</span>
+												{% endif %}
+											{% endfor %}
+										</td>
+										<td class="text-center fw-bold text-success">{{ offer_data.offer.formatted_payout }}</td>
+										<td class="text-center fw-bold text-primary">{{ offer_data.offer.formatted_epc }}</td>
+										<td class="text-center">
+											{% if offer_data.status_display == 'Approved' %}
+												<a href="#" class="btn btn-sm btn-outline-primary">
+													<i class="fa fa-external-link-alt me-1"></i>Get Link
+												</a>
+											{% elif offer_data.status_display == 'Rejected' %}
+												<a href="#" class="btn btn-sm btn-outline-secondary disabled">
+													<i class="fa fa-external-link-alt me-1"></i>Unavailable
+												</a>
+											{% elif offer_data.status_display == 'Pending' %}
+												<a href="#" class="btn btn-sm btn-outline-warning disabled">
+													<i class="fa fa-clock me-1"></i>Pending Review
+												</a>
+											{% elif offer_data.status_display == 'Need Approval' %}
+												<button type="button" class="btn btn-sm btn-outline-info request-access-btn" 
+														data-offer-id="{{ offer_data.offer.id }}" 
+														data-offer-name="{{ offer_data.offer.offer_name }}">
+													<i class="fa fa-clock me-1"></i>Request Access
+												</button>
+											{% else %}
+												<a href="#" class="btn btn-sm btn-outline-secondary disabled">
+													<i class="fa fa-external-link-alt me-1"></i>Unavailable
+												</a>
+											{% endif %}
+										</td>
+										<td class="text-center">
+											<button type="button" class="btn btn-sm btn-outline-info" title="View Details">
+												<i class="fa fa-eye"></i>
+											</button>
+										</td>
+									</tr>
+									{% empty %}
+									<tr>
+										<td colspan="9" class="text-center py-4">
+											<div class="text-muted">
+												<i class="fa fa-inbox fa-3x mb-3"></i>
+												<h5>No offers available</h5>
+												<p>Check back later for new offers!</p>
+											</div>
+										</td>
+									</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+						</div>
+
+						<!-- Pagination -->
+						{% if page_obj.has_other_pages %}
+						<div class="d-flex justify-content-between align-items-center mt-4">
+							<div>
+								<small class="text-muted">
+									Showing {{ page_obj.start_index }} to {{ page_obj.end_index }} of {{ total_offers }} offers
+								</small>
+							</div>
+							<nav aria-label="Offers pagination">
+								<ul class="pagination pagination-sm mb-0">
+									{% if page_obj.has_previous %}
+										<li class="page-item">
+											<a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+										</li>
+									{% else %}
+										<li class="page-item disabled">
+											<a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+										</li>
+									{% endif %}
+									
+									{% for num in page_obj.paginator.page_range %}
+										{% if page_obj.number == num %}
+											<li class="page-item active">
+												<a class="page-link" href="#">{{ num }}</a>
+											</li>
+										{% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+											<li class="page-item">
+												<a class="page-link" href="?page={{ num }}">{{ num }}</a>
+											</li>
+										{% endif %}
+									{% endfor %}
+									
+									{% if page_obj.has_next %}
+										<li class="page-item">
+											<a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+										</li>
+									{% else %}
+										<li class="page-item disabled">
+											<a class="page-link" href="#" tabindex="-1" aria-disabled="true">Next</a>
+										</li>
+									{% endif %}
+								</ul>
+							</nav>
+						</div>
+						{% endif %}
+
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- ROW-1 END -->
+	</div>
+</div>
+<!--app-content close-->
+
+<!-- Request Access Modal -->
+<div class="modal fade" id="requestAccessModal" tabindex="-1" aria-labelledby="requestAccessModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary-gradient">
+                <h5 class="modal-title text-white" id="requestAccessModalLabel">
+                    <i class="fa fa-briefcase me-2"></i>Request Access
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-3">
+                    <h6 class="text-primary" id="modalOfferName">Offer Name</h6>
+                    <p class="text-muted mb-0">Please describe your promotional method</p>
+                </div>
+                
+                <form id="requestAccessForm">
+                    <div class="mb-3">
+                        <label for="promotionalMethod" class="form-label fw-semibold">
+                            <i class="fa fa-bullhorn me-1"></i>Promotional Method
+                        </label>
+                        <textarea class="form-control" id="promotionalMethod" rows="4" 
+                                  placeholder="Describe how you plan to promote this offer (e.g., social media, email marketing, website, etc.)" 
+                                  required></textarea>
+                        <div class="form-text">
+                            <i class="fa fa-info-circle me-1"></i>Be specific about your promotional strategy
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info" role="alert">
+                        <i class="fa fa-lightbulb me-2"></i>
+                        <strong>Tip:</strong> Include details about your audience, platforms, and expected reach.
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fa fa-times me-1"></i>Cancel
+                </button>
+                <button type="button" class="btn btn-primary" id="submitRequestBtn">
+                    <i class="fa fa-paper-plane me-1"></i>Request Now
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Search Functionality Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('offerSearch');
+    const table = document.getElementById('offersTable');
+    const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+    const totalOffersSpan = document.getElementById('totalOffers');
+    
+    searchInput.addEventListener('keyup', function() {
+        const searchTerm = this.value.toLowerCase();
+        let visibleCount = 0;
+        
+        for (let i = 0; i < rows.length; i++) {
+            const row = rows[i];
+            const text = row.textContent.toLowerCase();
+            
+            if (text.includes(searchTerm)) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        }
+        
+        // Update total count
+        totalOffersSpan.textContent = visibleCount;
+    });
+    
+    // Request Access Modal Functionality
+    const requestAccessModal = new bootstrap.Modal(document.getElementById('requestAccessModal'));
+    const modalOfferName = document.getElementById('modalOfferName');
+    const promotionalMethodTextarea = document.getElementById('promotionalMethod');
+    const submitRequestBtn = document.getElementById('submitRequestBtn');
+    let currentOfferId = null;
+    let currentRequestBtn = null;
+    
+    // Handle Request Access button clicks
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.request-access-btn')) {
+            const btn = e.target.closest('.request-access-btn');
+            currentOfferId = btn.getAttribute('data-offer-id');
+            const offerName = btn.getAttribute('data-offer-name');
+            
+            modalOfferName.textContent = offerName;
+            promotionalMethodTextarea.value = '';
+            currentRequestBtn = btn;
+            
+            requestAccessModal.show();
+        }
+    });
+    
+    // Handle form submission
+    submitRequestBtn.addEventListener('click', function() {
+        const promotionalMethod = promotionalMethodTextarea.value.trim();
+        
+        if (!promotionalMethod) {
+            promotionalMethodTextarea.focus();
+            return;
+        }
+        
+        // Disable button and show loading
+        submitRequestBtn.disabled = true;
+        submitRequestBtn.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i>Processing...';
+        
+        // Get CSRF token
+        let csrfToken = '';
+        const csrfElement = document.querySelector('[name=csrfmiddlewaretoken]');
+        if (csrfElement) {
+            csrfToken = csrfElement.value;
+        } else {
+            // Fallback: try to get from cookie
+            csrfToken = getCookie('csrftoken');
+        }
+        
+        if (!csrfToken) {
+            showNotification('CSRF token not found. Please refresh the page.', 'danger');
+            return;
+        }
+        
+
+        
+        // Make AJAX call to submit request
+        fetch('{% url "request_offer_access" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': csrfToken
+            },
+            body: `offer_id=${currentOfferId}&promotional_method=${encodeURIComponent(promotionalMethod)}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update the button and status
+                if (currentRequestBtn) {
+                    // Change button to "Pending Review"
+                    currentRequestBtn.className = 'btn btn-sm btn-outline-warning disabled';
+                    currentRequestBtn.innerHTML = '<i class="fa fa-clock me-1"></i>Pending Review';
+                    currentRequestBtn.disabled = true;
+                    
+                    // Update the status badge in the same row
+                    const row = currentRequestBtn.closest('tr');
+                    const statusBadge = row.querySelector('.badge');
+                    if (statusBadge) {
+                        statusBadge.className = 'badge bg-warning';
+                        statusBadge.textContent = 'Pending';
+                    }
+                    
+                    // Update the link button in the same row
+                    const linkBtn = row.querySelector('td:nth-child(8) .btn');
+                    if (linkBtn) {
+                        linkBtn.className = 'btn btn-sm btn-outline-warning disabled';
+                        linkBtn.innerHTML = '<i class="fa fa-clock me-1"></i>Pending Review';
+                    }
+                }
+                
+                // Close modal
+                requestAccessModal.hide();
+                
+                // Show success message
+                showNotification(data.message, 'success');
+            } else {
+                // Show error message
+                showNotification(data.message, 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Network error. Please check your connection and try again.', 'danger');
+        })
+        .finally(() => {
+            // Reset button
+            submitRequestBtn.disabled = false;
+            submitRequestBtn.innerHTML = '<i class="fa fa-paper-plane me-1"></i>Request Now';
+        });
+    });
+    
+    // Get cookie function
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    // Show notification function
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+        notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+        notification.innerHTML = `
+            <i class="fa fa-${type === 'success' ? 'check-circle' : 'info-circle'} me-2"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 5000);
+    }
+});
+</script>
+
+{% endblock %}
