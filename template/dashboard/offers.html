@@ -109,9 +109,11 @@
 										<td class="text-center fw-bold text-primary">{{ offer_data.offer.formatted_epc }}</td>
 										<td class="text-center">
 											{% if offer_data.status_display == 'Approved' %}
-												<a href="#" class="btn btn-sm btn-outline-primary">
-													<i class="fa fa-external-link-alt me-1"></i>Get Link
-												</a>
+												<button type="button" class="btn btn-sm btn-outline-primary get-tracking-link-btn" 
+														data-offer-id="{{ offer_data.offer.id }}" 
+														data-user-id="{{ request.user.id }}">
+													<i class="fa fa-link me-1"></i>Get Link
+												</button>
 											{% elif offer_data.status_display == 'Rejected' %}
 												<a href="#" class="btn btn-sm btn-outline-secondary disabled">
 													<i class="fa fa-external-link-alt me-1"></i>Unavailable
@@ -255,6 +257,63 @@
     </div>
 </div>
 
+<!-- Tracking Link Modal -->
+<div class="modal fade" id="trackingLinkModal" tabindex="-1" aria-labelledby="trackingLinkModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-success-gradient">
+                <h5 class="modal-title text-white" id="trackingLinkModalLabel">
+                    <i class="fa fa-link me-2"></i>Your Tracking Link
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-3">
+                    <h6 class="text-success" id="modalTrackingOfferName">Offer Name</h6>
+                    <p class="text-muted mb-0">Copy your personalized tracking link below</p>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="trackingDomain" class="form-label fw-semibold">
+                        <i class="fa fa-globe me-1"></i>Select Tracking Domain
+                    </label>
+                    <select class="form-select" id="trackingDomain">
+                        <option value="">Loading domains...</option>
+                    </select>
+                    <div class="form-text">
+                        <i class="fa fa-info-circle me-1"></i>Choose which domain to use for your tracking link
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="trackingLink" class="form-label fw-semibold">
+                        <i class="fa fa-copy me-1"></i>Tracking Link
+                    </label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="trackingLink" readonly>
+                        <button class="btn btn-success" type="button" id="copyTrackingLinkBtn">
+                            <i class="fa fa-copy me-1"></i>Copy
+                        </button>
+                    </div>
+                    <div class="form-text">
+                        <i class="fa fa-info-circle me-1"></i>This link will track clicks and redirect to the original offer
+                    </div>
+                </div>
+                
+                <div class="alert alert-success" role="alert">
+                    <i class="fa fa-chart-line me-2"></i>
+                    <strong>Tracking Enabled:</strong> All clicks through this link will be tracked for analytics and commission calculation.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fa fa-times me-1"></i>Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Search Functionality Script -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -291,6 +350,15 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentOfferId = null;
     let currentRequestBtn = null;
     
+    // Tracking Link Modal Functionality
+    const trackingLinkModal = new bootstrap.Modal(document.getElementById('trackingLinkModal'));
+    const modalTrackingOfferName = document.getElementById('modalTrackingOfferName');
+    const trackingLinkInput = document.getElementById('trackingLink');
+    const copyTrackingLinkBtn = document.getElementById('copyTrackingLinkBtn');
+    const trackingDomainSelect = document.getElementById('trackingDomain');
+    let currentUserId = null;
+    let availableDomains = [];
+    
     // Handle Request Access button clicks
     document.addEventListener('click', function(e) {
         if (e.target.closest('.request-access-btn')) {
@@ -305,6 +373,73 @@ document.addEventListener('DOMContentLoaded', function() {
             requestAccessModal.show();
         }
     });
+    
+    // Handle Get Tracking Link button clicks
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.get-tracking-link-btn')) {
+            const btn = e.target.closest('.get-tracking-link-btn');
+            currentOfferId = btn.getAttribute('data-offer-id');
+            currentUserId = btn.getAttribute('data-user-id');
+            
+            // Get offer name from the row
+            const row = btn.closest('tr');
+            const offerNameElement = row.querySelector('h6');
+            const offerName = offerNameElement ? offerNameElement.textContent : 'Offer';
+            
+            modalTrackingOfferName.textContent = offerName;
+            
+            // Load tracking domains and show modal
+            loadTrackingDomains();
+            trackingLinkModal.show();
+        }
+    });
+    
+    // Load tracking domains from server
+    function loadTrackingDomains() {
+        fetch('{% url "get_tracking_domains" %}')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    availableDomains = data.domains;
+                    populateDomainDropdown();
+                    updateTrackingLink();
+                }
+            })
+            .catch(error => {
+                console.error('Error loading domains:', error);
+                // Fallback to default domain
+                trackingLinkInput.value = `${window.location.origin}/offers/offer/?userid=${currentUserId}&offerid=${currentOfferId}`;
+            });
+    }
+    
+    // Populate domain dropdown
+    function populateDomainDropdown() {
+        trackingDomainSelect.innerHTML = '';
+        
+        availableDomains.forEach(domain => {
+            const option = document.createElement('option');
+            option.value = domain.value;
+            option.textContent = domain.display;
+            trackingDomainSelect.appendChild(option);
+        });
+        
+        // Set default selection
+        if (availableDomains.length > 0) {
+            trackingDomainSelect.value = availableDomains[0].value;
+        }
+    }
+    
+    // Update tracking link when domain changes
+    function updateTrackingLink() {
+        const selectedDomain = trackingDomainSelect.value;
+        if (selectedDomain && currentOfferId && currentUserId) {
+            const trackingUrl = `${selectedDomain}/offers/offer/?userid=${currentUserId}&offerid=${currentOfferId}`;
+            trackingLinkInput.value = trackingUrl;
+        }
+    }
+    
+    // Handle domain selection change
+    trackingDomainSelect.addEventListener('change', updateTrackingLink);
     
     // Handle form submission
     submitRequestBtn.addEventListener('click', function() {
@@ -390,6 +525,40 @@ document.addEventListener('DOMContentLoaded', function() {
             submitRequestBtn.disabled = false;
             submitRequestBtn.innerHTML = '<i class="fa fa-paper-plane me-1"></i>Request Now';
         });
+    });
+    
+    // Handle copy tracking link button
+    copyTrackingLinkBtn.addEventListener('click', function() {
+        trackingLinkInput.select();
+        trackingLinkInput.setSelectionRange(0, 99999); // For mobile devices
+        
+        try {
+            document.execCommand('copy');
+            copyTrackingLinkBtn.innerHTML = '<i class="fa fa-check me-1"></i>Copied!';
+            copyTrackingLinkBtn.className = 'btn btn-success';
+            
+            setTimeout(() => {
+                copyTrackingLinkBtn.innerHTML = '<i class="fa fa-copy me-1"></i>Copy';
+                copyTrackingLinkBtn.className = 'btn btn-success';
+            }, 2000);
+            
+            showNotification('Tracking link copied to clipboard!', 'success');
+        } catch (err) {
+            // Fallback for modern browsers
+            navigator.clipboard.writeText(trackingLinkInput.value).then(() => {
+                copyTrackingLinkBtn.innerHTML = '<i class="fa fa-check me-1"></i>Copied!';
+                copyTrackingLinkBtn.className = 'btn btn-success';
+                
+                setTimeout(() => {
+                    copyTrackingLinkBtn.innerHTML = '<i class="fa fa-copy me-1"></i>Copy';
+                    copyTrackingLinkBtn.className = 'btn btn-success';
+                }, 2000);
+                
+                showNotification('Tracking link copied to clipboard!', 'success');
+            }).catch(() => {
+                showNotification('Failed to copy link. Please copy manually.', 'warning');
+            });
+        }
     });
     
     // Get cookie function

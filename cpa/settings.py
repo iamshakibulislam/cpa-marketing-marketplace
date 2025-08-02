@@ -130,3 +130,16 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'user.User'
+
+# Tracking domains for affiliate links
+TRACKING_DOMAINS = [
+    'http://localhost:8000',
+    'https://track1.yourdomain.com',
+    'https://track2.yourdomain.com',
+    'https://track3.yourdomain.com',
+    'https://track4.yourdomain.com',
+    'https://track5.yourdomain.com',
+]
+
+# Default tracking domain
+DEFAULT_TRACKING_DOMAIN = 'http://localhost:8000'

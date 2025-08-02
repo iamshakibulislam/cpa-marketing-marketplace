@@ -1,10 +1,15 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
-from .models import Offer, UserOfferRequest
+from django.utils import timezone
+from django.conf import settings
+from .models import Offer, UserOfferRequest, ClickTracking
+from user.models import User
+import requests
+import json
 
 @login_required
 def offers(request):
@@ -46,8 +51,6 @@ def offers(request):
             else:
                 status_display = 'Active'
                 status_class = 'bg-success'
-        
-
         
         offers_with_status.append({
             'offer': offer,
@@ -114,3 +117,90 @@ def request_offer_access(request):
             'success': False,
             'message': 'An error occurred. Please try again.'
         })
+
+
+def track_click(request):
+    """Track offer clicks and redirect to original URL"""
+    userid = request.GET.get('userid')
+    offerid = request.GET.get('offerid')
+    
+    if not userid or not offerid:
+        return HttpResponse("Invalid tracking link", status=400)
+    
+    try:
+        # Get user and offer
+        user = get_object_or_404(User, id=userid)
+        offer = get_object_or_404(Offer, id=offerid, is_active=True)
+        
+        # Check if user is approved for this offer
+        try:
+            user_request = UserOfferRequest.objects.get(user=user, offer=offer)
+            if user_request.status != 'approved':
+                return HttpResponse("Access denied", status=403)
+        except UserOfferRequest.DoesNotExist:
+            return HttpResponse("Access denied", status=403)
+        
+        # Get visitor information
+        ip_address = get_client_ip(request)
+        user_agent = request.META.get('HTTP_USER_AGENT', '')
+        referrer = request.META.get('HTTP_REFERER', '')
+        
+        # Get location information (optional - you can use a service like ipapi.co)
+        country = None
+        city = None
+        try:
+            # You can integrate with IP geolocation services here
+            # For now, we'll leave it as None
+            pass
+        except:
+            pass
+        
+        # Create click tracking record
+        ClickTracking.objects.create(
+            user=user,
+            offer=offer,
+            ip_address=ip_address,
+            user_agent=user_agent,
+            referrer=referrer,
+            country=country,
+            city=city
+        )
+        
+        # Redirect to original offer URL
+        return redirect(offer.offer_url)
+        
+    except (User.DoesNotExist, Offer.DoesNotExist):
+        return HttpResponse("Invalid tracking link", status=404)
+    except Exception as e:
+        return HttpResponse("An error occurred", status=500)
+
+
+def get_client_ip(request):
+    """Get client IP address"""
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
+
+@login_required
+def get_tracking_domains(request):
+    """Get available tracking domains for the user"""
+    from django.conf import settings
+    domains = getattr(settings, 'TRACKING_DOMAINS', ['http://localhost:8000'])
+    
+    # Format domains for display (remove protocol for cleaner display)
+    domain_options = []
+    for domain in domains:
+        display_name = domain.replace('https://', '').replace('http://', '')
+        domain_options.append({
+            'value': domain,
+            'display': display_name
+        })
+    
+    return JsonResponse({
+        'success': True,
+        'domains': domain_options
+    })

@@ -21,6 +21,12 @@ class Offer(models.Model):
     
     # Basic offer information
     offer_name = models.CharField(max_length=255, verbose_name="Offer Name")
+    offer_url = models.URLField(
+        max_length=500,
+        verbose_name="Original Offer URL",
+        help_text="URL from the third-party CPA network",
+        default="https://www.demourl.com"
+    )
     need_approval = models.BooleanField(default=True, verbose_name="Needs Approval")
     is_active = models.BooleanField(default=True, verbose_name="Is Active")
     
@@ -116,6 +122,21 @@ class Offer(models.Model):
         if self.epc:
             return f"${self.epc:.2f}"
         return "N/A"
+    
+    def get_tracking_url(self, user_id, domain=None):
+        """Generate tracking URL for this offer and user with optional domain"""
+        from django.conf import settings
+        if domain:
+            base_url = domain
+        else:
+            base_url = getattr(settings, 'DEFAULT_TRACKING_DOMAIN', 'http://localhost:8000')
+        return f"{base_url}/offer/?userid={user_id}&offerid={self.id}"
+    
+    def get_all_tracking_urls(self, user_id):
+        """Generate tracking URLs for all available domains"""
+        from django.conf import settings
+        domains = getattr(settings, 'TRACKING_DOMAINS', ['http://localhost:8000'])
+        return [f"{domain}/offer/?userid={user_id}&offerid={self.id}" for domain in domains]
 
 
 class UserOfferRequest(models.Model):
@@ -156,6 +177,36 @@ class UserOfferRequest(models.Model):
             return "bg-danger"
 
 
+class ClickTracking(models.Model):
+    """Track offer clicks for analytics and commission tracking"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Affiliate User")
+    offer = models.ForeignKey(Offer, on_delete=models.CASCADE, verbose_name="Offer")
+    click_date = models.DateTimeField(default=timezone.now, verbose_name="Click Date")
+    ip_address = models.GenericIPAddressField(verbose_name="Visitor IP Address", null=True, blank=True)
+    user_agent = models.TextField(verbose_name="User Agent", blank=True, null=True)
+    referrer = models.URLField(verbose_name="Referrer", blank=True, null=True)
+    country = models.CharField(max_length=100, verbose_name="Visitor Country", blank=True, null=True)
+    city = models.CharField(max_length=100, verbose_name="Visitor City", blank=True, null=True)
+    
+    class Meta:
+        verbose_name = "Click Tracking"
+        verbose_name_plural = "Click Tracking"
+        ordering = ['-click_date']
+        indexes = [
+            models.Index(fields=['user', 'offer']),
+            models.Index(fields=['click_date']),
+            models.Index(fields=['ip_address']),
+        ]
+    
+    def __str__(self):
+        return f"{self.user.full_name} - {self.offer.offer_name} - {self.click_date.strftime('%Y-%m-%d %H:%M')}"
+    
+    @property
+    def formatted_click_date(self):
+        """Return formatted click date"""
+        return self.click_date.strftime('%Y-%m-%d %H:%M:%S')
+
+
 # Custom form for admin
 class OfferAdminForm(forms.ModelForm):
     countries = forms.MultipleChoiceField(
@@ -188,9 +239,6 @@ class OfferAdminForm(forms.ModelForm):
         # Convert form data back to JSON
         instance.countries = self.cleaned_data.get('countries', [])
         instance.devices = self.cleaned_data.get('devices', [])
-        
-        # Debug: Print what we're saving
-        print(f"Saving devices: {instance.devices}")
         
         if commit:
             instance.save()
