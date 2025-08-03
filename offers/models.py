@@ -124,6 +124,19 @@ class Offer(models.Model):
     
     # Basic offer information
     offer_name = models.CharField(max_length=255, verbose_name="Offer Name")
+    offer_description = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name="Offer Description",
+        help_text="Detailed description of the offer"
+    )
+    offer_image = models.ImageField(
+        upload_to='offers/',
+        blank=True,
+        null=True,
+        verbose_name="Offer Image",
+        help_text="Image for the offer (optional)"
+    )
     cpa_network = models.ForeignKey(
         CPANetwork,
         on_delete=models.CASCADE,

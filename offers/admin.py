@@ -189,13 +189,13 @@ class OfferAdmin(admin.ModelAdmin):
         'devices'
     ]
     
-    search_fields = ['offer_name', 'offer_url', 'note', 'cpa_network__name']
+    search_fields = ['offer_name', 'offer_description', 'offer_url', 'note', 'cpa_network__name']
     
     readonly_fields = ['created_at', 'updated_at']
     
     fieldsets = (
         ('Basic Information', {
-            'fields': ('offer_name', 'cpa_network', 'offer_url', 'is_active', 'need_approval')
+            'fields': ('offer_name', 'offer_description', 'offer_image', 'cpa_network', 'offer_url', 'is_active', 'need_approval')
         }),
         ('Targeting', {
             'fields': ('countries', 'devices'),
