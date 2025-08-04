@@ -285,6 +285,31 @@
                     </div>
                 </div>
                 
+                <!-- Subid Parameters (Optional) -->
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="subid1" class="form-label fw-semibold">
+                            <i class="fa fa-tag me-1"></i>Subid 1 (Optional)
+                        </label>
+                        <input type="text" class="form-control" id="subid1" placeholder="Enter subid1 value">
+                        <div class="form-text">Optional tracking parameter</div>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="subid2" class="form-label fw-semibold">
+                            <i class="fa fa-tag me-1"></i>Subid 2 (Optional)
+                        </label>
+                        <input type="text" class="form-control" id="subid2" placeholder="Enter subid2 value">
+                        <div class="form-text">Optional tracking parameter</div>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="subid3" class="form-label fw-semibold">
+                            <i class="fa fa-tag me-1"></i>Subid 3 (Optional)
+                        </label>
+                        <input type="text" class="form-control" id="subid3" placeholder="Enter subid3 value">
+                        <div class="form-text">Optional tracking parameter</div>
+                    </div>
+                </div>
+                
                 <div class="mb-3">
                     <label for="trackingLink" class="form-label fw-semibold">
                         <i class="fa fa-copy me-1"></i>Tracking Link
@@ -433,13 +458,32 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateTrackingLink() {
         const selectedDomain = trackingDomainSelect.value;
         if (selectedDomain && currentOfferId && currentUserId) {
-            const trackingUrl = `${selectedDomain}/offers/offer/?userid=${currentUserId}&offerid=${currentOfferId}`;
+            let trackingUrl = `${selectedDomain}/offers/offer/?userid=${currentUserId}&offerid=${currentOfferId}`;
+            
+            // Add subid parameters if they exist
+            const subid1 = document.getElementById('subid1')?.value || '';
+            const subid2 = document.getElementById('subid2')?.value || '';
+            const subid3 = document.getElementById('subid3')?.value || '';
+            
+            if (subid1) trackingUrl += `&subid1=${encodeURIComponent(subid1)}`;
+            if (subid2) trackingUrl += `&subid2=${encodeURIComponent(subid2)}`;
+            if (subid3) trackingUrl += `&subid3=${encodeURIComponent(subid3)}`;
+            
             trackingLinkInput.value = trackingUrl;
         }
     }
     
     // Handle domain selection change
     trackingDomainSelect.addEventListener('change', updateTrackingLink);
+    
+    // Handle subid input changes
+    const subid1Input = document.getElementById('subid1');
+    const subid2Input = document.getElementById('subid2');
+    const subid3Input = document.getElementById('subid3');
+    
+    if (subid1Input) subid1Input.addEventListener('input', updateTrackingLink);
+    if (subid2Input) subid2Input.addEventListener('input', updateTrackingLink);
+    if (subid3Input) subid3Input.addEventListener('input', updateTrackingLink);
     
     // Handle form submission
     submitRequestBtn.addEventListener('click', function() {

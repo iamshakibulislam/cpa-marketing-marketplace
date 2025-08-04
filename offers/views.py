@@ -3,14 +3,16 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
 from .models import Offer, UserOfferRequest, ClickTracking, Conversion, SiteSettings, CPANetwork
 from user.models import User
 import json
+from datetime import datetime
 
 def get_client_ip(request):
     """Get client IP address"""
@@ -216,6 +218,11 @@ def track_click(request):
     """Track offer clicks and redirect to original URL with click ID"""
     userid = request.GET.get('userid')
     offerid = request.GET.get('offerid')
+    
+    # Get subid parameters
+    subid1 = request.GET.get('subid1', '')
+    subid2 = request.GET.get('subid2', '')
+    subid3 = request.GET.get('subid3', '')
 
     if not userid or not offerid:
         return HttpResponse("Invalid tracking link", status=400)
@@ -243,7 +250,7 @@ def track_click(request):
         country = None # Placeholder for IP geolocation
         city = None    # Placeholder for IP geolocation
 
-        # Create click tracking record
+        # Create click tracking record with subid parameters
         click_tracking = ClickTracking.objects.create(
             user=user,
             offer=offer,
@@ -252,7 +259,10 @@ def track_click(request):
             user_agent=user_agent,
             referrer=referrer,
             country=country,
-            city=city
+            city=city,
+            subid1=subid1 if subid1 else None,
+            subid2=subid2 if subid2 else None,
+            subid3=subid3 if subid3 else None
         )
 
         # Build redirect URL with click ID for the specific CPA network
@@ -411,3 +421,234 @@ def test_redirect_url(request):
         return HttpResponse(result)
     except Offer.DoesNotExist:
         return HttpResponse("Offer not found")
+
+@login_required
+def daily_reports(request):
+    """
+    Daily Reports View - Shows daily performance summary with filtering and pagination
+    """
+    # Get filter parameters
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+    offer_id = request.GET.get('offer_id')
+    subid = request.GET.get('subid')
+    page = request.GET.get('page', 1)
+    page_size = request.GET.get('page_size', 15)
+    
+    # Get user's click tracking data
+    user_click_data = ClickTracking.objects.filter(user=request.user)
+    
+    # Apply date filters if provided
+    if start_date and end_date:
+        try:
+            start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+            end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+            user_click_data = user_click_data.filter(
+                click_date__date__range=[start_date, end_date]
+            )
+        except ValueError:
+            pass
+    
+    # Apply offer filter if provided
+    if offer_id:
+        user_click_data = user_click_data.filter(offer_id=offer_id)
+    
+    # Apply subid filter if provided
+    if subid:
+        user_click_data = user_click_data.filter(
+            Q(subid1=subid) | Q(subid2=subid) | Q(subid3=subid)
+        )
+    
+    # Group by date and calculate daily metrics
+    daily_stats = {}
+    
+    for click in user_click_data:
+        date_key = click.click_date.date()
+        if date_key not in daily_stats:
+            daily_stats[date_key] = {
+                'clicks': 0,
+                'conversions': 0,
+                'earnings': 0,
+                'conversion_rate': 0.0,
+                'epc': 0.0
+            }
+        
+        daily_stats[date_key]['clicks'] += 1
+        
+        # Check if this click led to a conversion
+        conversion = Conversion.objects.filter(click_tracking=click).first()
+        if conversion:
+            daily_stats[date_key]['conversions'] += 1
+            # Earnings = offer payout × number of conversions
+            daily_stats[date_key]['earnings'] += float(click.offer.payout)
+    
+    # Calculate conversion rates and EPC
+    for date, stats in daily_stats.items():
+        if stats['clicks'] > 0:
+            stats['conversion_rate'] = (stats['conversions'] / stats['clicks']) * 100
+            # EPC = total earnings / total clicks
+            stats['epc'] = stats['earnings'] / stats['clicks']
+    
+    # Sort by date (most recent first)
+    sorted_dates = sorted(daily_stats.keys(), reverse=True)
+    
+    # Pagination
+    paginator = Paginator(sorted_dates, page_size)
+    try:
+        page_obj = paginator.page(page)
+    except (PageNotAnInteger, EmptyPage):
+        page_obj = paginator.page(1)
+    
+    # Prepare data for template
+    daily_reports_data = []
+    for date in page_obj:
+        stats = daily_stats[date]
+        daily_reports_data.append({
+            'date': date,
+            'clicks': stats['clicks'],
+            'conversions': stats['conversions'],
+            'conversion_rate': round(stats['conversion_rate'], 2),
+            'earnings': round(stats['earnings'], 2),
+            'epc': round(stats['epc'], 2)
+        })
+    
+    # Calculate summary statistics
+    total_clicks = sum(stats['clicks'] for stats in daily_stats.values())
+    total_conversions = sum(stats['conversions'] for stats in daily_stats.values())
+    total_earnings = sum(stats['earnings'] for stats in daily_stats.values())
+    avg_conversion_rate = (total_conversions / total_clicks * 100) if total_clicks > 0 else 0
+    
+    # Get available offers for filter (offers the user has access to)
+    user_approved_requests = UserOfferRequest.objects.filter(
+        user=request.user, 
+        status='approved'
+    ).values_list('offer_id', flat=True)
+    user_offers = Offer.objects.filter(
+        id__in=user_approved_requests,
+        is_active=True
+    )
+    
+    # Get available subids for filter
+    subids = set()
+    for click in user_click_data:
+        if click.subid1:
+            subids.add(click.subid1)
+        if click.subid2:
+            subids.add(click.subid2)
+        if click.subid3:
+            subids.add(click.subid3)
+    
+    context = {
+        'daily_reports': daily_reports_data,
+        'page_obj': page_obj,
+        'total_clicks': total_clicks,
+        'total_conversions': total_conversions,
+        'total_earnings': round(total_earnings, 2),
+        'avg_conversion_rate': round(avg_conversion_rate, 2),
+        'user_offers': user_offers,
+        'available_subids': sorted(list(subids)),
+        'current_filters': {
+            'start_date': start_date,
+            'end_date': end_date,
+            'offer_id': offer_id,
+            'subid': subid,
+            'page_size': page_size
+        }
+    }
+    
+    return render(request, 'dashboard/daily_reports.html', context)
+
+@login_required
+def get_daily_details(request):
+    """Get detailed performance data for a specific date"""
+    date_str = request.GET.get('date')
+    offer_id = request.GET.get('offer_id')
+    subid = request.GET.get('subid')
+    
+    if not date_str:
+        return JsonResponse({'success': False, 'message': 'Date parameter required'})
+    
+    try:
+        # Parse the date
+        selected_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+        
+        # Get user's click tracking data for the specific date
+        user_click_data = ClickTracking.objects.filter(
+            user=request.user,
+            click_date__date=selected_date
+        )
+        
+        # Apply filters if provided
+        if offer_id:
+            user_click_data = user_click_data.filter(offer_id=offer_id)
+        
+        if subid:
+            user_click_data = user_click_data.filter(
+                Q(subid1=subid) | Q(subid2=subid) | Q(subid3=subid)
+            )
+        
+        # Calculate daily metrics
+        total_clicks = user_click_data.count()
+        conversions = Conversion.objects.filter(click_tracking__in=user_click_data)
+        total_conversions = conversions.count()
+        
+        # Calculate earnings (offer payout × conversions)
+        total_earnings = 0
+        for conversion in conversions:
+            total_earnings += float(conversion.click_tracking.offer.payout)
+        
+        # Calculate conversion rate and EPC
+        conversion_rate = (total_conversions / total_clicks * 100) if total_clicks > 0 else 0
+        epc = (total_earnings / total_clicks) if total_clicks > 0 else 0
+        
+        # Get top performing offers for this date
+        offer_stats = {}
+        for click in user_click_data:
+            offer_name = click.offer.offer_name
+            if offer_name not in offer_stats:
+                offer_stats[offer_name] = {
+                    'clicks': 0,
+                    'conversions': 0,
+                    'earnings': 0
+                }
+            
+            offer_stats[offer_name]['clicks'] += 1
+            
+            # Check if this click led to a conversion
+            conversion = Conversion.objects.filter(click_tracking=click).first()
+            if conversion:
+                offer_stats[offer_name]['conversions'] += 1
+                offer_stats[offer_name]['earnings'] += float(click.offer.payout)
+        
+        # Sort offers by earnings (descending)
+        top_offers = sorted(offer_stats.items(), key=lambda x: x[1]['earnings'], reverse=True)
+        
+        # Prepare response data
+        response_data = {
+            'success': True,
+            'date': selected_date.strftime('%B %d, %Y'),
+            'summary': {
+                'total_clicks': total_clicks,
+                'total_conversions': total_conversions,
+                'conversion_rate': round(conversion_rate, 2),
+                'earnings': round(total_earnings, 2),
+                'epc': round(epc, 2)
+            },
+            'top_offers': []
+        }
+        
+        # Add top performing offers (limit to 5)
+        for offer_name, stats in top_offers[:5]:
+            response_data['top_offers'].append({
+                'name': offer_name,
+                'clicks': stats['clicks'],
+                'conversions': stats['conversions'],
+                'earnings': round(stats['earnings'], 2)
+            })
+        
+        return JsonResponse(response_data)
+        
+    except ValueError:
+        return JsonResponse({'success': False, 'message': 'Invalid date format'})
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)})

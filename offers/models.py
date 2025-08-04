@@ -340,6 +340,11 @@ class ClickTracking(models.Model):
     country = models.CharField(max_length=100, verbose_name="Visitor Country", blank=True, null=True)
     city = models.CharField(max_length=100, verbose_name="Visitor City", blank=True, null=True)
     
+    # Subid tracking fields
+    subid1 = models.CharField(max_length=100, verbose_name="Subid 1", blank=True, null=True, help_text="Optional subid parameter 1")
+    subid2 = models.CharField(max_length=100, verbose_name="Subid 2", blank=True, null=True, help_text="Optional subid parameter 2")
+    subid3 = models.CharField(max_length=100, verbose_name="Subid 3", blank=True, null=True, help_text="Optional subid parameter 3")
+    
     class Meta:
         verbose_name = "Click Tracking"
         verbose_name_plural = "Click Tracking"

@@ -11,4 +11,6 @@ urlpatterns = [
     path('postback/', views.handle_postback, name='handle_postback'),
     path('test-cpa-networks/', views.test_cpa_networks, name='test_cpa_networks'),
     path('test-redirect/', views.test_redirect_url, name='test_redirect_url'),
+    path('daily-reports/', views.daily_reports, name='daily_reports'),
+    path('get-daily-details/', views.get_daily_details, name='get_daily_details'),
 ]
