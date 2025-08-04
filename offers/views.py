@@ -22,6 +22,98 @@ def get_client_ip(request):
     return ip
 
 @login_required
+def view_offer(request, offer_id):
+    """Display detailed view of a specific offer"""
+    offer = get_object_or_404(Offer, id=offer_id, is_active=True)
+    
+    # Get user's request status for this offer
+    try:
+        user_request = UserOfferRequest.objects.get(user=request.user, offer=offer)
+        status = user_request.status
+        if status == 'approved':
+            status_display = 'Approved'
+            status_class = 'bg-success'
+            can_access = True
+        elif status == 'rejected':
+            status_display = 'Rejected'
+            status_class = 'bg-danger'
+            can_access = False
+        else:  # pending
+            status_display = 'Pending'
+            status_class = 'bg-warning'
+            can_access = False
+    except UserOfferRequest.DoesNotExist:
+        status_display = 'Need Approval'
+        status_class = 'bg-secondary'
+        can_access = False
+        user_request = None
+    
+    # Get tracking domains
+    tracking_domains = getattr(settings, 'TRACKING_DOMAINS', ['http://localhost:8000'])
+    domain_options = []
+    for domain in tracking_domains:
+        domain_options.append({
+            'value': domain,
+            'display': domain.replace('http://', '').replace('https://', '')
+        })
+    
+    context = {
+        'offer': offer,
+        'status_display': status_display,
+        'status_class': status_class,
+        'can_access': can_access,
+        'user_request': user_request,
+        'tracking_domains': domain_options,
+        'default_domain': getattr(settings, 'DEFAULT_TRACKING_DOMAIN', 'http://localhost:8000')
+    }
+    
+    return render(request, 'dashboard/view_offer.html', context)
+
+@login_required
+def approved_offers(request):
+    """Display list of approved offers for the user"""
+    # Get user's approved offers
+    user_requests = UserOfferRequest.objects.filter(
+        user=request.user, 
+        status='approved'
+    ).values_list('offer_id', flat=True)
+    
+    offers_list = Offer.objects.filter(
+        id__in=user_requests,
+        is_active=True
+    )
+    
+    # Search functionality
+    search_query = request.GET.get('search', '')
+    if search_query:
+        offers_list = offers_list.filter(
+            models.Q(offer_name__icontains=search_query) |
+            models.Q(cpa_network__name__icontains=search_query)
+        )
+    
+    # Prepare offers data with status information (all will be approved)
+    offers_data = []
+    for offer in offers_list:
+        offers_data.append({
+            'offer': offer,
+            'status_display': 'Approved',
+            'status_class': 'bg-success'
+        })
+    
+    # Pagination
+    paginator = Paginator(offers_data, 10)  # Show 10 offers per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    context = {
+        'offers': page_obj,
+        'search_query': search_query,
+        'total_offers': len(offers_data),
+    }
+    
+    return render(request, 'dashboard/approved_offers.html', context)
+
+@login_required
 def offers_list(request):
     """Display list of offers with search and pagination"""
     offers_list = Offer.objects.filter(is_active=True)

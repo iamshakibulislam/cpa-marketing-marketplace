@@ -3,6 +3,8 @@ from . import views
 
 urlpatterns = [
     path('', views.offers_list, name='offers_list'),
+    path('approved/', views.approved_offers, name='approved_offers'),
+    path('view/<int:offer_id>/', views.view_offer, name='view_offer'),
     path('request-access/', views.request_offer_access, name='request_offer_access'),
     path('offer/', views.track_click, name='track_click'),
     path('tracking-domains/', views.get_tracking_domains, name='get_tracking_domains'),
