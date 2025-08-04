@@ -492,25 +492,25 @@ def daily_reports(request):
     # Sort by date (most recent first)
     sorted_dates = sorted(daily_stats.keys(), reverse=True)
     
-    # Pagination
-    paginator = Paginator(sorted_dates, page_size)
-    try:
-        page_obj = paginator.page(page)
-    except (PageNotAnInteger, EmptyPage):
-        page_obj = paginator.page(1)
-    
     # Prepare data for template
     daily_reports_data = []
-    for date in page_obj:
+    for date in sorted_dates:
         stats = daily_stats[date]
         daily_reports_data.append({
             'date': date,
-            'clicks': stats['clicks'],
-            'conversions': stats['conversions'],
+            'total_clicks': stats['clicks'],
+            'total_conversions': stats['conversions'],
             'conversion_rate': round(stats['conversion_rate'], 2),
             'earnings': round(stats['earnings'], 2),
             'epc': round(stats['epc'], 2)
         })
+    
+    # Pagination
+    paginator = Paginator(daily_reports_data, page_size)
+    try:
+        page_obj = paginator.page(page)
+    except (PageNotAnInteger, EmptyPage):
+        page_obj = paginator.page(1)
     
     # Calculate summary statistics
     total_clicks = sum(stats['clicks'] for stats in daily_stats.values())
@@ -539,14 +539,9 @@ def daily_reports(request):
             subids.add(click.subid3)
     
     context = {
-        'daily_reports': daily_reports_data,
-        'page_obj': page_obj,
-        'total_clicks': total_clicks,
-        'total_conversions': total_conversions,
-        'total_earnings': round(total_earnings, 2),
-        'avg_conversion_rate': round(avg_conversion_rate, 2),
-        'user_offers': user_offers,
-        'available_subids': sorted(list(subids)),
+        'daily_data': page_obj,
+        'offers': user_offers,
+        'subids': sorted(list(subids)),
         'current_filters': {
             'start_date': start_date,
             'end_date': end_date,
@@ -561,9 +556,13 @@ def daily_reports(request):
 @login_required
 def get_daily_details(request):
     """Get detailed performance data for a specific date"""
+    print(f"DEBUG: get_daily_details called with params: {request.GET}")
+    
     date_str = request.GET.get('date')
     offer_id = request.GET.get('offer_id')
     subid = request.GET.get('subid')
+    
+    print(f"DEBUG: date_str={date_str}, offer_id={offer_id}, subid={subid}")
     
     if not date_str:
         return JsonResponse({'success': False, 'message': 'Date parameter required'})
