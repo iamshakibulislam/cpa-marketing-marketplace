@@ -51,6 +51,9 @@
 		<!-- Date Range Picker CSS -->
 		<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
+		<!-- FontAwesome CSS -->
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 		<!-- COLOR SKIN CSS -->
 		<link id="theme" rel="stylesheet" type="text/css" media="all" href="{% static 'dashboard/assets/colors/color1.css' %}" />
 
@@ -112,10 +115,10 @@
 							</a>
 							<ul class="slide-menu">
 								<li><a class="slide-item" href="{% url 'daily_reports' %}"><i class="side-menu__icon fe fe-calendar me-2"></i>Daily Reports</a></li>
-								<li><a class="slide-item" href="#"><i class="side-menu__icon fe fe-target me-2"></i>Click Reports</a></li>
-								<li><a class="slide-item" href="#"><i class="side-menu__icon fe fe-file-text me-2"></i>Offers Reports</a></li>
-								<li><a class="slide-item" href="#"><i class="side-menu__icon fe fe-filter me-2"></i>Conversion Reports</a></li>
-								<li><a class="slide-item" href="#"><i class="side-menu__icon fe fe-tag me-2"></i>Subid Reports</a></li>
+								<li><a class="slide-item" href="{% url 'click_reports' %}"><i class="side-menu__icon fe fe-target me-2"></i>Click Reports</a></li>
+								<li><a class="slide-item" href="{% url 'offer_reports' %}"><i class="side-menu__icon fe fe-file-text me-2"></i>Offers Reports</a></li>
+								<li><a class="slide-item" href="{% url 'conversion_reports' %}"><i class="side-menu__icon fe fe-filter me-2"></i>Conversion Reports</a></li>
+								           <li><a class="slide-item" href="{% url 'subid_reports' %}"><i class="side-menu__icon fe fe-tag me-2"></i>Subid Reports</a></li>
 							</ul>
 						</li>
 						

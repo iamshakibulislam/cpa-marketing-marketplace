@@ -13,4 +13,8 @@ urlpatterns = [
     path('test-redirect/', views.test_redirect_url, name='test_redirect_url'),
     path('daily-reports/', views.daily_reports, name='daily_reports'),
     path('get-daily-details/', views.get_daily_details, name='get_daily_details'),
+    path('click-reports/', views.click_reports, name='click_reports'),
+    path('offer-reports/', views.offer_reports, name='offer_reports'),
+    path('conversion-reports/', views.conversion_reports, name='conversion_reports'),
+    path('subid-reports/', views.subid_reports, name='subid_reports'),
 ]

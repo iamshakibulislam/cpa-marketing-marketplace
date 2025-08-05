@@ -718,3 +718,427 @@ def get_daily_details(request):
         return JsonResponse({'success': False, 'message': 'Invalid date format'})
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)})
+
+@login_required
+def click_reports(request):
+    """Display click tracking reports with filtering and pagination"""
+    from datetime import datetime, timedelta
+    from django.db.models import Q
+    
+    # Get filter parameters
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+    offer_id = request.GET.get('offer_id')
+    subid = request.GET.get('subid')
+    
+    # Set default date range (last 7 days)
+    if not start_date or not end_date:
+        end_date = datetime.now().date()
+        start_date = end_date - timedelta(days=6)
+    else:
+        try:
+            start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+            end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+        except ValueError:
+            end_date = datetime.now().date()
+            start_date = end_date - timedelta(days=6)
+    
+    # Get user's click tracking data
+    click_data = ClickTracking.objects.filter(
+        user=request.user,
+        click_date__date__range=[start_date, end_date]
+    ).select_related('offer').order_by('-click_date')
+    
+    # Apply filters
+    if offer_id:
+        click_data = click_data.filter(offer_id=offer_id)
+    
+    if subid:
+        click_data = click_data.filter(
+            Q(subid1=subid) | Q(subid2=subid) | Q(subid3=subid)
+        )
+    
+    # Get unique offers and subids for filter dropdowns
+    offers = Offer.objects.filter(is_active=True).order_by('offer_name')
+    subids = ClickTracking.objects.filter(user=request.user).values_list(
+        'subid1', 'subid2', 'subid3'
+    ).distinct()
+    
+    # Flatten and filter subids
+    unique_subids = set()
+    for subid_tuple in subids:
+        for subid_val in subid_tuple:
+            if subid_val:
+                unique_subids.add(subid_val)
+    
+    # Pagination
+    paginator = Paginator(click_data, 20)  # Show 20 clicks per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    # Prepare current filters for template
+    current_filters = {
+        'start_date': start_date,
+        'end_date': end_date,
+        'offer_id': offer_id,
+        'subid': subid
+    }
+    
+    context = {
+        'click_data': page_obj,
+        'offers': offers,
+        'subids': sorted(unique_subids),
+        'current_filters': current_filters,
+        'total_clicks': click_data.count(),
+    }
+    
+    return render(request, 'dashboard/click_report.html', context)
+
+@login_required
+def offer_reports(request):
+    """Display offer performance reports with filtering and pagination"""
+    from datetime import datetime, timedelta
+    from django.db.models import Count, Sum, Q
+    from decimal import Decimal
+    
+    # Get filter parameters
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+    
+    # Set default date range (last 7 days)
+    if not start_date or not end_date:
+        end_date = datetime.now().date()
+        start_date = end_date - timedelta(days=6)
+    else:
+        try:
+            start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+            end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+        except ValueError:
+            end_date = datetime.now().date()
+            start_date = end_date - timedelta(days=6)
+    
+    # Get user's approved offers
+    user_offers = Offer.objects.filter(
+        userofferrequest__user=request.user,
+        userofferrequest__status='approved',
+        is_active=True
+    ).distinct()
+    
+    # Get offer performance data
+    offer_data = []
+    total_clicks = 0
+    total_conversions = 0
+    total_earnings = Decimal('0.00')
+    
+    for offer in user_offers:
+        # Get clicks for this offer in date range
+        clicks = ClickTracking.objects.filter(
+            user=request.user,
+            offer=offer,
+            click_date__date__range=[start_date, end_date]
+        ).count()
+        
+        # Get conversions for this offer in date range
+        conversions = Conversion.objects.filter(
+            click_tracking__user=request.user,
+            click_tracking__offer=offer,
+            conversion_date__date__range=[start_date, end_date]
+        )
+        
+        conversion_count = conversions.count()
+        
+        # Calculate earnings (conversions * offer payout)
+        earnings = conversion_count * offer.payout
+        
+        # Calculate EPC (Earnings Per Click)
+        epc = earnings / clicks if clicks > 0 else Decimal('0.00')
+        
+        # Add to totals
+        total_clicks += clicks
+        total_conversions += conversion_count
+        total_earnings += earnings
+        
+        offer_data.append({
+            'offer': offer,
+            'clicks': clicks,
+            'conversions': conversion_count,
+            'epc': epc,
+            'payout': offer.payout,
+            'earnings': earnings
+        })
+    
+    # Sort by clicks (descending)
+    offer_data.sort(key=lambda x: x['clicks'], reverse=True)
+    
+    # Pagination
+    paginator = Paginator(offer_data, 15)  # Show 15 offers per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    # Calculate overall stats
+    overall_epc = total_earnings / total_clicks if total_clicks > 0 else Decimal('0.00')
+    
+    # Prepare current filters for template
+    current_filters = {
+        'start_date': start_date,
+        'end_date': end_date
+    }
+    
+    context = {
+        'offer_data': page_obj,
+        'current_filters': current_filters,
+        'total_offers': len(offer_data),
+        'total_clicks': total_clicks,
+        'total_conversions': total_conversions,
+        'total_earnings': total_earnings,
+        'overall_epc': overall_epc
+    }
+    
+    return render(request, 'dashboard/offer_report.html', context)
+
+@login_required
+def conversion_reports(request):
+    """Display conversion tracking reports with filtering and pagination"""
+    from datetime import datetime, timedelta
+    from django.db.models import Count, Sum, Q
+    from decimal import Decimal
+    
+    # Get filter parameters
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+    offer_id = request.GET.get('offer_id')
+    subid = request.GET.get('subid')
+    
+    # Set default date range (last 7 days)
+    if not start_date or not end_date:
+        end_date = datetime.now().date()
+        start_date = end_date - timedelta(days=6)
+    else:
+        try:
+            start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+            end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+        except ValueError:
+            end_date = datetime.now().date()
+            start_date = end_date - timedelta(days=6)
+    
+    # Get conversion data with related click tracking info
+    conversion_data = Conversion.objects.filter(
+        click_tracking__user=request.user,
+        conversion_date__date__range=[start_date, end_date]
+    ).select_related('click_tracking', 'click_tracking__offer')
+    
+    # Apply filters
+    if offer_id:
+        conversion_data = conversion_data.filter(click_tracking__offer_id=offer_id)
+    
+    if subid:
+        conversion_data = conversion_data.filter(
+            Q(click_tracking__subid1=subid) | 
+            Q(click_tracking__subid2=subid) | 
+            Q(click_tracking__subid3=subid)
+        )
+    
+    # Get unique offers for filter dropdown
+    offers = Offer.objects.filter(
+        userofferrequest__user=request.user,
+        userofferrequest__status='approved',
+        is_active=True
+    ).distinct()
+    
+    # Get unique subids for filter dropdown
+    subids = ClickTracking.objects.filter(
+        user=request.user,
+        click_date__date__range=[start_date, end_date]
+    ).values_list('subid1', flat=True).distinct().exclude(subid1__isnull=True).exclude(subid1='')
+    
+    subids = list(subids) + list(ClickTracking.objects.filter(
+        user=request.user,
+        click_date__date__range=[start_date, end_date]
+    ).values_list('subid2', flat=True).distinct().exclude(subid2__isnull=True).exclude(subid2=''))
+    
+    subids = list(subids) + list(ClickTracking.objects.filter(
+        user=request.user,
+        click_date__date__range=[start_date, end_date]
+    ).values_list('subid3', flat=True).distinct().exclude(subid3__isnull=True).exclude(subid3=''))
+    
+    subids = list(set(subids))  # Remove duplicates
+    
+    # Pagination
+    paginator = Paginator(conversion_data, 20)  # Show 20 conversions per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    # Calculate totals
+    total_conversions = conversion_data.count()
+    
+    # Calculate total earnings - handle case where no conversions exist
+    if total_conversions > 0:
+        # First try to sum the payout field directly
+        total_earnings = conversion_data.aggregate(
+            total_earnings=Sum('payout')
+        )['total_earnings'] or Decimal('0.00')
+        
+            # If payout sum is 0, calculate based on offer payouts
+        if total_earnings == Decimal('0.00'):
+            # Debug: Print conversion data to see what's happening
+            print(f"Debug: Found {total_conversions} conversions but payout sum is 0")
+            for conv in conversion_data[:3]:  # Print first 3 conversions
+                print(f"Conversion ID: {conv.id}, Payout: {conv.payout}, Offer Payout: {conv.click_tracking.offer.payout}")
+            
+            # Calculate earnings based on offer payouts
+            total_earnings = sum(
+                conversion.click_tracking.offer.payout 
+                for conversion in conversion_data
+                if conversion.click_tracking.offer.payout
+            )
+    else:
+        total_earnings = Decimal('0.00')
+    
+    # Prepare current filters for template
+    current_filters = {
+        'start_date': start_date,
+        'end_date': end_date,
+        'offer_id': offer_id,
+        'subid': subid
+    }
+    
+    context = {
+        'conversion_data': page_obj,
+        'current_filters': current_filters,
+        'offers': offers,
+        'subids': subids,
+        'total_conversions': total_conversions,
+        'total_earnings': total_earnings
+    }
+    
+    return render(request, 'dashboard/conversion_report.html', context)
+
+@login_required
+def subid_reports(request):
+    """Display subid conversion tracking reports with filtering and pagination"""
+    from datetime import datetime, timedelta
+    from django.db.models import Count, Sum, Q, Avg
+    from decimal import Decimal
+    
+    # Get filter parameters
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+    subid = request.GET.get('subid')
+    
+    # Set default date range (last 7 days)
+    if not start_date or not end_date:
+        end_date = datetime.now().date()
+        start_date = end_date - timedelta(days=6)
+    else:
+        try:
+            start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+            end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+        except ValueError:
+            end_date = datetime.now().date()
+            start_date = end_date - timedelta(days=6)
+    
+    # Get conversion data with subids only
+    conversion_data = Conversion.objects.filter(
+        click_tracking__user=request.user,
+        conversion_date__date__range=[start_date, end_date]
+    ).select_related('click_tracking', 'click_tracking__offer').filter(
+        Q(click_tracking__subid1__isnull=False) & ~Q(click_tracking__subid1='') |
+        Q(click_tracking__subid2__isnull=False) & ~Q(click_tracking__subid2='') |
+        Q(click_tracking__subid3__isnull=False) & ~Q(click_tracking__subid3='')
+    )
+    
+    # Apply subid filter if specified
+    if subid:
+        conversion_data = conversion_data.filter(
+            Q(click_tracking__subid1=subid) | 
+            Q(click_tracking__subid2=subid) | 
+            Q(click_tracking__subid3=subid)
+        )
+    
+    # Get unique subids for filter dropdown
+    subids = ClickTracking.objects.filter(
+        user=request.user,
+        click_date__date__range=[start_date, end_date]
+    ).values_list('subid1', flat=True).distinct().exclude(subid1__isnull=True).exclude(subid1='')
+    
+    subids = list(subids) + list(ClickTracking.objects.filter(
+        user=request.user,
+        click_date__date__range=[start_date, end_date]
+    ).values_list('subid2', flat=True).distinct().exclude(subid2__isnull=True).exclude(subid2=''))
+    
+    subids = list(subids) + list(ClickTracking.objects.filter(
+        user=request.user,
+        click_date__date__range=[start_date, end_date]
+    ).values_list('subid3', flat=True).distinct().exclude(subid3__isnull=True).exclude(subid3=''))
+    
+    subids = list(set(subids))  # Remove duplicates
+    
+    # Pagination
+    paginator = Paginator(conversion_data, 20)  # Show 20 conversions per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    # Calculate totals
+    total_conversions = conversion_data.count()
+    
+    # Calculate total earnings - handle case where no conversions exist
+    if total_conversions > 0:
+        # Force evaluation of queryset to ensure data is loaded
+        conversion_list = list(conversion_data)
+        
+        # First try to sum the payout field directly
+        total_earnings = conversion_data.aggregate(
+            total_earnings=Sum('payout')
+        )['total_earnings'] or Decimal('0.00')
+        
+        # If payout sum is 0, calculate based on offer payouts
+        if total_earnings == Decimal('0.00'):
+            # Calculate earnings based on offer payouts using the list
+            total_earnings = sum(
+                float(conversion.click_tracking.offer.payout) 
+                for conversion in conversion_list
+                if conversion.click_tracking.offer.payout
+            )
+            # Convert to Decimal to ensure proper type
+            total_earnings = Decimal(str(total_earnings))
+    else:
+        total_earnings = Decimal('0.00')
+    
+    # Calculate EPC (Earnings Per Click)
+    total_clicks = ClickTracking.objects.filter(
+        user=request.user,
+        click_date__date__range=[start_date, end_date]
+    ).filter(
+        Q(subid1__isnull=False) & ~Q(subid1='') |
+        Q(subid2__isnull=False) & ~Q(subid2='') |
+        Q(subid3__isnull=False) & ~Q(subid3='')
+    ).count()
+    
+    if subid:
+        total_clicks = ClickTracking.objects.filter(
+            user=request.user,
+            click_date__date__range=[start_date, end_date]
+        ).filter(
+            Q(subid1=subid) | Q(subid2=subid) | Q(subid3=subid)
+        ).count()
+    
+    epc = total_earnings / total_clicks if total_clicks > 0 else Decimal('0.00')
+    
+    # Prepare current filters for template
+    current_filters = {
+        'start_date': start_date,
+        'end_date': end_date,
+        'subid': subid
+    }
+    
+    context = {
+        'conversion_data': page_obj,
+        'current_filters': current_filters,
+        'subids': subids,
+        'total_conversions': total_conversions,
+        'total_earnings': total_earnings,
+        'total_clicks': total_clicks,
+        'epc': epc
+    }
+    
+    return render(request, 'dashboard/subid_report.html', context)

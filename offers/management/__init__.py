@@ -1,1 +1,1 @@
-# Management commands for offers app 
+# This file makes the management directory a Python package 
