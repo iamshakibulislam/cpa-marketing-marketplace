@@ -4,6 +4,8 @@ from django import forms
 from user.models import User
 import uuid
 import datetime
+import requests
+import json
 
 def generate_click_id(user_id, offer_id):
     """Generate unique click ID"""
@@ -339,6 +341,12 @@ class ClickTracking(models.Model):
     referrer = models.URLField(verbose_name="Referrer", blank=True, null=True)
     country = models.CharField(max_length=100, verbose_name="Visitor Country", blank=True, null=True)
     city = models.CharField(max_length=100, verbose_name="Visitor City", blank=True, null=True)
+    region = models.CharField(max_length=100, verbose_name="Visitor Region", blank=True, null=True)
+    timezone = models.CharField(max_length=100, verbose_name="Visitor Timezone", blank=True, null=True)
+    postal_code = models.CharField(max_length=20, verbose_name="Visitor Postal Code", blank=True, null=True)
+    organization = models.CharField(max_length=255, verbose_name="Visitor Organization", blank=True, null=True)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, verbose_name="Latitude", blank=True, null=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, verbose_name="Longitude", blank=True, null=True)
     
     # Subid tracking fields
     subid1 = models.CharField(max_length=100, verbose_name="Subid 1", blank=True, null=True, help_text="Optional subid parameter 1")
@@ -363,6 +371,13 @@ class ClickTracking(models.Model):
     def formatted_click_date(self):
         """Return formatted click date"""
         return self.click_date.strftime('%Y-%m-%d %H:%M:%S')
+    
+    def save(self, *args, **kwargs):
+        """Override save to generate click_id if not provided"""
+        if not self.click_id:
+            self.click_id = generate_click_id(self.user.id, self.offer.id)
+        
+        super().save(*args, **kwargs)
 
 
 class Conversion(models.Model):

@@ -12,15 +12,43 @@ from django.db.models import Q
 from .models import Offer, UserOfferRequest, ClickTracking, Conversion, SiteSettings, CPANetwork
 from user.models import User
 import json
+import requests
 from datetime import datetime
 
 def get_client_ip(request):
-    """Get client IP address"""
+    """Get client IP address - improved version based on Stack Overflow best practices"""
+    # Try different headers in order of preference
+    ip = None
+    
+    # 1. Try X-Forwarded-For (most common for proxies)
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
     if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0]
-    else:
+        ip = x_forwarded_for.split(',')[0].strip()
+    
+    # 2. Try X-Real-IP
+    if not ip or ip == '127.0.0.1':
+        ip = request.META.get('HTTP_X_REAL_IP')
+    
+    # 3. Try X-Forwarded
+    if not ip or ip == '127.0.0.1':
+        ip = request.META.get('HTTP_X_FORWARDED')
+    
+    # 4. Try X-Cluster-Client-IP
+    if not ip or ip == '127.0.0.1':
+        ip = request.META.get('HTTP_X_CLUSTER_CLIENT_IP')
+    
+    # 5. Fallback to REMOTE_ADDR
+    if not ip or ip == '127.0.0.1':
         ip = request.META.get('REMOTE_ADDR')
+    
+    # 6. If still no valid IP, try HTTP_CLIENT_IP
+    if not ip or ip == '127.0.0.1':
+        ip = request.META.get('HTTP_CLIENT_IP')
+    
+    # 7. Last resort - if we're in development, use a default
+    if not ip:
+        ip = '127.0.0.1'  # Localhost for development
+    
     return ip
 
 @login_required
@@ -247,9 +275,6 @@ def track_click(request):
         user_agent = request.META.get('HTTP_USER_AGENT', '')
         referrer = request.META.get('HTTP_REFERER', '')
 
-        country = None # Placeholder for IP geolocation
-        city = None    # Placeholder for IP geolocation
-
         # Create click tracking record with subid parameters
         click_tracking = ClickTracking.objects.create(
             user=user,
@@ -258,12 +283,54 @@ def track_click(request):
             ip_address=ip_address,
             user_agent=user_agent,
             referrer=referrer,
-            country=country,
-            city=city,
             subid1=subid1 if subid1 else None,
             subid2=subid2 if subid2 else None,
             subid3=subid3 if subid3 else None
         )
+        
+        # Fetch IP information from ipinfo.io and save it
+        if ip_address:
+            if ip_address == '127.0.0.1':
+                # For development environment, set some default values
+                click_tracking.country = 'Development'
+                click_tracking.city = 'Localhost'
+                click_tracking.region = 'Development Environment'
+                click_tracking.timezone = 'UTC'
+                click_tracking.organization = 'Development Server'
+                click_tracking.save()
+                print(f"Development environment detected, using default values for {ip_address}")
+            else:
+                try:
+                    # Fetch IP info from ipinfo.io
+                    response = requests.get(f'https://ipinfo.io/{ip_address}/json', timeout=5)
+                    if response.status_code == 200:
+                        data = response.json()
+                        
+                        # Update click tracking with IP info
+                        click_tracking.country = data.get('country', '')
+                        click_tracking.city = data.get('city', '')
+                        click_tracking.region = data.get('region', '')
+                        click_tracking.timezone = data.get('timezone', '')
+                        click_tracking.postal_code = data.get('postal', '')
+                        click_tracking.organization = data.get('org', '')
+                        
+                        # Parse location coordinates
+                        if 'loc' in data and data['loc']:
+                            try:
+                                lat, lon = data['loc'].split(',')
+                                click_tracking.latitude = float(lat.strip())
+                                click_tracking.longitude = float(lon.strip())
+                            except (ValueError, AttributeError):
+                                pass
+                        
+                        click_tracking.save()
+                        print(f"IP info fetched for {ip_address}: {data.get('city', 'Unknown')}, {data.get('country', 'Unknown')}")
+                    else:
+                        print(f"Failed to fetch IP info for {ip_address}: HTTP {response.status_code}")
+                except Exception as e:
+                    print(f"Error fetching IP info for {ip_address}: {str(e)}")
+        else:
+            print(f"No IP address captured")
 
         # Build redirect URL with click ID for the specific CPA network
         redirect_url = offer.build_redirect_url(click_id)

@@ -278,12 +278,15 @@ class ClickTrackingAdmin(admin.ModelAdmin):
         'formatted_click_date',
         'ip_address',
         'country',
-        'city'
+        'city',
+        'region'
     ]
     
     list_filter = [
         'click_date',
         'country',
+        'region',
+        'timezone',
         'offer__is_active',
         'offer__cpa_network',
         'user'
@@ -294,7 +297,10 @@ class ClickTrackingAdmin(admin.ModelAdmin):
         'user__email',
         'offer__offer_name',
         'click_id',
-        'ip_address'
+        'ip_address',
+        'city',
+        'region',
+        'organization'
     ]
     
     readonly_fields = ['click_id', 'click_date', 'ip_address', 'user_agent', 'referrer']
@@ -308,7 +314,15 @@ class ClickTrackingAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
         ('Location Information', {
-            'fields': ('country', 'city'),
+            'fields': ('country', 'city', 'region', 'postal_code', 'timezone'),
+            'classes': ('collapse',)
+        }),
+        ('Advanced Location Data', {
+            'fields': ('latitude', 'longitude', 'organization'),
+            'classes': ('collapse',)
+        }),
+        ('Subid Tracking', {
+            'fields': ('subid1', 'subid2', 'subid3'),
             'classes': ('collapse',)
         }),
     )
