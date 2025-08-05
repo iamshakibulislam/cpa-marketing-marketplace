@@ -57,7 +57,7 @@
 							<table class="table table-hover table-striped" id="offersTable">
 								<thead class="table-dark">
 									<tr>
-										<th scope="col" class="text-center text-white fw-bold" style="width: 60px; font-size: 14px;">#</th>
+										<th scope="col" class="text-center text-white fw-bold" style="width: 60px; font-size: 14px;">ID</th>
 										<th scope="col" class="text-white fw-bold" style="font-size: 14px;">Offer</th>
 										<th scope="col" class="text-center text-white fw-bold" style="font-size: 14px;">Status</th>
 										<th scope="col" class="text-white fw-bold" style="font-size: 14px;">Countries</th>
@@ -71,7 +71,7 @@
 								<tbody>
 									{% for offer_data in offers %}
 									<tr>
-										<td class="text-center fw-bold">{{ forloop.counter }}</td>
+										<td class="text-center fw-bold" title="Offer ID: {{ offer_data.offer.id }}">{{ offer_data.offer.id }}</td>
 										<td>
 											<div class="d-flex align-items-center">
 												<div class="me-3">
