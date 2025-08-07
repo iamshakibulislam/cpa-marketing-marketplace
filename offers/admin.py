@@ -3,7 +3,7 @@ from django.urls import path
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.utils.html import format_html
-from .models import Offer, OfferAdminForm, UserOfferRequest, ClickTracking, Conversion, SiteSettings, CPANetwork
+from .models import Offer, OfferAdminForm, UserOfferRequest, ClickTracking, Conversion, SiteSettings, CPANetwork, Manager
 from django.utils import timezone
 
 @admin.register(CPANetwork)
@@ -370,3 +370,11 @@ class ConversionAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
+
+@admin.register(Manager)
+class ManagerAdmin(admin.ModelAdmin):
+    list_display = ['name', 'email', 'whatsapp', 'telegram', 'is_active', 'created_at']
+    list_filter = ['is_active', 'created_at']
+    search_fields = ['name', 'email', 'telegram']
+    ordering = ['name']
+    readonly_fields = ['created_at', 'updated_at']

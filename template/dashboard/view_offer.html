@@ -1,0 +1,535 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}{{ offer.offer_name }} - Offer Details{% endblock %}
+
+{% block content %}
+
+<style>
+.bg-gradient-success {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #007bff 0%, #6610f2 100%);
+}
+</style>
+
+<!-- Hidden CSRF token for AJAX requests -->
+{% csrf_token %}
+
+<!--app-content open-->
+<div class="app-content">
+	<div class="side-app">
+
+		<div class="page-header">
+			<div>
+				<h1 class="page-title">{{ offer.offer_name }}</h1>
+				<ol class="breadcrumb">
+					<li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+					<li class="breadcrumb-item"><a href="{% url 'offers_list' %}">All Offers</a></li>
+					<li class="breadcrumb-item active" aria-current="page">{{ offer.offer_name }}</li>
+				</ol>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-12 col-md-12 col-sm-12 col-xl-12">
+				<div class="card overflow-hidden">
+					<div class="card-header bg-primary-gradient">
+						<h3 class="card-title text-white mb-0">
+							<i class="fa fa-briefcase me-2"></i>Offer Details
+						</h3>
+					</div>
+					<div class="card-body p-4">
+						
+						<!-- Offer Status Banner -->
+						<div class="alert alert-{{ status_class|slice:'3:' }} alert-dismissible fade show mb-4" role="alert">
+							<div class="d-flex align-items-center">
+								<i class="fa fa-info-circle me-2"></i>
+								<strong>Status:</strong> 
+								<span class="badge {{ status_class }} ms-2">{{ status_display }}</span>
+								{% if status_display == 'Pending' %}
+									<span class="ms-2">Your request is under review. We'll notify you once approved.</span>
+								{% elif status_display == 'Rejected' %}
+									<span class="ms-2">Your request was not approved. Please contact support for more information.</span>
+								{% elif status_display == 'Need Approval' %}
+									<span class="ms-2">You need to request access to this offer before getting your tracking link.</span>
+								{% else %}
+									<span class="ms-2">You have access to this offer. Get your tracking link below.</span>
+								{% endif %}
+							</div>
+						</div>
+
+						<div class="row">
+							<!-- Left Column - Offer Image and Basic Info -->
+							<div class="col-lg-4 col-md-5 col-sm-12">
+								<div class="card border-0 shadow-sm">
+									<div class="card-body text-center p-4">
+										{% if offer.offer_image %}
+											<img src="{{ offer.offer_image.url }}" alt="{{ offer.offer_name }}" 
+												 class="img-fluid rounded mb-3" style="width: 200px; height: 200px; object-fit: cover;">
+										{% else %}
+											<div class="bg-light rounded d-flex align-items-center justify-content-center mb-3" 
+												 style="width: 200px; height: 200px;">
+												<i class="fa fa-image fa-3x text-muted"></i>
+											</div>
+										{% endif %}
+										
+										<h4 class="fw-bold text-primary mb-2">{{ offer.offer_name }}</h4>
+										<p class="text-muted mb-3">Premium CPA Offer</p>
+										
+										<!-- Financial Information -->
+										<div class="row g-3 mb-3">
+											<div class="col-6">
+												<div class="bg-gradient-success text-white rounded-3 p-3 shadow-sm">
+													<div class="d-flex align-items-center">
+														<i class="fa fa-dollar-sign me-2 fs-4"></i>
+														<div>
+															<small class="d-block opacity-75 fw-semibold">Payout</small>
+															<strong class="fs-4 fw-bold">{{ offer.formatted_payout }}</strong>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="col-6">
+												<div class="bg-gradient-primary text-white rounded-3 p-3 shadow-sm">
+													<div class="d-flex align-items-center">
+														<i class="fa fa-chart-line me-2 fs-4"></i>
+														<div>
+															<small class="d-block opacity-75 fw-semibold">EPC</small>
+															<strong class="fs-4 fw-bold">{{ offer.formatted_epc }}</strong>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										
+										<!-- Countries and Devices -->
+										<div class="mb-3">
+											<div class="mb-2">
+												<small class="text-muted d-block mb-1">Target Countries:</small>
+												{% for country in offer.get_countries_display %}
+													<span class="badge bg-light text-dark me-1">{{ country }}</span>
+												{% endfor %}
+											</div>
+											<div>
+												<small class="text-muted d-block mb-1">Supported Devices:</small>
+												{% for device in offer.get_devices_display %}
+													<span class="badge bg-info text-white me-1">{{ device }}</span>
+												{% endfor %}
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<!-- Right Column - Description and Actions -->
+							<div class="col-lg-8 col-md-7 col-sm-12">
+								<div class="card border-0 shadow-sm">
+									<div class="card-body p-4">
+										
+										<!-- Offer Description -->
+										{% if offer.offer_description %}
+											<div class="mb-4">
+												<h5 class="fw-bold mb-3">
+													<i class="fa fa-file-text me-2 text-primary"></i>Offer Description
+												</h5>
+												<div class="bg-light rounded p-3">
+													{{ offer.offer_description|linebreaks }}
+												</div>
+											</div>
+										{% endif %}
+										
+										<!-- Action Section -->
+										<div class="border-top pt-4">
+											{% if can_access %}
+												<!-- Approved - Show Tracking Options -->
+												<h5 class="fw-bold mb-3">
+													<i class="fa fa-link me-2 text-success"></i>Get Your Tracking Link
+												</h5>
+												
+												<div class="row g-3">
+													<div class="col-md-6">
+														<label for="trackingDomain" class="form-label fw-semibold">
+															<i class="fa fa-globe me-1"></i>Select Tracking Domain
+														</label>
+														<select class="form-select" id="trackingDomain">
+															{% for domain in tracking_domains %}
+																<option value="{{ domain.value }}" 
+																		{% if domain.value == default_domain %}selected{% endif %}>
+																	{{ domain.display }}
+																</option>
+															{% endfor %}
+														</select>
+													</div>
+													<div class="col-md-6">
+														<label for="trackingLink" class="form-label fw-semibold">
+															<i class="fa fa-copy me-1"></i>Your Tracking Link
+														</label>
+														<div class="input-group">
+															<input type="text" class="form-control" id="trackingLink" readonly>
+															<button class="btn btn-success" type="button" id="copyTrackingLinkBtn">
+																<i class="fa fa-copy me-1"></i>Copy
+															</button>
+														</div>
+													</div>
+												</div>
+												
+												<!-- Subid Parameters Section -->
+												<div class="row g-3 mt-3">
+													<div class="col-md-4">
+														<label for="subid1" class="form-label fw-semibold">
+															<i class="fa fa-tag me-1"></i>Subid 1 (Optional)
+														</label>
+														<input type="text" class="form-control" id="subid1" placeholder="Enter subid1 value">
+													</div>
+													<div class="col-md-4">
+														<label for="subid2" class="form-label fw-semibold">
+															<i class="fa fa-tag me-1"></i>Subid 2 (Optional)
+														</label>
+														<input type="text" class="form-control" id="subid2" placeholder="Enter subid2 value">
+													</div>
+													<div class="col-md-4">
+														<label for="subid3" class="form-label fw-semibold">
+															<i class="fa fa-tag me-1"></i>Subid 3 (Optional)
+														</label>
+														<input type="text" class="form-control" id="subid3" placeholder="Enter subid3 value">
+													</div>
+												</div>
+												
+												<div class="alert alert-success mt-3" role="alert">
+													<i class="fa fa-chart-line me-2"></i>
+													<strong>Tracking Enabled:</strong> All clicks through this link will be tracked for analytics and commission calculation.
+												</div>
+												
+											{% elif status_display == 'Pending' %}
+												<!-- Pending - Show Disabled Button -->
+												<div class="text-center py-4">
+													<button class="btn btn-warning btn-lg disabled" disabled>
+														<i class="fa fa-clock me-2"></i>Pending Review
+													</button>
+													<p class="text-muted mt-2">Your request is currently under review. We'll notify you once approved.</p>
+												</div>
+												
+											{% elif status_display == 'Rejected' %}
+												<!-- Rejected - Show Contact Info -->
+												<div class="text-center py-4">
+													<button class="btn btn-danger btn-lg disabled" disabled>
+														<i class="fa fa-times me-2"></i>Access Denied
+													</button>
+													<p class="text-muted mt-2">Your request was not approved. Please contact support for more information.</p>
+												</div>
+												
+											{% else %}
+												<!-- Need Approval - Show Request Button -->
+												<div class="text-center py-4">
+													<button type="button" class="btn btn-primary btn-lg request-access-btn" 
+															data-offer-id="{{ offer.id }}" 
+															data-offer-name="{{ offer.offer_name }}">
+														<i class="fa fa-rocket me-2"></i>Request Access
+													</button>
+													<p class="text-muted mt-2">Click to request approval for this offer</p>
+												</div>
+											{% endif %}
+										</div>
+										
+										<!-- Additional Notes -->
+										{% if offer.note %}
+											<div class="border-top pt-4 mt-4">
+												<h6 class="fw-bold mb-2">
+													<i class="fa fa-sticky-note me-2 text-warning"></i>Additional Notes
+												</h6>
+												<div class="bg-warning bg-opacity-10 rounded p-3">
+													{{ offer.note|linebreaks }}
+												</div>
+											</div>
+										{% endif %}
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Request Access Modal -->
+<div class="modal fade" id="requestAccessModal" tabindex="-1" aria-labelledby="requestAccessModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary-gradient">
+                <h5 class="modal-title text-white" id="requestAccessModalLabel">
+                    <i class="fa fa-briefcase me-2"></i>Request Access
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-3">
+                    <h6 class="text-primary" id="modalOfferName">Offer Name</h6>
+                    <p class="text-muted mb-0">Please describe your promotional method</p>
+                </div>
+                
+                <form id="requestAccessForm">
+                    <div class="mb-3">
+                        <label for="promotionalMethod" class="form-label fw-semibold">
+                            <i class="fa fa-bullhorn me-1"></i>Promotional Method
+                        </label>
+                        <textarea class="form-control" id="promotionalMethod" rows="4" 
+                                  placeholder="Describe how you plan to promote this offer (e.g., social media, email marketing, website, etc.)" 
+                                  required></textarea>
+                        <div class="form-text">
+                            <i class="fa fa-info-circle me-1"></i>Be specific about your promotional strategy
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info" role="alert">
+                        <i class="fa fa-lightbulb me-2"></i>
+                        <strong>Tip:</strong> Include details about your audience, platforms, and expected reach.
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fa fa-times me-1"></i>Cancel
+                </button>
+                <button type="button" class="btn btn-primary" id="submitRequestBtn">
+                    <i class="fa fa-paper-plane me-1"></i>Request Now
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for functionality -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get data from HTML elements
+    const currentUserId = {{ request.user.id }};
+    const currentOfferId = {{ offer.id }};
+    const canAccess = {% if can_access %}true{% else %}false{% endif %};
+    
+    // Request Access Modal Functionality
+    const requestAccessModal = new bootstrap.Modal(document.getElementById('requestAccessModal'));
+    const modalOfferName = document.getElementById('modalOfferName');
+    const promotionalMethodTextarea = document.getElementById('promotionalMethod');
+    const submitRequestBtn = document.getElementById('submitRequestBtn');
+    let requestOfferId = null;
+    
+    // Tracking Link Functionality
+    const trackingLinkInput = document.getElementById('trackingLink');
+    const copyTrackingLinkBtn = document.getElementById('copyTrackingLinkBtn');
+    const trackingDomainSelect = document.getElementById('trackingDomain');
+    
+    // Initialize tracking link if user has access
+    if (canAccess) {
+        console.log('User has access, initializing tracking link...');
+        // Set initial tracking link immediately
+        updateTrackingLink();
+    }
+    
+    // Handle Request Access button clicks
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.request-access-btn')) {
+            const btn = e.target.closest('.request-access-btn');
+            requestOfferId = btn.getAttribute('data-offer-id');
+            const offerName = btn.getAttribute('data-offer-name');
+            
+            modalOfferName.textContent = offerName;
+            promotionalMethodTextarea.value = '';
+            
+            requestAccessModal.show();
+        }
+    });
+    
+    // Update tracking link when domain changes
+    function updateTrackingLink() {
+        console.log('updateTrackingLink called');
+        console.log('trackingDomainSelect:', trackingDomainSelect);
+        console.log('trackingLinkInput:', trackingLinkInput);
+        
+        if (trackingDomainSelect && trackingLinkInput) {
+            const selectedDomain = trackingDomainSelect.value;
+            console.log('selectedDomain:', selectedDomain);
+            console.log('currentOfferId:', currentOfferId);
+            console.log('currentUserId:', currentUserId);
+            
+            if (selectedDomain && currentOfferId && currentUserId) {
+                let trackingUrl = `${selectedDomain}/offers/offer/?userid=${currentUserId}&offerid=${currentOfferId}`;
+                
+                // Add subid parameters if they exist
+                const subid1 = document.getElementById('subid1')?.value || '';
+                const subid2 = document.getElementById('subid2')?.value || '';
+                const subid3 = document.getElementById('subid3')?.value || '';
+                
+                if (subid1) trackingUrl += `&subid1=${encodeURIComponent(subid1)}`;
+                if (subid2) trackingUrl += `&subid2=${encodeURIComponent(subid2)}`;
+                if (subid3) trackingUrl += `&subid3=${encodeURIComponent(subid3)}`;
+                
+                console.log('trackingUrl:', trackingUrl);
+                trackingLinkInput.value = trackingUrl;
+            }
+        }
+    }
+    
+    // Handle domain selection change
+    if (trackingDomainSelect) {
+        trackingDomainSelect.addEventListener('change', updateTrackingLink);
+    }
+    
+    // Handle subid input changes
+    const subid1Input = document.getElementById('subid1');
+    const subid2Input = document.getElementById('subid2');
+    const subid3Input = document.getElementById('subid3');
+    
+    if (subid1Input) subid1Input.addEventListener('input', updateTrackingLink);
+    if (subid2Input) subid2Input.addEventListener('input', updateTrackingLink);
+    if (subid3Input) subid3Input.addEventListener('input', updateTrackingLink);
+    
+    // Handle form submission
+    submitRequestBtn.addEventListener('click', function() {
+        const promotionalMethod = promotionalMethodTextarea.value.trim();
+        
+        if (!promotionalMethod) {
+            promotionalMethodTextarea.focus();
+            return;
+        }
+        
+        // Disable button and show loading
+        submitRequestBtn.disabled = true;
+        submitRequestBtn.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i>Processing...';
+        
+        // Get CSRF token
+        let csrfToken = '';
+        const csrfElement = document.querySelector('[name=csrfmiddlewaretoken]');
+        if (csrfElement) {
+            csrfToken = csrfElement.value;
+        } else {
+            // Fallback: try to get from cookie
+            csrfToken = getCookie('csrftoken');
+        }
+        
+        if (!csrfToken) {
+            showNotification('CSRF token not found. Please refresh the page.', 'danger');
+            return;
+        }
+        
+        // Make AJAX call to submit request
+        fetch('{% url "request_offer_access" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({
+                offer_id: requestOfferId,
+                promotion_method: promotionalMethod
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Close modal
+                requestAccessModal.hide();
+                
+                // Show success message
+                showNotification(data.message, 'success');
+                
+                // Reload page after a short delay to show updated status
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+            } else {
+                // Show error message
+                showNotification(data.message, 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Network error. Please check your connection and try again.', 'danger');
+        })
+        .finally(() => {
+            // Reset button
+            submitRequestBtn.disabled = false;
+            submitRequestBtn.innerHTML = '<i class="fa fa-paper-plane me-1"></i>Request Now';
+        });
+    });
+    
+    // Handle copy tracking link button
+    if (copyTrackingLinkBtn) {
+        copyTrackingLinkBtn.addEventListener('click', function() {
+            trackingLinkInput.select();
+            trackingLinkInput.setSelectionRange(0, 99999); // For mobile devices
+            
+            try {
+                document.execCommand('copy');
+                copyTrackingLinkBtn.innerHTML = '<i class="fa fa-check me-1"></i>Copied!';
+                copyTrackingLinkBtn.className = 'btn btn-success';
+                
+                setTimeout(() => {
+                    copyTrackingLinkBtn.innerHTML = '<i class="fa fa-copy me-1"></i>Copy';
+                    copyTrackingLinkBtn.className = 'btn btn-success';
+                }, 2000);
+                
+                showNotification('Tracking link copied to clipboard!', 'success');
+            } catch (err) {
+                // Fallback for modern browsers
+                navigator.clipboard.writeText(trackingLinkInput.value).then(() => {
+                    copyTrackingLinkBtn.innerHTML = '<i class="fa fa-check me-1"></i>Copied!';
+                    copyTrackingLinkBtn.className = 'btn btn-success';
+                    
+                    setTimeout(() => {
+                        copyTrackingLinkBtn.innerHTML = '<i class="fa fa-copy me-1"></i>Copy';
+                        copyTrackingLinkBtn.className = 'btn btn-success';
+                    }, 2000);
+                    
+                    showNotification('Tracking link copied to clipboard!', 'success');
+                }).catch(() => {
+                    showNotification('Failed to copy link. Please copy manually.', 'warning');
+                });
+            }
+        });
+    }
+    
+    // Get cookie function
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    // Show notification function
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+        notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+        notification.innerHTML = `
+            <i class="fa fa-${type === 'success' ? 'check-circle' : 'info-circle'} me-2"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 5000);
+    }
+});
+</script>
+
+{% endblock %} 

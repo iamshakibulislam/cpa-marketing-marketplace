@@ -34,6 +34,16 @@ class User(AbstractBaseUser, PermissionsMixin):
     niches = models.CharField(max_length=255, blank=True, help_text="Niches/verticals of interest")
     promotion_description = models.TextField(blank=True, help_text="How will you promote CPA/CPL offers or landing page URL")
     heard_about_us = models.CharField(max_length=255, blank=True, help_text="How did you hear about us?")
+    
+    # Manager assignment
+    manager = models.ForeignKey(
+        'offers.Manager',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name="Assigned Manager",
+        help_text="Manager assigned to this user"
+    )
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -46,5 +56,28 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+    
+    def assign_random_manager(self):
+        """Assign a random active manager to this user"""
+        from offers.models import Manager
+        from django.db.models import Q
+        
+        # Get all active managers
+        active_managers = Manager.objects.filter(is_active=True)
+        
+        if active_managers.exists():
+            # Get the manager with the least number of assigned users
+            from django.db.models import Count
+            manager_counts = active_managers.annotate(
+                user_count=Count('user')
+            ).order_by('user_count')
+            
+            # Assign the manager with the least users
+            if manager_counts.exists():
+                self.manager = manager_counts.first()
+                self.save()
+                return self.manager
+        
+        return None
 
 

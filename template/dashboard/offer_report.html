@@ -1,0 +1,469 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Offer Reports{% endblock title %}
+
+{% block content %}
+
+<!-- Hidden CSRF token for AJAX requests -->
+{% csrf_token %}
+
+<!--app-content open-->
+<div class="app-content">
+	<div class="side-app">
+
+		<div class="page-header">
+			<div>
+				<h1 class="page-title">Offer Reports</h1>
+				<ol class="breadcrumb">
+					<li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+					<li class="breadcrumb-item active" aria-current="page">Offer Reports</li>
+				</ol>
+			</div>
+		</div>
+		<!-- PAGE-HEADER END -->
+
+		<!-- ROW-1 -->
+		<div class="row">
+			<div class="col-lg-12 col-md-12 col-sm-12 col-xl-12">
+				<div class="card overflow-hidden">
+					<div class="card-header bg-success-gradient">
+						<h3 class="card-title text-white mb-0">
+							<i class="fa fa-chart-line me-2"></i>Offer Performance Reports
+						</h3>
+					</div>
+					<div class="card-body p-4">
+						
+						<!-- Filters Section -->
+						<div class="row mb-4">
+							<div class="col-lg-4 col-md-6 col-sm-12 mb-3">
+								<label for="dateRange" class="form-label fw-semibold">
+									<i class="fa fa-calendar me-1"></i>Date Range
+								</label>
+								<input type="text" class="form-control" id="dateRange" placeholder="Select date range">
+								<input type="hidden" id="startDate" name="start_date" value="{% if current_filters.start_date %}{{ current_filters.start_date|date:'Y-m-d' }}{% endif %}">
+								<input type="hidden" id="endDate" name="end_date" value="{% if current_filters.end_date %}{{ current_filters.end_date|date:'Y-m-d' }}{% endif %}">
+							</div>
+							<div class="col-lg-4 col-md-6 col-sm-12 mb-3">
+								<label class="form-label fw-semibold">&nbsp;</label>
+								<div class="d-flex gap-2">
+									<button type="button" class="btn btn-success" onclick="applyFilters()">
+										<i class="fa fa-filter me-1"></i>Apply Filters
+									</button>
+									<a href="{% url 'offer_reports' %}" class="btn btn-secondary">
+										<i class="fa fa-undo me-1"></i>Reset
+									</a>
+								</div>
+							</div>
+						</div>
+
+						<!-- Summary Cards -->
+						<div class="row mb-4">
+							<div class="col-lg-2 col-md-6 col-sm-12 mb-3">
+								<div class="card bg-primary-gradient text-white">
+									<div class="card-body">
+										<div class="d-flex align-items-center">
+											<div class="me-3">
+												<i class="fa fa-briefcase fa-2x"></i>
+											</div>
+											<div>
+												<h4 class="mb-0">{{ total_offers|default:0 }}</h4>
+												<small>Total Offers</small>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-lg-2 col-md-6 col-sm-12 mb-3">
+								<div class="card bg-info-gradient text-white">
+									<div class="card-body">
+										<div class="d-flex align-items-center">
+											<div class="me-3">
+												<i class="fa fa-mouse-pointer fa-2x"></i>
+											</div>
+											<div>
+												<h4 class="mb-0">{{ total_clicks|default:0 }}</h4>
+												<small>Total Clicks</small>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-lg-2 col-md-6 col-sm-12 mb-3">
+								<div class="card bg-warning-gradient text-white">
+									<div class="card-body">
+										<div class="d-flex align-items-center">
+											<div class="me-3">
+												<i class="fa fa-check-circle fa-2x"></i>
+											</div>
+											<div>
+												<h4 class="mb-0">{{ total_conversions|default:0 }}</h4>
+												<small>Total Conversions</small>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-lg-2 col-md-6 col-sm-12 mb-3">
+								<div class="card bg-success-gradient text-white">
+									<div class="card-body">
+										<div class="d-flex align-items-center">
+											<div class="me-3">
+												<i class="fa fa-dollar-sign fa-2x"></i>
+											</div>
+											<div>
+												<h4 class="mb-0">${{ total_earnings|floatformat:2|default:"0.00" }}</h4>
+												<small>Total Earnings</small>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-lg-2 col-md-6 col-sm-12 mb-3">
+								<div class="card bg-danger-gradient text-white">
+									<div class="card-body">
+										<div class="d-flex align-items-center">
+											<div class="me-3">
+												<i class="fa fa-chart-line fa-2x"></i>
+											</div>
+											<div>
+												<h4 class="mb-0">${{ overall_epc|floatformat:2|default:"0.00" }}</h4>
+												<small>Overall EPC</small>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-lg-2 col-md-6 col-sm-12 mb-3">
+								<div class="card bg-secondary-gradient text-white">
+									<div class="card-body">
+										<div class="d-flex align-items-center">
+											<div class="me-3">
+												<i class="fa fa-calendar fa-2x"></i>
+											</div>
+											<div>
+												<h4 class="mb-0">
+													{% if current_filters.start_date and current_filters.end_date %}
+														{{ current_filters.start_date|date:"M d" }} - {{ current_filters.end_date|date:"M d" }}
+													{% else %}
+														Last 7 Days
+													{% endif %}
+												</h4>
+												<small>Date Range</small>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- Results Table -->
+						<div class="table-responsive">
+							<table class="table table-hover table-striped" id="offerReportsTable">
+								<thead class="table-dark">
+									<tr>
+										<th scope="col" class="text-white fw-bold" style="font-size: 12px;">Offer</th>
+										<th scope="col" class="text-center text-white fw-bold" style="font-size: 12px;">Clicks</th>
+										<th scope="col" class="text-center text-white fw-bold" style="font-size: 12px;">Conversions</th>
+										<th scope="col" class="text-center text-white fw-bold" style="font-size: 12px;">Conversion Rate</th>
+										<th scope="col" class="text-center text-white fw-bold" style="font-size: 12px;">EPC</th>
+										<th scope="col" class="text-center text-white fw-bold" style="font-size: 12px;">Payout</th>
+										<th scope="col" class="text-center text-white fw-bold" style="font-size: 12px;">Earnings</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for offer in offer_data %}
+									<tr>
+										<td>
+											<div class="d-flex align-items-center">
+												<div class="me-2">
+													<i class="fa fa-briefcase text-primary"></i>
+												</div>
+												<div>
+													<h6 class="mb-0 fw-semibold" style="font-size: 12px;">{{ offer.offer.offer_name|truncatechars:25 }}</h6>
+													<small class="text-muted">ID: {{ offer.offer.id }}</small>
+												</div>
+											</div>
+										</td>
+										<td class="text-center">
+											<span class="badge bg-info">{{ offer.clicks }}</span>
+										</td>
+										<td class="text-center">
+											<span class="badge bg-warning">{{ offer.conversions }}</span>
+										</td>
+										<td class="text-center">
+											{% if offer.clicks > 0 %}
+												{% widthratio offer.conversions offer.clicks 100 %}%
+											{% else %}
+												<span class="text-muted">0%</span>
+											{% endif %}
+										</td>
+										<td class="text-center">
+											<span class="badge bg-success">${{ offer.epc|floatformat:2 }}</span>
+										</td>
+										<td class="text-center">
+											<span class="badge bg-primary">${{ offer.payout|floatformat:2 }}</span>
+										</td>
+										<td class="text-center">
+											<span class="badge bg-success">${{ offer.earnings|floatformat:2 }}</span>
+										</td>
+									</tr>
+									{% empty %}
+									<tr>
+										<td colspan="7" class="text-center py-4">
+											<div class="text-muted">
+												<i class="fa fa-chart-line fa-3x mb-3"></i>
+												<h5>No offer data available</h5>
+												<p>No offer performance data found for the selected date range.</p>
+											</div>
+										</td>
+									</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+						</div>
+
+						<!-- Pagination -->
+						{% if offer_data.has_other_pages %}
+						<div class="d-flex justify-content-between align-items-center mt-4">
+							<div>
+								<small class="text-muted">
+									Showing {{ offer_data.start_index }} to {{ offer_data.end_index }} of {{ offer_data.paginator.count }} offers
+								</small>
+							</div>
+							<nav aria-label="Offer reports pagination">
+								<ul class="pagination pagination-sm mb-0">
+									{% if offer_data.has_previous %}
+										<li class="page-item">
+											<a class="page-link" href="?page={{ offer_data.previous_page_number }}{% if current_filters.start_date %}&start_date={{ current_filters.start_date }}{% endif %}{% if current_filters.end_date %}&end_date={{ current_filters.end_date }}{% endif %}">Previous</a>
+										</li>
+									{% else %}
+										<li class="page-item disabled">
+											<a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+										</li>
+									{% endif %}
+									
+									{% for num in offer_data.paginator.page_range %}
+										{% if offer_data.number == num %}
+											<li class="page-item active">
+												<a class="page-link" href="#">{{ num }}</a>
+											</li>
+										{% elif num > offer_data.number|add:'-3' and num < offer_data.number|add:'3' %}
+											<li class="page-item">
+												<a class="page-link" href="?page={{ num }}{% if current_filters.start_date %}&start_date={{ current_filters.start_date }}{% endif %}{% if current_filters.end_date %}&end_date={{ current_filters.end_date }}{% endif %}">{{ num }}</a>
+											</li>
+										{% endif %}
+									{% endfor %}
+									
+									{% if offer_data.has_next %}
+										<li class="page-item">
+											<a class="page-link" href="?page={{ offer_data.next_page_number }}{% if current_filters.start_date %}&start_date={{ current_filters.start_date }}{% endif %}{% if current_filters.end_date %}&end_date={{ current_filters.end_date }}{% endif %}">Next</a>
+										</li>
+									{% else %}
+										<li class="page-item disabled">
+											<a class="page-link" href="#" tabindex="-1" aria-disabled="true">Next</a>
+										</li>
+									{% endif %}
+								</ul>
+							</nav>
+						</div>
+						{% endif %}
+
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- ROW-1 END -->
+	</div>
+</div>
+<!--app-content close-->
+
+<style>
+#dateRange {
+    cursor: pointer;
+    background-color: white;
+}
+#dateRange:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.card {
+    border: none;
+    box-shadow: 0 0 20px rgba(0,0,0,0.08);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: center;
+}
+
+.card-header {
+    background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+    color: white;
+    border-radius: 10px 10px 0 0 !important;
+}
+
+/* Ensure equal height cards in rows */
+.row .col-lg-2,
+.row .col-md-6,
+.row .col-sm-12 {
+    display: flex;
+    flex-direction: column;
+}
+
+.row .col-lg-2 .card,
+.row .col-md-6 .card,
+.row .col-sm-12 .card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.table-dark {
+    background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+}
+
+.badge {
+    border-radius: 6px;
+    font-size: 10px;
+}
+
+.pagination .page-link {
+    border-radius: 6px;
+    margin: 0 2px;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.fs-12 {
+    font-size: 12px !important;
+}
+
+.table td {
+    vertical-align: middle;
+    font-size: 12px;
+}
+
+.table th {
+    font-size: 11px !important;
+}
+
+.bg-primary-gradient {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+}
+
+.bg-success-gradient {
+    background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+}
+
+.bg-warning-gradient {
+    background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+}
+
+.bg-info-gradient {
+    background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+}
+
+.bg-danger-gradient {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+}
+
+.bg-secondary-gradient {
+    background: linear-gradient(135deg, #6c757d 0%, #545b62 100%);
+}
+</style>
+
+{% endblock %}
+
+{% block page_scripts %}
+<script>
+// Wait for jQuery to be available
+function initializeDaterangepicker() {
+    if (typeof $ !== 'undefined' && typeof $.fn.daterangepicker !== 'undefined') {
+        // Simple daterangepicker initialization as per official documentation
+        $('#dateRange').daterangepicker({
+            startDate: moment().subtract(6, 'days'),
+            endDate: moment(),
+            ranges: {
+               'Today': [moment(), moment()],
+               'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+               'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+               'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+               'This Month': [moment().startOf('month'), moment().endOf('month')],
+               'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            locale: {
+                format: 'MM/DD/YYYY'
+            },
+            autoApply: true,
+            showDropdowns: true,
+            showCustomRangeLabel: true,
+            alwaysShowCalendars: true,
+            opens: 'center'
+        }, function(start, end, label) {
+            // Update hidden inputs
+            $('#startDate').val(start.format('YYYY-MM-DD'));
+            $('#endDate').val(end.format('YYYY-MM-DD'));
+            
+            // Apply filters immediately
+            applyFilters();
+        });
+        
+        // Set current filter values if they exist
+        {% if current_filters.start_date and current_filters.end_date %}
+        var startDate = '{{ current_filters.start_date|date:"Y-m-d" }}';
+        var endDate = '{{ current_filters.end_date|date:"Y-m-d" }}';
+        $('#startDate').val(startDate);
+        $('#endDate').val(endDate);
+        
+        // Set the daterangepicker to current values
+        $('#dateRange').data('daterangepicker').setStartDate(moment(startDate));
+        $('#dateRange').data('daterangepicker').setEndDate(moment(endDate));
+        $('#dateRange').val(moment(startDate).format('MM/DD/YYYY') + ' - ' + moment(endDate).format('MM/DD/YYYY'));
+        {% else %}
+        // Set default values
+        var startDate = moment().subtract(6, 'days').format('YYYY-MM-DD');
+        var endDate = moment().format('YYYY-MM-DD');
+        $('#startDate').val(startDate);
+        $('#endDate').val(endDate);
+        $('#dateRange').val(moment().subtract(6, 'days').format('MM/DD/YYYY') + ' - ' + moment().format('MM/DD/YYYY'));
+        {% endif %}
+    } else {
+        // Retry after a short delay if jQuery or daterangepicker not ready
+        setTimeout(initializeDaterangepicker, 100);
+    }
+}
+
+// Initialize when document is ready
+$(document).ready(function() {
+    initializeDaterangepicker();
+});
+
+// Apply filters
+function applyFilters() {
+    const startDate = $('#startDate').val();
+    const endDate = $('#endDate').val();
+    
+    // Build query parameters
+    const params = new URLSearchParams();
+    
+    if (startDate && endDate) {
+        params.append('start_date', startDate);
+        params.append('end_date', endDate);
+    }
+    
+    // Redirect with filters
+    window.location.href = `{% url 'offer_reports' %}?${params.toString()}`;
+}
+</script>
+{% endblock %}

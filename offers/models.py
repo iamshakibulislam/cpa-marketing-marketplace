@@ -421,21 +421,62 @@ class OfferAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.instance.pk:
-            # Convert JSON data to choices for form
             self.fields['countries'].initial = self.instance.countries
             self.fields['devices'].initial = self.instance.devices
-        
-        # Set CPA network choices
-        self.fields['cpa_network'].queryset = CPANetwork.objects.filter(is_active=True).order_by('name')
-        self.fields['cpa_network'].widget.attrs.update({'class': 'form-control'})
     
     def save(self, commit=True):
         instance = super().save(commit=False)
-        # Convert form data back to JSON
-        instance.countries = self.cleaned_data.get('countries', [])
-        instance.devices = self.cleaned_data.get('devices', [])
-        
         if commit:
             instance.save()
+            self.save_m2m()
         return instance
+
+
+class Manager(models.Model):
+    """Affiliate Manager for user support and guidance"""
+    name = models.CharField(max_length=255, verbose_name="Manager Name")
+    picture = models.ImageField(
+        upload_to='managers/',
+        verbose_name="Profile Picture",
+        help_text="Manager's profile picture"
+    )
+    whatsapp = models.CharField(
+        max_length=20,
+        verbose_name="WhatsApp Number",
+        help_text="WhatsApp number with country code (e.g., +1234567890)"
+    )
+    email = models.EmailField(
+        verbose_name="Email Address",
+        help_text="Manager's email address"
+    )
+    telegram = models.CharField(
+        max_length=100,
+        verbose_name="Telegram Username",
+        help_text="Telegram username (without @)"
+    )
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name="Is Active",
+        help_text="Whether this manager is active and available for assignment"
+    )
+    created_at = models.DateTimeField(default=timezone.now, verbose_name="Created At")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Updated At")
+    
+    class Meta:
+        verbose_name = "Manager"
+        verbose_name_plural = "Managers"
+        ordering = ['name']
+    
+    def __str__(self):
+        return f"{self.name} ({self.email})"
+    
+    def get_telegram_url(self):
+        """Return Telegram URL with username"""
+        return f"https://t.me/{self.telegram}"
+    
+    def get_whatsapp_url(self):
+        """Return WhatsApp URL with number"""
+        # Remove any non-digit characters except +
+        clean_number = ''.join(c for c in self.whatsapp if c.isdigit() or c == '+')
+        return f"https://wa.me/{clean_number}"
 

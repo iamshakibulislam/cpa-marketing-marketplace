@@ -1,0 +1,570 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Subid Reports{% endblock title %}
+
+{% block content %}
+
+<!-- Hidden CSRF token for AJAX requests -->
+{% csrf_token %}
+
+<!--app-content open-->
+<div class="app-content">
+	<div class="side-app">
+
+		<div class="page-header">
+			<div>
+				<h1 class="page-title">Subid Reports</h1>
+				<ol class="breadcrumb">
+					<li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+					<li class="breadcrumb-item active" aria-current="page">Subid Reports</li>
+				</ol>
+			</div>
+		</div>
+		<!-- PAGE-HEADER END -->
+
+		<!-- ROW-1 -->
+		<div class="row">
+			<div class="col-lg-12 col-md-12 col-sm-12 col-xl-12">
+				<div class="card overflow-hidden">
+					<div class="card-header bg-success-gradient">
+						<h3 class="card-title text-white mb-0">
+							<i class="fa fa-tag me-2"></i>Subid Conversion Tracking Reports
+						</h3>
+					</div>
+					<div class="card-body p-4">
+						
+						<!-- Filters Section -->
+						<div class="row mb-4">
+							<div class="col-lg-4 col-md-6 col-sm-12 mb-3">
+								<label for="dateRange" class="form-label fw-semibold">
+									<i class="fa fa-calendar me-1"></i>Date Range
+								</label>
+								<input type="text" class="form-control" id="dateRange" placeholder="Select date range">
+								<input type="hidden" id="startDate" name="start_date" value="{% if current_filters.start_date %}{{ current_filters.start_date|date:'Y-m-d' }}{% endif %}">
+								<input type="hidden" id="endDate" name="end_date" value="{% if current_filters.end_date %}{{ current_filters.end_date|date:'Y-m-d' }}{% endif %}">
+							</div>
+							<div class="col-lg-4 col-md-6 col-sm-12 mb-3">
+								<label for="subidFilter" class="form-label fw-semibold">
+									<i class="fa fa-tag me-1"></i>Sub ID
+								</label>
+								<select class="form-select" id="subidFilter" name="subid">
+									<option value="">All Sub IDs</option>
+									{% for subid in subids %}
+									<option value="{{ subid }}" {% if current_filters.subid == subid %}selected{% endif %}>
+										{{ subid }}
+									</option>
+									{% endfor %}
+								</select>
+							</div>
+							<div class="col-lg-4 col-md-6 col-sm-12 mb-3">
+								<label class="form-label fw-semibold">&nbsp;</label>
+								<div class="d-flex gap-2">
+									<button type="button" class="btn btn-success" onclick="applyFilters()">
+										<i class="fa fa-filter me-1"></i>Apply Filters
+									</button>
+									<a href="{% url 'subid_reports' %}" class="btn btn-secondary">
+										<i class="fa fa-undo me-1"></i>Reset
+									</a>
+								</div>
+							</div>
+						</div>
+
+						<!-- Summary Cards -->
+						<div class="row mb-4">
+							<div class="col-lg-2 col-md-6 col-sm-12 mb-3">
+								<div class="card bg-success-gradient text-white">
+									<div class="card-body">
+										<div class="d-flex align-items-center">
+											<div class="me-3">
+												<i class="fa fa-check-circle fa-2x"></i>
+											</div>
+											<div>
+												<h4 class="mb-0">{{ total_conversions|default:0 }}</h4>
+												<small>Total Conversions</small>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-lg-2 col-md-6 col-sm-12 mb-3">
+								<div class="card bg-primary-gradient text-white">
+									<div class="card-body">
+										<div class="d-flex align-items-center">
+											<div class="me-3">
+												<i class="fa fa-dollar-sign fa-2x"></i>
+											</div>
+											<div>
+												<h4 class="mb-0">${{ total_earnings|floatformat:2 }}</h4>
+												<small>Total Earnings</small>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-lg-2 col-md-6 col-sm-12 mb-3">
+								<div class="card bg-info-gradient text-white">
+									<div class="card-body">
+										<div class="d-flex align-items-center">
+											<div class="me-3">
+												<i class="fa fa-mouse-pointer fa-2x"></i>
+											</div>
+											<div>
+												<h4 class="mb-0">{{ total_clicks|default:0 }}</h4>
+												<small>Total Clicks</small>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-lg-2 col-md-6 col-sm-12 mb-3">
+								<div class="card bg-warning-gradient text-white">
+									<div class="card-body">
+										<div class="d-flex align-items-center">
+											<div class="me-3">
+												<i class="fa fa-chart-line fa-2x"></i>
+											</div>
+											<div>
+												<h4 class="mb-0">${{ epc|floatformat:2 }}</h4>
+												<small>EPC</small>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-lg-2 col-md-6 col-sm-12 mb-3">
+								<div class="card bg-secondary-gradient text-white">
+									<div class="card-body">
+										<div class="d-flex align-items-center">
+											<div class="me-3">
+												<i class="fa fa-calendar fa-2x"></i>
+											</div>
+											<div>
+												<h4 class="mb-0">
+													{% if current_filters.start_date and current_filters.end_date %}
+														{{ current_filters.start_date|date:"M d" }} - {{ current_filters.end_date|date:"M d" }}
+													{% else %}
+														Last 7 Days
+													{% endif %}
+												</h4>
+												<small>Date Range</small>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-lg-2 col-md-6 col-sm-12 mb-3">
+								<div class="card bg-dark-gradient text-white">
+									<div class="card-body">
+										<div class="d-flex align-items-center">
+											<div class="me-3">
+												<i class="fa fa-chart-line fa-2x"></i>
+											</div>
+											<div>
+												<h4 class="mb-0">{{ conversion_data.paginator.num_pages|default:1 }}</h4>
+												<small>Total Pages</small>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- Results Table -->
+						<div class="table-responsive">
+							<table class="table table-hover table-striped" id="subidReportsTable">
+								<thead class="table-dark">
+									<tr>
+										<th scope="col" class="text-center text-white fw-bold" style="width: 80px; font-size: 12px;">Date</th>
+										<th scope="col" class="text-white fw-bold" style="font-size: 12px; width: 300px;">Offer</th>
+										<th scope="col" class="text-center text-white fw-bold" style="font-size: 12px;">Sub 1</th>
+										<th scope="col" class="text-center text-white fw-bold" style="font-size: 12px;">Sub 2</th>
+										<th scope="col" class="text-center text-white fw-bold" style="font-size: 12px;">Sub 3</th>
+										<th scope="col" class="text-center text-white fw-bold" style="font-size: 12px;">Earnings</th>
+										<th scope="col" class="text-center text-white fw-bold" style="font-size: 12px;">IP Address</th>
+										<th scope="col" class="text-center text-white fw-bold" style="font-size: 12px;">Country</th>
+										<th scope="col" class="text-center text-white fw-bold" style="font-size: 12px;">City</th>
+										<th scope="col" class="text-center text-white fw-bold" style="font-size: 12px;">Device</th>
+										<th scope="col" class="text-center text-white fw-bold" style="font-size: 12px;">Browser</th>
+										<th scope="col" class="text-center text-white fw-bold" style="font-size: 12px;">OS </th>
+										<th scope="col" class="text-center text-white fw-bold" style="font-size: 12px; width: 200px;">User Agent</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for conversion in conversion_data %}
+									<tr>
+										<td class="text-center">
+											<div class="d-flex flex-column align-items-center">
+												<small class="fw-bold text-success">{{ conversion.conversion_date|date:"M d" }}</small>
+												<small class="text-muted">{{ conversion.conversion_date|date:"H:i" }}</small>
+											</div>
+										</td>
+										<td>
+											<div class="d-flex align-items-center">
+												<div class="me-2">
+													<i class="fa fa-briefcase text-success"></i>
+												</div>
+												<div>
+													<h6 class="mb-0 fw-semibold" style="font-size: 12px;">{{ conversion.click_tracking.offer.offer_name|truncatechars:20 }}</h6>
+													<small class="text-muted">ID: {{ conversion.click_tracking.offer.id }}</small>
+												</div>
+											</div>
+										</td>
+										<td class="text-center">
+											{% if conversion.click_tracking.subid1 %}
+												<span class="badge bg-primary">{{ conversion.click_tracking.subid1|truncatechars:10 }}</span>
+											{% else %}
+												<span class="badge bg-light text-muted">-</span>
+											{% endif %}
+										</td>
+										<td class="text-center">
+											{% if conversion.click_tracking.subid2 %}
+												<span class="badge bg-primary">{{ conversion.click_tracking.subid2|truncatechars:10 }}</span>
+											{% else %}
+												<span class="badge bg-light text-muted">-</span>
+											{% endif %}
+										</td>
+										<td class="text-center">
+											{% if conversion.click_tracking.subid3 %}
+												<span class="badge bg-primary">{{ conversion.click_tracking.subid3|truncatechars:10 }}</span>
+											{% else %}
+												<span class="badge bg-light text-muted">-</span>
+											{% endif %}
+										</td>
+										<td class="text-center">
+											<span class="badge bg-success fw-bold">
+												{% if conversion.payout and conversion.payout > 0 %}
+													${{ conversion.payout|floatformat:2 }}
+												{% elif conversion.click_tracking.offer.payout %}
+													${{ conversion.click_tracking.offer.payout|floatformat:2 }}
+												{% else %}
+													$0.00
+												{% endif %}
+											</span>
+										</td>
+										<td class="text-center">
+											<span class="badge bg-light text-dark" title="{{ conversion.click_tracking.ip_address }}">
+												{{ conversion.click_tracking.ip_address|truncatechars:12 }}
+											</span>
+										</td>
+										<td class="text-center">
+											{% if conversion.click_tracking.country %}
+												<span class="badge bg-success">{{ conversion.click_tracking.country }}</span>
+											{% else %}
+												<span class="badge bg-secondary">N/A</span>
+											{% endif %}
+										</td>
+										<td class="text-center">
+											{% if conversion.click_tracking.city %}
+												<span class="badge bg-info">{{ conversion.click_tracking.city|truncatechars:15 }}</span>
+											{% else %}
+												<span class="badge bg-secondary">N/A</span>
+											{% endif %}
+										</td>
+										<td class="text-center">
+											{% if "mobile" in conversion.click_tracking.user_agent|lower %}
+												<i class="fa fa-mobile text-success" title="Mobile"></i>
+											{% elif "tablet" in conversion.click_tracking.user_agent|lower %}
+												<i class="fa fa-tablet text-warning" title="Tablet"></i>
+											{% else %}
+												<i class="fa fa-desktop text-primary" title="Desktop"></i>
+											{% endif %}
+										</td>
+										<td class="text-center">
+											{% if "chrome" in conversion.click_tracking.user_agent|lower %}
+												<i class="fab fa-chrome text-success" title="Chrome"></i>
+											{% elif "firefox" in conversion.click_tracking.user_agent|lower %}
+												<i class="fab fa-firefox text-warning" title="Firefox"></i>
+											{% elif "safari" in conversion.click_tracking.user_agent|lower %}
+												<i class="fab fa-safari text-info" title="Safari"></i>
+											{% elif "edge" in conversion.click_tracking.user_agent|lower %}
+												<i class="fab fa-edge text-primary" title="Edge"></i>
+											{% else %}
+												<i class="fas fa-globe text-secondary" title="Other"></i>
+											{% endif %}
+										</td>
+										<td class="text-center">
+											{% if "windows" in conversion.click_tracking.user_agent|lower %}
+												<i class="fab fa-windows text-primary" title="Windows"></i>
+											{% elif "mac" in conversion.click_tracking.user_agent|lower %}
+												<i class="fab fa-apple text-secondary" title="macOS"></i>
+											{% elif "linux" in conversion.click_tracking.user_agent|lower %}
+												<i class="fab fa-linux text-warning" title="Linux"></i>
+											{% elif "android" in conversion.click_tracking.user_agent|lower %}
+												<i class="fab fa-android text-success" title="Android"></i>
+											{% elif "ios" in conversion.click_tracking.user_agent|lower %}
+												<i class="fab fa-apple text-info" title="iOS"></i>
+											{% else %}
+												<i class="fas fa-desktop text-muted" title="Other"></i>
+											{% endif %}
+										</td>
+										<td class="text-center">
+											<span class="badge bg-light text-dark" title="{{ conversion.click_tracking.user_agent }}">
+												{{ conversion.click_tracking.user_agent|truncatechars:50 }}
+											</span>
+										</td>
+									</tr>
+									{% empty %}
+									<tr>
+										<td colspan="13" class="text-center py-4">
+											<div class="text-muted">
+												<i class="fa fa-tag fa-3x mb-3"></i>
+												<h5>No subid conversion data available</h5>
+												<p>No conversion tracking data with subids found for the selected filters.</p>
+											</div>
+										</td>
+									</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+						</div>
+
+						<!-- Pagination -->
+						{% if conversion_data.has_other_pages %}
+						<div class="d-flex justify-content-between align-items-center mt-4">
+							<div>
+								<small class="text-muted">
+									Showing {{ conversion_data.start_index }} to {{ conversion_data.end_index }} of {{ conversion_data.paginator.count }} conversions
+								</small>
+							</div>
+							<nav aria-label="Subid reports pagination">
+								<ul class="pagination pagination-sm mb-0">
+									{% if conversion_data.has_previous %}
+										<li class="page-item">
+											<a class="page-link" href="?page={{ conversion_data.previous_page_number }}{% if current_filters.start_date %}&start_date={{ current_filters.start_date }}{% endif %}{% if current_filters.end_date %}&end_date={{ current_filters.end_date }}{% endif %}{% if current_filters.subid %}&subid={{ current_filters.subid }}{% endif %}">Previous</a>
+										</li>
+									{% else %}
+										<li class="page-item disabled">
+											<a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+										</li>
+									{% endif %}
+									
+									{% for num in conversion_data.paginator.page_range %}
+										{% if conversion_data.number == num %}
+											<li class="page-item active">
+												<a class="page-link" href="#">{{ num }}</a>
+											</li>
+										{% elif num > conversion_data.number|add:'-3' and num < conversion_data.number|add:'3' %}
+											<li class="page-item">
+												<a class="page-link" href="?page={{ num }}{% if current_filters.start_date %}&start_date={{ current_filters.start_date }}{% endif %}{% if current_filters.end_date %}&end_date={{ current_filters.end_date }}{% endif %}{% if current_filters.subid %}&subid={{ current_filters.subid }}{% endif %}">{{ num }}</a>
+											</li>
+										{% endif %}
+									{% endfor %}
+									
+									{% if conversion_data.has_next %}
+										<li class="page-item">
+											<a class="page-link" href="?page={{ conversion_data.next_page_number }}{% if current_filters.start_date %}&start_date={{ current_filters.start_date }}{% endif %}{% if current_filters.end_date %}&end_date={{ current_filters.end_date }}{% endif %}{% if current_filters.subid %}&subid={{ current_filters.subid }}{% endif %}">Next</a>
+										</li>
+									{% else %}
+										<li class="page-item disabled">
+											<a class="page-link" href="#" tabindex="-1" aria-disabled="true">Next</a>
+										</li>
+									{% endif %}
+								</ul>
+							</nav>
+						</div>
+						{% endif %}
+
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- ROW-1 END -->
+	</div>
+</div>
+<!--app-content close-->
+
+<style>
+#dateRange {
+    cursor: pointer;
+    background-color: white;
+}
+#dateRange:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.card {
+    border: none;
+    box-shadow: 0 0 20px rgba(0,0,0,0.08);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: center;
+}
+
+.card-header {
+    background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+    color: white;
+    border-radius: 10px 10px 0 0 !important;
+}
+
+/* Ensure equal height cards in rows */
+.row .col-lg-2,
+.row .col-md-6,
+.row .col-sm-12 {
+    display: flex;
+    flex-direction: column;
+}
+
+.row .col-lg-2 .card,
+.row .col-md-6 .card,
+.row .col-sm-12 .card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.table-dark {
+    background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+}
+
+.badge {
+    border-radius: 6px;
+    font-size: 10px;
+}
+
+.pagination .page-link {
+    border-radius: 6px;
+    margin: 0 2px;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.fs-12 {
+    font-size: 12px !important;
+}
+
+.table td {
+    vertical-align: middle;
+    font-size: 12px;
+}
+
+.table th {
+    font-size: 11px !important;
+}
+
+.bg-primary-gradient {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+}
+
+.bg-success-gradient {
+    background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+}
+
+.bg-warning-gradient {
+    background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+}
+
+.bg-info-gradient {
+    background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+}
+
+.bg-secondary-gradient {
+    background: linear-gradient(135deg, #6c757d 0%, #545b62 100%);
+}
+
+.bg-dark-gradient {
+    background: linear-gradient(135deg, #343a40 0%, #212529 100%);
+}
+</style>
+
+{% endblock %}
+
+{% block page_scripts %}
+<script>
+// Wait for jQuery to be available
+function initializeDaterangepicker() {
+    if (typeof $ !== 'undefined' && typeof $.fn.daterangepicker !== 'undefined') {
+        // Simple daterangepicker initialization as per official documentation
+        $('#dateRange').daterangepicker({
+            startDate: moment().subtract(6, 'days'),
+            endDate: moment(),
+            ranges: {
+               'Today': [moment(), moment()],
+               'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+               'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+               'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+               'This Month': [moment().startOf('month'), moment().endOf('month')],
+               'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            locale: {
+                format: 'MM/DD/YYYY'
+            },
+            autoApply: true,
+            showDropdowns: true,
+            showCustomRangeLabel: true,
+            alwaysShowCalendars: true,
+            opens: 'center'
+        }, function(start, end, label) {
+            // Update hidden inputs
+            $('#startDate').val(start.format('YYYY-MM-DD'));
+            $('#endDate').val(end.format('YYYY-MM-DD'));
+            
+            // Apply filters immediately
+            applyFilters();
+        });
+        
+        // Set current filter values if they exist
+        {% if current_filters.start_date and current_filters.end_date %}
+        var startDate = '{{ current_filters.start_date|date:"Y-m-d" }}';
+        var endDate = '{{ current_filters.end_date|date:"Y-m-d" }}';
+        $('#startDate').val(startDate);
+        $('#endDate').val(endDate);
+        
+        // Set the daterangepicker to current values
+        $('#dateRange').data('daterangepicker').setStartDate(moment(startDate));
+        $('#dateRange').data('daterangepicker').setEndDate(moment(endDate));
+        $('#dateRange').val(moment(startDate).format('MM/DD/YYYY') + ' - ' + moment(endDate).format('MM/DD/YYYY'));
+        {% else %}
+        // Set default values
+        var startDate = moment().subtract(6, 'days').format('YYYY-MM-DD');
+        var endDate = moment().format('YYYY-MM-DD');
+        $('#startDate').val(startDate);
+        $('#endDate').val(endDate);
+        $('#dateRange').val(moment().subtract(6, 'days').format('MM/DD/YYYY') + ' - ' + moment().format('MM/DD/YYYY'));
+        {% endif %}
+    } else {
+        // Retry after a short delay if jQuery or daterangepicker not ready
+        setTimeout(initializeDaterangepicker, 100);
+    }
+}
+
+// Initialize when document is ready
+$(document).ready(function() {
+    initializeDaterangepicker();
+});
+
+// Apply filters
+function applyFilters() {
+    const startDate = $('#startDate').val();
+    const endDate = $('#endDate').val();
+    const subid = $('#subidFilter').val();
+    
+    // Build query parameters
+    const params = new URLSearchParams();
+    
+    if (startDate && endDate) {
+        params.append('start_date', startDate);
+        params.append('end_date', endDate);
+    }
+    
+    if (subid) {
+        params.append('subid', subid);
+    }
+    
+    // Redirect with filters
+    window.location.href = `{% url 'subid_reports' %}?${params.toString()}`;
+}
+</script>
+{% endblock %}

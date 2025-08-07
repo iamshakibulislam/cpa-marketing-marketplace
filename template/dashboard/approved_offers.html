@@ -1,0 +1,458 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Approved Offers{% endblock %}
+
+{% block content %}
+
+<!-- Hidden CSRF token for AJAX requests -->
+{% csrf_token %}
+
+<!--app-content open-->
+<div class="app-content">
+	<div class="side-app">
+
+		<div class="page-header">
+			<div>
+				<h1 class="page-title">Approved Offers</h1>
+				<ol class="breadcrumb">
+					<li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+					<li class="breadcrumb-item active" aria-current="page">Approved Offers</li>
+				</ol>
+			</div>
+		</div>
+		<!-- PAGE-HEADER END -->
+
+		<!-- ROW-1 -->
+		<div class="row">
+			<div class="col-lg-12 col-md-12 col-sm-12 col-xl-12">
+				<div class="card overflow-hidden">
+					<div class="card-header bg-success-gradient">
+						<h3 class="card-title text-white mb-0">
+							<i class="fa fa-check-circle me-2"></i>Your Approved Offers
+						</h3>
+					</div>
+					<div class="card-body p-4">
+						
+						<!-- Search Section -->
+						<div class="row mb-4">
+							<div class="col-lg-6 col-md-8 col-sm-12">
+								<div class="input-group">
+									<span class="input-group-text bg-light">
+										<i class="fa fa-search text-success"></i>
+									</span>
+									<input type="text" class="form-control" id="offerSearch" placeholder="Search approved offers by name, category, or payout...">
+									<button class="btn btn-success" type="button">
+										<i class="fa fa-filter me-1"></i>Filter
+									</button>
+								</div>
+							</div>
+							<div class="col-lg-6 col-md-4 col-sm-12 text-end">
+								<span class="badge bg-success fs-12">Approved Offers: <span id="totalOffers">{{ total_offers }}</span></span>
+							</div>
+						</div>
+
+						<!-- Offers Table -->
+						<div class="table-responsive">
+							<table class="table table-hover table-striped" id="offersTable">
+								<thead class="table-dark">
+									<tr>
+										<th scope="col" class="text-center text-white fw-bold" style="width: 60px; font-size: 14px;">ID</th>
+										<th scope="col" class="text-white fw-bold" style="font-size: 14px;">Offer</th>
+										<th scope="col" class="text-center text-white fw-bold" style="font-size: 14px;">Status</th>
+										<th scope="col" class="text-white fw-bold" style="font-size: 14px;">Countries</th>
+										<th scope="col" class="text-center text-white fw-bold" style="font-size: 14px;">Devices</th>
+										<th scope="col" class="text-center text-white fw-bold" style="font-size: 14px;">Payout</th>
+										<th scope="col" class="text-center text-white fw-bold" style="font-size: 14px;">EPC</th>
+										<th scope="col" class="text-center text-white fw-bold" style="font-size: 14px;">Link</th>
+										<th scope="col" class="text-center text-white fw-bold" style="font-size: 14px;">Action</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for offer_data in offers %}
+									<tr>
+										<td class="text-center fw-bold" title="Offer ID: {{ offer_data.offer.id }}">{{ offer_data.offer.id }}</td>
+										<td>
+											<div class="d-flex align-items-center">
+												<div class="me-3">
+													<img src="{% static 'dashboard/assets/images/brand/logo.png' %}" class="rounded-circle" width="40" height="40" alt="Offer">
+												</div>
+												<div>
+													<h6 class="mb-0 fw-semibold">{{ offer_data.offer.offer_name }}</h6>
+													<small class="text-muted">Approved CPA Offer</small>
+												</div>
+											</div>
+										</td>
+										<td class="text-center">
+											<span class="badge {{ offer_data.status_class }}">{{ offer_data.status_display }}</span>
+										</td>
+										<td>
+											{% for country in offer_data.offer.countries %}
+												<span class="badge bg-light text-dark me-1">{{ country }}</span>
+											{% endfor %}
+										</td>
+										<td class="text-center">
+											{% for device in offer_data.offer.devices %}
+												{% if device == 'desktop' %}
+													<i class="fa fa-desktop text-primary me-1" title="Desktop"></i>
+												{% elif device == 'mobile' %}
+													<i class="fa fa-mobile text-success me-1" title="Mobile"></i>
+												{% elif device == 'tablet' %}
+													<i class="fa fa-tablet text-warning me-1" title="Tablet"></i>
+												{% else %}
+													<span class="badge bg-secondary">{{ device }}</span>
+												{% endif %}
+											{% endfor %}
+										</td>
+										<td class="text-center fw-bold text-success">{{ offer_data.offer.formatted_payout }}</td>
+										<td class="text-center fw-bold text-primary">{{ offer_data.offer.formatted_epc }}</td>
+										<td class="text-center">
+											<button type="button" class="btn btn-sm btn-outline-success get-tracking-link-btn" 
+													data-offer-id="{{ offer_data.offer.id }}" 
+													data-user-id="{{ request.user.id }}">
+												<i class="fa fa-link me-1"></i>Get Link
+											</button>
+										</td>
+										<td class="text-center">
+											<a href="{% url 'view_offer' offer_data.offer.id %}" class="btn btn-sm btn-outline-info" title="View Details">
+												<i class="fa fa-eye"></i>
+											</a>
+										</td>
+									</tr>
+									{% empty %}
+									<tr>
+										<td colspan="9" class="text-center py-4">
+											<div class="text-muted">
+												<i class="fa fa-check-circle fa-3x mb-3 text-success"></i>
+												<h5>No approved offers yet</h5>
+												<p>Request access to offers to see them here once approved!</p>
+												<a href="{% url 'offers_list' %}" class="btn btn-success mt-2">
+													<i class="fa fa-briefcase me-1"></i>Browse All Offers
+												</a>
+											</div>
+										</td>
+									</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+						</div>
+
+						<!-- Pagination -->
+						{% if offers.has_other_pages %}
+						<div class="d-flex justify-content-between align-items-center mt-4">
+							<div>
+								<small class="text-muted">
+									Showing {{ offers.start_index }} to {{ offers.end_index }} of {{ total_offers }} approved offers
+								</small>
+							</div>
+							<nav aria-label="Approved offers pagination">
+								<ul class="pagination pagination-sm mb-0">
+									{% if offers.has_previous %}
+										<li class="page-item">
+											<a class="page-link" href="?page={{ offers.previous_page_number }}">Previous</a>
+										</li>
+									{% else %}
+										<li class="page-item disabled">
+											<a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+										</li>
+									{% endif %}
+									
+									{% for num in offers.paginator.page_range %}
+										{% if offers.number == num %}
+											<li class="page-item active">
+												<a class="page-link" href="#">{{ num }}</a>
+											</li>
+										{% elif num > offers.number|add:'-3' and num < offers.number|add:'3' %}
+											<li class="page-item">
+												<a class="page-link" href="?page={{ num }}">{{ num }}</a>
+											</li>
+										{% endif %}
+									{% endfor %}
+									
+									{% if offers.has_next %}
+										<li class="page-item">
+											<a class="page-link" href="?page={{ offers.next_page_number }}">Next</a>
+										</li>
+									{% else %}
+										<li class="page-item disabled">
+											<a class="page-link" href="#" tabindex="-1" aria-disabled="true">Next</a>
+										</li>
+									{% endif %}
+								</ul>
+							</nav>
+						</div>
+						{% endif %}
+
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- ROW-1 END -->
+	</div>
+</div>
+<!--app-content close-->
+
+<!-- Tracking Link Modal -->
+<div class="modal fade" id="trackingLinkModal" tabindex="-1" aria-labelledby="trackingLinkModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-success-gradient">
+                <h5 class="modal-title text-white" id="trackingLinkModalLabel">
+                    <i class="fa fa-link me-2"></i>Your Tracking Link
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-3">
+                    <h6 class="text-success" id="modalTrackingOfferName">Offer Name</h6>
+                    <p class="text-muted mb-0">Copy your personalized tracking link below</p>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="trackingDomain" class="form-label fw-semibold">
+                        <i class="fa fa-globe me-1"></i>Select Tracking Domain
+                    </label>
+                    <select class="form-select" id="trackingDomain">
+                        <option value="">Loading domains...</option>
+                    </select>
+                    <div class="form-text">
+                        <i class="fa fa-info-circle me-1"></i>Choose which domain to use for your tracking link
+                    </div>
+                </div>
+                
+                <!-- Subid Parameters (Optional) -->
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="subid1" class="form-label fw-semibold">
+                            <i class="fa fa-tag me-1"></i>Subid 1 (Optional)
+                        </label>
+                        <input type="text" class="form-control" id="subid1" placeholder="Enter subid1 value">
+                        <div class="form-text">Optional tracking parameter</div>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="subid2" class="form-label fw-semibold">
+                            <i class="fa fa-tag me-1"></i>Subid 2 (Optional)
+                        </label>
+                        <input type="text" class="form-control" id="subid2" placeholder="Enter subid2 value">
+                        <div class="form-text">Optional tracking parameter</div>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="subid3" class="form-label fw-semibold">
+                            <i class="fa fa-tag me-1"></i>Subid 3 (Optional)
+                        </label>
+                        <input type="text" class="form-control" id="subid3" placeholder="Enter subid3 value">
+                        <div class="form-text">Optional tracking parameter</div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="trackingLink" class="form-label fw-semibold">
+                        <i class="fa fa-copy me-1"></i>Tracking Link
+                    </label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="trackingLink" readonly>
+                        <button class="btn btn-success" type="button" id="copyTrackingLinkBtn">
+                            <i class="fa fa-copy me-1"></i>Copy
+                        </button>
+                    </div>
+                    <div class="form-text">
+                        <i class="fa fa-info-circle me-1"></i>This link will track clicks and redirect to the original offer
+                    </div>
+                </div>
+                
+                <div class="alert alert-success" role="alert">
+                    <i class="fa fa-chart-line me-2"></i>
+                    <strong>Tracking Enabled:</strong> All clicks through this link will be tracked for analytics and commission calculation.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fa fa-times me-1"></i>Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Search Functionality Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('offerSearch');
+    const table = document.getElementById('offersTable');
+    const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+    const totalOffersSpan = document.getElementById('totalOffers');
+    
+    searchInput.addEventListener('keyup', function() {
+        const searchTerm = this.value.toLowerCase();
+        let visibleCount = 0;
+        
+        for (let i = 0; i < rows.length; i++) {
+            const row = rows[i];
+            const text = row.textContent.toLowerCase();
+            
+            if (text.includes(searchTerm)) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        }
+        
+        // Update total count
+        totalOffersSpan.textContent = visibleCount;
+    });
+    
+    // Tracking Link Modal Functionality
+    const trackingLinkModal = new bootstrap.Modal(document.getElementById('trackingLinkModal'));
+    const modalTrackingOfferName = document.getElementById('modalTrackingOfferName');
+    const trackingLinkInput = document.getElementById('trackingLink');
+    const copyTrackingLinkBtn = document.getElementById('copyTrackingLinkBtn');
+    const trackingDomainSelect = document.getElementById('trackingDomain');
+    let currentUserId = {{ request.user.id }};
+    let currentOfferId = null;
+    let availableDomains = [];
+    
+    // Handle Get Tracking Link button clicks
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.get-tracking-link-btn')) {
+            const btn = e.target.closest('.get-tracking-link-btn');
+            currentOfferId = btn.getAttribute('data-offer-id');
+            currentUserId = btn.getAttribute('data-user-id');
+            
+            // Get offer name from the row
+            const row = btn.closest('tr');
+            const offerNameElement = row.querySelector('h6');
+            const offerName = offerNameElement ? offerNameElement.textContent : 'Offer';
+            
+            modalTrackingOfferName.textContent = offerName;
+            
+            // Load tracking domains and show modal
+            loadTrackingDomains();
+            trackingLinkModal.show();
+        }
+    });
+    
+    // Load tracking domains from server
+    function loadTrackingDomains() {
+        fetch('{% url "get_tracking_domains" %}')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    availableDomains = data.domains;
+                    populateDomainDropdown();
+                    updateTrackingLink();
+                }
+            })
+            .catch(error => {
+                console.error('Error loading domains:', error);
+                // Fallback to default domain
+                trackingLinkInput.value = `${window.location.origin}/offers/offer/?userid=${currentUserId}&offerid=${currentOfferId}`;
+            });
+    }
+    
+    // Populate domain dropdown
+    function populateDomainDropdown() {
+        trackingDomainSelect.innerHTML = '';
+        
+        availableDomains.forEach(domain => {
+            const option = document.createElement('option');
+            option.value = domain.value;
+            option.textContent = domain.display;
+            trackingDomainSelect.appendChild(option);
+        });
+        
+        // Set default selection
+        if (availableDomains.length > 0) {
+            trackingDomainSelect.value = availableDomains[0].value;
+        }
+    }
+    
+    // Update tracking link when domain changes
+    function updateTrackingLink() {
+        const selectedDomain = trackingDomainSelect.value;
+        if (selectedDomain && currentOfferId && currentUserId) {
+            let trackingUrl = `${selectedDomain}/offers/offer/?userid=${currentUserId}&offerid=${currentOfferId}`;
+            
+            // Add subid parameters if they exist
+            const subid1 = document.getElementById('subid1')?.value || '';
+            const subid2 = document.getElementById('subid2')?.value || '';
+            const subid3 = document.getElementById('subid3')?.value || '';
+            
+            if (subid1) trackingUrl += `&subid1=${encodeURIComponent(subid1)}`;
+            if (subid2) trackingUrl += `&subid2=${encodeURIComponent(subid2)}`;
+            if (subid3) trackingUrl += `&subid3=${encodeURIComponent(subid3)}`;
+            
+            trackingLinkInput.value = trackingUrl;
+        }
+    }
+    
+    // Handle domain selection change
+    trackingDomainSelect.addEventListener('change', updateTrackingLink);
+    
+    // Handle subid input changes
+    const subid1Input = document.getElementById('subid1');
+    const subid2Input = document.getElementById('subid2');
+    const subid3Input = document.getElementById('subid3');
+    
+    if (subid1Input) subid1Input.addEventListener('input', updateTrackingLink);
+    if (subid2Input) subid2Input.addEventListener('input', updateTrackingLink);
+    if (subid3Input) subid3Input.addEventListener('input', updateTrackingLink);
+    
+    // Handle copy tracking link button
+    copyTrackingLinkBtn.addEventListener('click', function() {
+        trackingLinkInput.select();
+        trackingLinkInput.setSelectionRange(0, 99999); // For mobile devices
+        
+        try {
+            document.execCommand('copy');
+            copyTrackingLinkBtn.innerHTML = '<i class="fa fa-check me-1"></i>Copied!';
+            copyTrackingLinkBtn.className = 'btn btn-success';
+            
+            setTimeout(() => {
+                copyTrackingLinkBtn.innerHTML = '<i class="fa fa-copy me-1"></i>Copy';
+                copyTrackingLinkBtn.className = 'btn btn-success';
+            }, 2000);
+            
+            showNotification('Tracking link copied to clipboard!', 'success');
+        } catch (err) {
+            // Fallback for modern browsers
+            navigator.clipboard.writeText(trackingLinkInput.value).then(() => {
+                copyTrackingLinkBtn.innerHTML = '<i class="fa fa-check me-1"></i>Copied!';
+                copyTrackingLinkBtn.className = 'btn btn-success';
+                
+                setTimeout(() => {
+                    copyTrackingLinkBtn.innerHTML = '<i class="fa fa-copy me-1"></i>Copy';
+                    copyTrackingLinkBtn.className = 'btn btn-success';
+                }, 2000);
+                
+                showNotification('Tracking link copied to clipboard!', 'success');
+            }).catch(() => {
+                showNotification('Failed to copy link. Please copy manually.', 'warning');
+            });
+        }
+    });
+    
+    // Show notification function
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+        notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+        notification.innerHTML = `
+            <i class="fa fa-${type === 'success' ? 'check-circle' : 'info-circle'} me-2"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 5000);
+    }
+});
+</script>
+
+{% endblock %}

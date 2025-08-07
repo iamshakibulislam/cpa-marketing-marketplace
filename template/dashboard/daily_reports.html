@@ -1,0 +1,517 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Daily Reports{% endblock title %}
+
+{% block content %}
+
+<!-- Hidden CSRF token for AJAX requests -->
+{% csrf_token %}
+
+<!--app-content open-->
+<div class="app-content">
+	<div class="side-app">
+
+		<div class="page-header">
+			<div>
+				<h1 class="page-title">Daily Reports</h1>
+				<ol class="breadcrumb">
+					<li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+					<li class="breadcrumb-item active" aria-current="page">Daily Reports</li>
+				</ol>
+			</div>
+		</div>
+		<!-- PAGE-HEADER END -->
+
+		<!-- ROW-1 -->
+		<div class="row">
+			<div class="col-lg-12 col-md-12 col-sm-12 col-xl-12">
+				<div class="card overflow-hidden">
+					<div class="card-header bg-primary-gradient">
+						<h3 class="card-title text-white mb-0">
+							<i class="fa fa-chart-line me-2"></i>Daily Performance Reports
+						</h3>
+					</div>
+					<div class="card-body p-4">
+						
+						<!-- Filters Section -->
+						<div class="row mb-4">
+							<div class="col-lg-3 col-md-6 col-sm-12 mb-3">
+								<label for="dateRange" class="form-label fw-semibold">
+									<i class="fa fa-calendar me-1"></i>Date Range
+								</label>
+								<input type="text" class="form-control" id="dateRange" placeholder="Select date range">
+								<input type="hidden" id="startDate" name="start_date" value="{{ current_filters.start_date|default:'' }}">
+								<input type="hidden" id="endDate" name="end_date" value="{{ current_filters.end_date|default:'' }}">
+							</div>
+							<div class="col-lg-3 col-md-6 col-sm-12 mb-3">
+								<label for="offerFilter" class="form-label fw-semibold">
+									<i class="fa fa-briefcase me-1"></i>Offer
+								</label>
+								<select class="form-select" id="offerFilter" name="offer_id">
+									<option value="">All Offers</option>
+									{% for offer in offers %}
+									<option value="{{ offer.id }}" {% if current_filters.offer_id == offer.id|stringformat:"s" %}selected{% endif %}>
+										{{ offer.offer_name }}
+									</option>
+									{% endfor %}
+								</select>
+							</div>
+							<div class="col-lg-3 col-md-6 col-sm-12 mb-3">
+								<label for="subidFilter" class="form-label fw-semibold">
+									<i class="fa fa-tag me-1"></i>Sub ID
+								</label>
+								<select class="form-select" id="subidFilter" name="subid">
+									<option value="">All Sub IDs</option>
+									{% for subid in subids %}
+									<option value="{{ subid }}" {% if current_filters.subid == subid %}selected{% endif %}>
+										{{ subid }}
+									</option>
+									{% endfor %}
+								</select>
+							</div>
+							<div class="col-lg-3 col-md-6 col-sm-12 mb-3">
+								<label class="form-label fw-semibold">&nbsp;</label>
+								<div class="d-flex gap-2">
+									<button type="button" class="btn btn-primary" onclick="applyFilters()">
+										<i class="fa fa-filter me-1"></i>Apply Filters
+									</button>
+									<a href="{% url 'daily_reports' %}" class="btn btn-secondary">
+										<i class="fa fa-undo me-1"></i>Reset
+									</a>
+								</div>
+							</div>
+						</div>
+
+						<!-- Results Table -->
+						<div class="table-responsive">
+							<table class="table table-hover table-striped" id="dailyReportsTable">
+								<thead class="table-dark">
+									<tr>
+										<th scope="col" class="text-center text-white fw-bold" style="width: 60px; font-size: 14px;">#</th>
+										<th scope="col" class="text-white fw-bold" style="font-size: 14px;">Date</th>
+										<th scope="col" class="text-center text-white fw-bold" style="font-size: 14px;">Total Clicks</th>
+										<th scope="col" class="text-center text-white fw-bold" style="font-size: 14px;">Total Conversions</th>
+										<th scope="col" class="text-center text-white fw-bold" style="font-size: 14px;">Conversion Rate</th>
+										<th scope="col" class="text-center text-white fw-bold" style="font-size: 14px;">Earnings</th>
+										<th scope="col" class="text-center text-white fw-bold" style="font-size: 14px;">EPC</th>
+										<th scope="col" class="text-center text-white fw-bold" style="font-size: 14px;">Action</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for day_data in daily_data %}
+									<tr>
+										<td class="text-center fw-bold">{{ forloop.counter }}</td>
+										<td>
+											<div class="d-flex align-items-center">
+												<div class="me-3">
+													<i class="fa fa-calendar text-primary fa-lg"></i>
+												</div>
+												<div>
+													<h6 class="mb-0 fw-semibold">{{ day_data.date|date:"M d, Y" }}</h6>
+													<small class="text-muted">{{ day_data.date|date:"l" }}</small>
+												</div>
+											</div>
+										</td>
+										<td class="text-center">
+											<span class="badge bg-info fs-12">{{ day_data.total_clicks|floatformat:0 }}</span>
+										</td>
+										<td class="text-center">
+											<span class="badge bg-success fs-12">{{ day_data.total_conversions|floatformat:0 }}</span>
+										</td>
+										<td class="text-center">
+											<span class="badge {% if day_data.conversion_rate >= 5 %}bg-success{% elif day_data.conversion_rate >= 2 %}bg-warning{% else %}bg-danger{% endif %} fs-12">
+												{{ day_data.conversion_rate|floatformat:2 }}%
+											</span>
+										</td>
+										<td class="text-center fw-bold text-success">${{ day_data.earnings|floatformat:2 }}</td>
+										<td class="text-center fw-bold text-primary">${{ day_data.epc|floatformat:2 }}</td>
+										<td class="text-center">
+											<button class="btn btn-sm btn-outline-primary view-details-btn" 
+													data-date="{{ day_data.date|date:'Y-m-d' }}"
+													title="View Details">
+												<i class="fa fa-eye me-1"></i>Details
+											</button>
+										</td>
+									</tr>
+									{% empty %}
+									<tr>
+										<td colspan="8" class="text-center py-4">
+											<div class="text-muted">
+												<i class="fa fa-chart-line fa-3x mb-3"></i>
+												<h5>No data available</h5>
+												<p>No performance data found for the selected date range.</p>
+											</div>
+										</td>
+									</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+						</div>
+
+						<!-- Pagination -->
+						{% if daily_data.has_other_pages %}
+						<div class="d-flex justify-content-between align-items-center mt-4">
+							<div>
+								<small class="text-muted">
+									Showing {{ daily_data.start_index }} to {{ daily_data.end_index }} of {{ daily_data.paginator.count }} days
+								</small>
+							</div>
+							<nav aria-label="Daily reports pagination">
+								<ul class="pagination pagination-sm mb-0">
+									{% if daily_data.has_previous %}
+										<li class="page-item">
+											<a class="page-link" href="?page={{ daily_data.previous_page_number }}{% if current_filters.start_date %}&start_date={{ current_filters.start_date }}{% endif %}{% if current_filters.end_date %}&end_date={{ current_filters.end_date }}{% endif %}{% if current_filters.offer_id %}&offer_id={{ current_filters.offer_id }}{% endif %}{% if current_filters.subid %}&subid={{ current_filters.subid }}{% endif %}">Previous</a>
+										</li>
+									{% else %}
+										<li class="page-item disabled">
+											<a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+										</li>
+									{% endif %}
+									
+									{% for num in daily_data.paginator.page_range %}
+										{% if daily_data.number == num %}
+											<li class="page-item active">
+												<a class="page-link" href="#">{{ num }}</a>
+											</li>
+										{% elif num > daily_data.number|add:'-3' and num < daily_data.number|add:'3' %}
+											<li class="page-item">
+												<a class="page-link" href="?page={{ num }}{% if current_filters.start_date %}&start_date={{ current_filters.start_date }}{% endif %}{% if current_filters.end_date %}&end_date={{ current_filters.end_date }}{% endif %}{% if current_filters.offer_id %}&offer_id={{ current_filters.offer_id }}{% endif %}{% if current_filters.subid %}&subid={{ current_filters.subid }}{% endif %}">{{ num }}</a>
+											</li>
+										{% endif %}
+									{% endfor %}
+									
+									{% if daily_data.has_next %}
+										<li class="page-item">
+											<a class="page-link" href="?page={{ daily_data.next_page_number }}{% if current_filters.start_date %}&start_date={{ current_filters.start_date }}{% endif %}{% if current_filters.end_date %}&end_date={{ current_filters.end_date }}{% endif %}{% if current_filters.offer_id %}&offer_id={{ current_filters.offer_id }}{% endif %}{% if current_filters.subid %}&subid={{ current_filters.subid }}{% endif %}">Next</a>
+										</li>
+									{% else %}
+										<li class="page-item disabled">
+											<a class="page-link" href="#" tabindex="-1" aria-disabled="true">Next</a>
+										</li>
+									{% endif %}
+								</ul>
+							</nav>
+						</div>
+						{% endif %}
+
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- ROW-1 END -->
+	</div>
+</div>
+<!--app-content close-->
+
+<!-- Details Modal -->
+<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary-gradient">
+                <h5 class="modal-title text-white" id="detailsModalLabel">
+                    <i class="fa fa-calendar me-2"></i>Daily Performance Details
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Loading State -->
+                <div id="modalLoading" style="display: none;">
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Loading performance data...</p>
+                    </div>
+                </div>
+
+                <!-- Error State -->
+                <div id="modalError" style="display: none;">
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <span id="modalErrorMessage">An error occurred while loading the data.</span>
+                    </div>
+                </div>
+
+                <!-- Content -->
+                <div id="modalContent" style="display: none;">
+                    <div class="row mb-4">
+                        <div class="col-md-2">
+                            <div class="text-center">
+                                <div class="h4 text-info mb-1" id="modalClicks">0</div>
+                                <small class="text-muted">Total Clicks</small>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="text-center">
+                                <div class="h4 text-success mb-1" id="modalConversions">0</div>
+                                <small class="text-muted">Conversions</small>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="text-center">
+                                <div class="h4 text-warning mb-1" id="modalConversionRate">0%</div>
+                                <small class="text-muted">Conversion Rate</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <div class="h4 text-success mb-1" id="modalEarnings">$0.00</div>
+                                <small class="text-muted">Total Earnings</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <div class="h4 text-primary mb-1" id="modalEpc">$0.00</div>
+                                <small class="text-muted">EPC</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h6 class="mb-3">
+                        <i class="fas fa-trophy me-2"></i>Top Performing Offers
+                    </h6>
+                    <div id="modalTopOffers">
+                        <!-- Top offers will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+#dateRange {
+    cursor: pointer;
+    background-color: white;
+}
+#dateRange:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.card {
+    border: none;
+    box-shadow: 0 0 20px rgba(0,0,0,0.08);
+    border-radius: 10px;
+}
+
+.card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 10px 10px 0 0 !important;
+}
+
+.table-dark {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.badge {
+    border-radius: 6px;
+}
+
+.pagination .page-link {
+    border-radius: 6px;
+    margin: 0 2px;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #667eea;
+    border-color: #667eea;
+}
+
+.modal-content {
+    border-radius: 15px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.list-group-item {
+    border-radius: 8px;
+    margin-bottom: 5px;
+}
+
+.fs-12 {
+    font-size: 12px !important;
+}
+</style>
+
+{% endblock %}
+
+{% block page_scripts %}
+<script>
+// Wait for jQuery to be available
+function initializeDaterangepicker() {
+    if (typeof $ !== 'undefined' && typeof $.fn.daterangepicker !== 'undefined') {
+        // Simple daterangepicker initialization as per official documentation
+        $('#dateRange').daterangepicker({
+            startDate: moment().subtract(6, 'days'),
+            endDate: moment(),
+            ranges: {
+               'Today': [moment(), moment()],
+               'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+               'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+               'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+               'This Month': [moment().startOf('month'), moment().endOf('month')],
+               'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            locale: {
+                format: 'MM/DD/YYYY'
+            },
+            autoApply: true,
+            showDropdowns: true,
+            showCustomRangeLabel: true,
+            alwaysShowCalendars: true,
+            opens: 'center'
+        }, function(start, end, label) {
+            // Update hidden inputs
+            $('#startDate').val(start.format('YYYY-MM-DD'));
+            $('#endDate').val(end.format('YYYY-MM-DD'));
+            
+            // Apply filters immediately
+            applyFilters();
+        });
+        
+        // Set current filter values if they exist
+        {% if current_filters.start_date and current_filters.end_date %}
+        var startDate = '{{ current_filters.start_date }}';
+        var endDate = '{{ current_filters.end_date }}';
+        $('#startDate').val(startDate);
+        $('#endDate').val(endDate);
+        
+        // Set the daterangepicker to current values
+        $('#dateRange').data('daterangepicker').setStartDate(moment(startDate));
+        $('#dateRange').data('daterangepicker').setEndDate(moment(endDate));
+        $('#dateRange').val(moment(startDate).format('MM/DD/YYYY') + ' - ' + moment(endDate).format('MM/DD/YYYY'));
+        {% else %}
+        // Set default values
+        var startDate = moment().subtract(6, 'days').format('YYYY-MM-DD');
+        var endDate = moment().format('YYYY-MM-DD');
+        $('#startDate').val(startDate);
+        $('#endDate').val(endDate);
+        $('#dateRange').val(moment().subtract(6, 'days').format('MM/DD/YYYY') + ' - ' + moment().format('MM/DD/YYYY'));
+        {% endif %}
+    } else {
+        // Retry after a short delay if jQuery or daterangepicker not ready
+        setTimeout(initializeDaterangepicker, 100);
+    }
+}
+
+// Initialize when document is ready
+$(document).ready(function() {
+    initializeDaterangepicker();
+});
+
+// Apply filters
+function applyFilters() {
+    const startDate = $('#startDate').val();
+    const endDate = $('#endDate').val();
+    const offer = $('#offerFilter').val();
+    const subid = $('#subidFilter').val();
+    
+    // Build query parameters
+    const params = new URLSearchParams();
+    
+    if (startDate && endDate) {
+        params.append('start_date', startDate);
+        params.append('end_date', endDate);
+    }
+    
+    if (offer) {
+        params.append('offer_id', offer);
+    }
+    
+    if (subid) {
+        params.append('subid', subid);
+    }
+    
+    // Redirect with filters
+    window.location.href = `{% url 'daily_reports' %}?${params.toString()}`;
+}
+
+// View details for a specific date
+function viewDetails(date) {
+    // Update modal title
+    $('#detailsModalLabel').html(`<i class="fa fa-calendar me-2"></i>Details for ${date}`);
+    
+    // Show loading state
+    $('#modalLoading').show();
+    $('#modalContent').hide();
+    $('#modalError').hide();
+    
+    // Show modal
+    $('#detailsModal').modal('show');
+    
+    // Get current filters
+    const offer = $('#offerFilter').val();
+    const subid = $('#subidFilter').val();
+    
+    // Build query parameters
+    const params = new URLSearchParams();
+    params.append('date', date);
+    if (offer) params.append('offer_id', offer);
+    if (subid) params.append('subid', subid);
+    
+    // Fetch data from server
+    fetch(`{% url 'get_daily_details' %}?${params.toString()}`)
+        .then(response => {
+            return response.json();
+        })
+        .then(data => {
+            $('#modalLoading').hide();
+            
+            if (data.success) {
+                // Update summary data
+                $('#modalClicks').text(data.summary.total_clicks.toLocaleString());
+                $('#modalConversions').text(data.summary.total_conversions.toLocaleString());
+                $('#modalConversionRate').text(data.summary.conversion_rate + '%');
+                $('#modalEarnings').text('$' + data.summary.earnings.toFixed(2));
+                $('#modalEpc').text('$' + data.summary.epc.toFixed(2));
+                
+                // Update top offers
+                const topOffersHtml = data.top_offers.map(offer => `
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1">${offer.name}</h6>
+                            <small class="text-muted">${offer.clicks} clicks, ${offer.conversions} conversions</small>
+                        </div>
+                        <span class="badge bg-success">$${offer.earnings.toFixed(2)}</span>
+                    </div>
+                `).join('');
+                
+                $('#modalTopOffers').html(topOffersHtml || '<p class="text-muted">No offer data available for this date.</p>');
+                
+                $('#modalContent').show();
+            } else {
+                // Show error
+                $('#modalErrorMessage').text(data.message || 'Unable to load performance data for this date.');
+                $('#modalError').show();
+            }
+        })
+        .catch(error => {
+            $('#modalLoading').hide();
+            $('#modalErrorMessage').text('Network error. Please try again.');
+            $('#modalError').show();
+        });
+}
+
+// Handle view details button clicks
+document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.view-details-btn')) {
+            const btn = e.target.closest('.view-details-btn');
+            const date = btn.getAttribute('data-date');
+            viewDetails(date);
+        }
+    });
+});
+
+// Reset modal when closed
+$('#detailsModal').on('hidden.bs.modal', function () {
+    $('#modalLoading').hide();
+    $('#modalContent').hide();
+    $('#modalError').hide();
+});
+</script>
+{% endblock %}
+

@@ -62,6 +62,83 @@
 			.slide-item::before {
 				content: "" !important;
 			}
+			
+			/* Manager Section Styling */
+			.manager-section {
+				background: #ffffff;
+				margin: 20px 0 10px 0;
+				padding: 15px 10px 10px 10px;
+				border-radius: 10px;
+				box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+				border: 1px solid #e9ecef;
+			}
+			
+			.manager-avatar {
+				position: relative;
+			}
+			
+			.manager-avatar img {
+				border: 3px solid rgba(0,0,0,0.1);
+				transition: all 0.3s ease;
+				box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+			}
+			
+			.manager-avatar:hover img {
+				border-color: rgba(0,0,0,0.2);
+				transform: scale(1.05);
+			}
+			
+			.manager-section .btn {
+				transition: all 0.3s ease;
+			}
+			
+			.manager-section .btn:hover {
+				transform: translateY(-2px);
+				box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+			}
+			
+			/* Contact Icons Styling */
+			.contact-icon {
+				width: 40px !important;
+				height: 40px !important;
+				font-size: 16px !important;
+				display: flex !important;
+				align-items: center !important;
+				justify-content: center !important;
+				border: 2px solid rgba(0,0,0,0.1) !important;
+				transition: all 0.3s ease !important;
+			}
+			
+			.contact-icon:hover {
+				transform: translateY(-3px) scale(1.1) !important;
+				box-shadow: 0 6px 12px rgba(0,0,0,0.2) !important;
+				border-color: rgba(0,0,0,0.2) !important;
+			}
+			
+			.contact-icon i {
+				line-height: 1 !important;
+			}
+			
+			/* Modal Styling */
+			#managerInfoModal .modal-content {
+				border-radius: 15px;
+				border: none;
+				box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+			}
+			
+			#managerInfoModal .modal-header {
+				border-radius: 15px 15px 0 0;
+			}
+			
+			.manager-info label {
+				font-size: 14px;
+				margin-bottom: 5px;
+			}
+			
+			.manager-info .btn {
+				padding: 4px 8px;
+				font-size: 12px;
+			}
 		</style>
 
 	</head>
@@ -89,6 +166,40 @@
 							<img src="{% static 'dashboard/assets/images/brand/logo-3.png' %}" class="header-brand-img light-logo1" alt="logo">
 						</a><!-- LOGO -->
 					</div>
+					
+					<!-- Manager Section -->
+					{% if user.manager %}
+					<div class="manager-section p-2 border-bottom">
+						<div class="text-center mb-2">
+							<div class="manager-avatar position-relative d-inline-block">
+								<img src="{{ user.manager.picture.url }}" alt="{{ user.manager.name }}" class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
+							</div>
+							<div class="mt-1">
+								<div class="d-flex align-items-center justify-content-center">
+									<h6 class="mb-0 text-dark" style="font-size: 14px;">{{ user.manager.name }}</h6>
+									<button class="btn btn-sm btn-primary ms-2 rounded-circle" style="width: 20px; height: 20px; font-size: 10px; display: flex; align-items: center; justify-content: center;" onclick="showManagerInfo()" title="Manager Info">
+										<i class="fas fa-info"></i>
+									</button>
+								</div>
+								<small class="text-muted" style="font-size: 11px;">Manager</small>
+							</div>
+						</div>
+						
+						<!-- Contact Icons -->
+						<div class="d-flex justify-content-center gap-3 mb-1">
+							<a href="{{ user.manager.get_whatsapp_url }}" target="_blank" class="btn btn-sm btn-success rounded-circle contact-icon" title="WhatsApp">
+								<i class="fab fa-whatsapp"></i>
+							</a>
+							<a href="mailto:{{ user.manager.email }}" class="btn btn-sm btn-primary rounded-circle contact-icon" title="Email">
+								<i class="fas fa-envelope"></i>
+							</a>
+							<a href="{{ user.manager.get_telegram_url }}" target="_blank" class="btn btn-sm btn-info rounded-circle contact-icon" title="Telegram">
+								<i class="fab fa-telegram-plane"></i>
+							</a>
+						</div>
+					</div>
+					{% endif %}
+					
 					<ul class="side-menu">
 						<li><h3></h3></li>
 						<li class="slide">
@@ -475,6 +586,108 @@
 
 		<!-- Page Specific JavaScript Block -->
 		{% block page_scripts %}{% endblock %}
+
+		<!-- Manager Info Modal -->
+		{% if user.manager %}
+		<div class="modal fade" id="managerInfoModal" tabindex="-1" aria-labelledby="managerInfoModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header bg-primary text-white">
+						<h5 class="modal-title" id="managerInfoModalLabel">
+							<i class="fas fa-user-tie me-2"></i>{{ user.manager.name }}
+						</h5>
+						<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-md-4 text-center">
+								<img src="{{ user.manager.picture.url }}" alt="{{ user.manager.name }}" class="rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover;">
+							</div>
+							<div class="col-md-8">
+								<div class="manager-info">
+									<div class="mb-3">
+										<label class="fw-bold text-muted">Email:</label>
+										<div class="d-flex align-items-center">
+											<span class="me-2">{{ user.manager.email }}</span>
+											<button class="btn btn-sm btn-outline-primary" onclick="copyToClipboard('{{ user.manager.email }}')" title="Copy Email">
+												<i class="fas fa-copy"></i>
+											</button>
+										</div>
+									</div>
+									<div class="mb-3">
+										<label class="fw-bold text-muted">WhatsApp:</label>
+										<div class="d-flex align-items-center">
+											<span class="me-2">{{ user.manager.whatsapp }}</span>
+											<button class="btn btn-sm btn-outline-success" onclick="copyToClipboard('{{ user.manager.whatsapp }}')" title="Copy WhatsApp">
+												<i class="fas fa-copy"></i>
+											</button>
+										</div>
+									</div>
+									<div class="mb-3">
+										<label class="fw-bold text-muted">Telegram:</label>
+										<div class="d-flex align-items-center">
+											<span class="me-2">@{{ user.manager.telegram }}</span>
+											<button class="btn btn-sm btn-outline-info" onclick="copyToClipboard('{{ user.manager.telegram }}')" title="Copy Telegram">
+												<i class="fas fa-copy"></i>
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+						<div class="btn-group" role="group">
+							<a href="{{ user.manager.get_whatsapp_url }}" target="_blank" class="btn btn-success">
+								<i class="fab fa-whatsapp me-1"></i>WhatsApp
+							</a>
+							<a href="mailto:{{ user.manager.email }}" class="btn btn-primary">
+								<i class="fas fa-envelope me-1"></i>Email
+							</a>
+							<a href="{{ user.manager.get_telegram_url }}" target="_blank" class="btn btn-info">
+								<i class="fab fa-telegram-plane me-1"></i>Telegram
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Manager Info JavaScript -->
+		<script>
+			function showManagerInfo() {
+				var modal = new bootstrap.Modal(document.getElementById('managerInfoModal'));
+				modal.show();
+			}
+			
+			function copyToClipboard(text) {
+				navigator.clipboard.writeText(text).then(function() {
+					// Show success message
+					const button = event.target.closest('button');
+					const originalIcon = button.innerHTML;
+					button.innerHTML = '<i class="fas fa-check"></i>';
+					button.classList.remove('btn-outline-primary', 'btn-outline-success', 'btn-outline-info');
+					button.classList.add('btn-success');
+					
+					setTimeout(function() {
+						button.innerHTML = originalIcon;
+						button.classList.remove('btn-success');
+						if (text.includes('@')) {
+							button.classList.add('btn-outline-info');
+						} else if (text.includes('+')) {
+							button.classList.add('btn-outline-success');
+						} else {
+							button.classList.add('btn-outline-primary');
+						}
+					}, 2000);
+				}).catch(function(err) {
+					console.error('Could not copy text: ', err);
+					alert('Failed to copy to clipboard');
+				});
+			}
+		</script>
+		{% endif %}
 
 	</body>
 </html>

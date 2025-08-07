@@ -45,7 +45,14 @@ def signup(request):
                 heard_about_us=heard_about_us,
                 is_active=True  # Set to False if you want to require email verification before login
             )
-            messages.success(request, 'Signup successful! Please verify your email')
+            
+            # Assign a random manager to the user
+            assigned_manager = user.assign_random_manager()
+            if assigned_manager:
+                messages.success(request, f'Signup successful! Your assigned manager is {assigned_manager.name}.')
+            else:
+                messages.success(request, 'Signup successful! Please verify your email')
+            
             return render(request, 'home/signup.html')
         except IntegrityError:
             messages.error(request, 'A user with this email already exists.')
