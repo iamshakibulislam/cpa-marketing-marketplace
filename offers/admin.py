@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.utils.html import format_html
 from django.utils import timezone
-from .models import Offer, OfferAdminForm, UserOfferRequest, ClickTracking, Conversion, SiteSettings, CPANetwork, Manager, PaymentMethod
+from .models import Offer, OfferAdminForm, UserOfferRequest, ClickTracking, Conversion, SiteSettings, CPANetwork, Manager, PaymentMethod, Invoice
 
 @admin.register(CPANetwork)
 class CPANetworkAdmin(admin.ModelAdmin):
@@ -411,3 +411,67 @@ class PaymentMethodAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
+
+@admin.register(Invoice)
+class InvoiceAdmin(admin.ModelAdmin):
+    list_display = [
+        'invoice_number',
+        'user',
+        'amount',
+        'status',
+        'created_at',
+        'paid_at'
+    ]
+    
+    list_filter = [
+        'status',
+        'created_at',
+        'paid_at',
+        'user'
+    ]
+    
+    search_fields = [
+        'invoice_number',
+        'user__full_name',
+        'user__email',
+        'notes'
+    ]
+    
+    readonly_fields = ['invoice_number', 'created_at']
+    
+    list_editable = ['status']
+    
+    fieldsets = (
+        ('Invoice Information', {
+            'fields': ('invoice_number', 'user', 'amount', 'status')
+        }),
+        ('Payment Details', {
+            'fields': ('payment_method', 'paid_at', 'notes')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at',),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    actions = ['mark_as_paid', 'mark_as_rejected']
+    
+    def mark_as_paid(self, request, queryset):
+        """Admin action to mark selected invoices as paid"""
+        updated = queryset.update(status='paid', paid_at=timezone.now())
+        self.message_user(
+            request, 
+            f"Successfully marked {updated} invoice(s) as paid.",
+            level='SUCCESS'
+        )
+    mark_as_paid.short_description = "Mark selected invoices as paid"
+    
+    def mark_as_rejected(self, request, queryset):
+        """Admin action to mark selected invoices as rejected"""
+        updated = queryset.update(status='rejected')
+        self.message_user(
+            request, 
+            f"Successfully marked {updated} invoice(s) as rejected.",
+            level='SUCCESS'
+        )
+    mark_as_rejected.short_description = "Mark selected invoices as rejected"

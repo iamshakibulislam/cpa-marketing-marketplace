@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'home',
     'user',
     'offers',
+    'django_crontab',  # Add django-crontab for scheduled tasks
 ]
 
 MIDDLEWARE = [
@@ -143,3 +144,50 @@ TRACKING_DOMAINS = [
 
 # Default tracking domain
 DEFAULT_TRACKING_DOMAIN = 'http://localhost:8000'
+
+# Django Crontab Configuration
+# ============================
+
+# CRONJOBS - List of scheduled jobs
+# Format: (cron_timing, python_module_path, [args], {kwargs}, suffix)
+# Cron timing format: minute hour day month weekday
+# Examples:
+# '0 6 * * *' - Every day at 6:00 AM
+# '0 6 * * 1' - Every Monday at 6:00 AM
+# '0 6 1 * *' - First day of every month at 6:00 AM
+
+CRONJOBS = [
+    # Run payment processing every day at 6:00 AM
+    ('0 6 * * *', 'django.core.management.call_command', ['process_payments'], {}, '>> /var/log/cpa_cron.log 2>&1'),
+]
+
+# CRONTAB_LOCK_JOBS - Prevent overlapping jobs
+# Set to True to prevent starting a job if an old instance is still running
+CRONTAB_LOCK_JOBS = True
+
+# CRONTAB_COMMAND_PREFIX - Environment variables or commands to run before each job
+# Example: 'STAGE=production'
+CRONTAB_COMMAND_PREFIX = ''
+
+# CRONTAB_COMMAND_SUFFIX - Commands to run after each job
+# Example: '2>&1' for error redirection
+CRONTAB_COMMAND_SUFFIX = ''
+
+# CRONTAB_COMMENT - Comment to mark crontab entries for this project
+CRONTAB_COMMENT = 'django-crontabs for cpa'
+
+# CRONTAB_EXECUTABLE - Path to crontab executable
+# Default: '/usr/bin/crontab'
+CRONTAB_EXECUTABLE = '/usr/bin/crontab'
+
+# CRONTAB_PYTHON_EXECUTABLE - Path to Python interpreter
+# Default: Uses the interpreter used to add jobs
+CRONTAB_PYTHON_EXECUTABLE = '/usr/bin/python3'
+
+# CRONTAB_DJANGO_MANAGE_PATH - Path to manage.py file
+# Default: Built using DJANGO_PROJECT_NAME
+CRONTAB_DJANGO_MANAGE_PATH = str(BASE_DIR / 'manage.py')
+
+# CRONTAB_DJANGO_SETTINGS_MODULE - Django settings module
+# Default: From environment variable
+CRONTAB_DJANGO_SETTINGS_MODULE = 'cpa.settings'

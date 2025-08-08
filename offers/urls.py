@@ -18,4 +18,5 @@ urlpatterns = [
     path('conversion-reports/', views.conversion_reports, name='conversion_reports'),
     path('subid-reports/', views.subid_reports, name='subid_reports'),
     path('payment/', views.payment_methods, name='payment_methods'),
+    path('invoice/', views.invoice_list, name='invoice_list'),
 ]

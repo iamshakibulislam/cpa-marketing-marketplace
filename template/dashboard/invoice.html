@@ -1,0 +1,355 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Invoices - CPA Network{% endblock %}
+
+{% block content %}
+<!--app-content open-->
+<div class="app-content">
+	<div class="side-app">
+
+		<!-- PAGE-HEADER -->
+		<div class="page-header">
+			<div>
+				<h1 class="page-title">Invoices</h1>
+				<ol class="breadcrumb">
+					<li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+					<li class="breadcrumb-item active">Invoices</li>
+				</ol>
+			</div>
+		</div>
+		<!-- PAGE-HEADER END -->
+
+		<!-- ROW -->
+		<div class="row">
+			<!-- Summary Cards -->
+			<div class="col-xl-3 col-lg-6 col-md-6">
+				<div class="card">
+					<div class="card-body">
+						<div class="row">
+							<div class="col-8">
+								<div class="mt-0 text-start">
+									<span class="fs-14 font-weight-semibold">Total Invoices</span>
+									<h3 class="mb-0 mt-1 text-dark">{{ total_invoices }}</h3>
+								</div>
+							</div>
+							<div class="col-4">
+								<div class="mt-0 text-end">
+									<span class="fs-25 text-primary"><i class="fe fe-file-text"></i></span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="col-xl-3 col-lg-6 col-md-6">
+				<div class="card">
+					<div class="card-body">
+						<div class="row">
+							<div class="col-8">
+								<div class="mt-0 text-start">
+									<span class="fs-14 font-weight-semibold">Pending</span>
+									<h3 class="mb-0 mt-1 text-warning">{{ total_pending }}</h3>
+								</div>
+							</div>
+							<div class="col-4">
+								<div class="mt-0 text-end">
+									<span class="fs-25 text-warning"><i class="fe fe-clock"></i></span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="col-xl-3 col-lg-6 col-md-6">
+				<div class="card">
+					<div class="card-body">
+						<div class="row">
+							<div class="col-8">
+								<div class="mt-0 text-start">
+									<span class="fs-14 font-weight-semibold">Paid</span>
+									<h3 class="mb-0 mt-1 text-success">{{ total_paid }}</h3>
+								</div>
+							</div>
+							<div class="col-4">
+								<div class="mt-0 text-end">
+									<span class="fs-25 text-success"><i class="fe fe-check-circle"></i></span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="col-xl-3 col-lg-6 col-md-6">
+				<div class="card">
+					<div class="card-body">
+						<div class="row">
+							<div class="col-8">
+								<div class="mt-0 text-start">
+									<span class="fs-14 font-weight-semibold">Total Earned</span>
+									<h3 class="mb-0 mt-1 text-primary">${{ total_amount|floatformat:2 }}</h3>
+								</div>
+							</div>
+							<div class="col-4">
+								<div class="mt-0 text-end">
+									<span class="fs-25 text-primary"><i class="fe fe-dollar-sign"></i></span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- ROW END -->
+
+		<!-- ROW -->
+		<div class="row">
+			<div class="col-12">
+				<div class="card">
+					<div class="card-header">
+						<h3 class="card-title">Invoice History</h3>
+						<div class="card-options">
+							<span class="text-muted">Your payment invoices and status</span>
+						</div>
+					</div>
+					<div class="card-body">
+						{% if invoices %}
+						<div class="table-responsive">
+							<table class="table table-bordered text-nowrap border-bottom">
+								<thead>
+									<tr>
+										<th class="border-bottom-0">Invoice #</th>
+										<th class="border-bottom-0">Amount</th>
+										<th class="border-bottom-0">Status</th>
+										<th class="border-bottom-0">Created Date</th>
+										<th class="border-bottom-0">Paid Date</th>
+										<th class="border-bottom-0">Payment Method</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for invoice in invoices %}
+									<tr>
+										<td>
+											<div class="d-flex align-items-center">
+												<div class="me-3">
+													<span class="avatar avatar-md bg-primary-gradient rounded-circle">
+														<i class="fe fe-file-text text-white"></i>
+													</span>
+												</div>
+												<div>
+													<h6 class="mb-0 fw-semibold">{{ invoice.invoice_number }}</h6>
+													<small class="text-muted">Invoice</small>
+												</div>
+											</div>
+										</td>
+										<td>
+											<span class="fw-semibold fs-16 text-primary">{{ invoice.formatted_amount }}</span>
+										</td>
+										<td>
+											<span class="{{ invoice.get_status_badge_class }}">{{ invoice.status|title }}</span>
+										</td>
+										<td>
+											<span class="text-muted">{{ invoice.formatted_created_at }}</span>
+										</td>
+										<td>
+											<span class="text-muted">{{ invoice.formatted_paid_at }}</span>
+										</td>
+										<td>
+											{% if invoice.payment_method %}
+											<div class="d-flex align-items-center">
+												<div class="me-2">
+													<span class="avatar avatar-sm bg-success-gradient rounded-circle">
+														<i class="fe fe-credit-card text-white"></i>
+													</span>
+												</div>
+												<div>
+													<small class="text-muted">Binance</small>
+													<div class="fw-semibold">{{ invoice.payment_method.binance_email }}</div>
+												</div>
+											</div>
+											{% else %}
+											<span class="text-muted">Not specified</span>
+											{% endif %}
+										</td>
+									</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+						</div>
+						{% else %}
+						<div class="text-center py-5">
+							<div class="mb-4">
+								<span class="avatar avatar-xxl bg-light rounded-circle">
+									<i class="fe fe-file-text text-muted" style="font-size: 3rem;"></i>
+								</span>
+							</div>
+							<h4 class="text-muted mb-3">No Invoices Yet</h4>
+							<p class="text-muted mb-4">You don't have any invoices yet. Invoices are automatically generated when your balance reaches $100 or more on payment dates.</p>
+							<div class="alert alert-info" role="alert">
+								<div class="d-flex align-items-center">
+									<i class="fe fe-info me-2"></i>
+									<div>
+										<strong>Payment Schedule:</strong><br>
+										• First Monday of each month (all users)<br>
+										• First Monday after 15th day of each month (returning users only)<br>
+										• Minimum balance required: $100
+									</div>
+								</div>
+							</div>
+						</div>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- ROW END -->
+
+		<!-- Payment Information Alert -->
+		{% if invoices %}
+		<div class="row">
+			<div class="col-12">
+				<div class="alert alert-info" role="alert">
+					<div class="d-flex align-items-center">
+						<i class="fe fe-info me-3" style="font-size: 1.5rem;"></i>
+						<div>
+							<h6 class="alert-heading mb-2">Payment Information</h6>
+							<p class="mb-0">
+								<strong>Payment Schedule:</strong> Invoices are automatically generated on the first Monday of each month (all users) and the first Monday after the 15th day of each month (returning users only).<br>
+								<strong>First-Time Users:</strong> Only processed on the first Monday of each month.<br>
+								<strong>Returning Users:</strong> Processed on both payment dates.<br>
+								<strong>Minimum Balance:</strong> $100 USD required for automatic invoice generation.<br>
+								<strong>Payment Method:</strong> Binance Wallet (as configured in your payment method).<br>
+								<strong>Processing Time:</strong> Payments are released within 3 business days to your Binance wallet.
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		{% endif %}
+
+	</div>
+</div>
+<!--app-content close-->
+
+<style>
+/* Custom styling for better appearance */
+.card {
+    border: none;
+    box-shadow: 0 0 20px rgba(0,0,0,0.08);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+}
+
+.avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bg-primary-gradient {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+}
+
+.bg-success-gradient {
+    background: linear-gradient(45deg, #28a745, #1e7e34);
+}
+
+.bg-warning-gradient {
+    background: linear-gradient(45deg, #ffc107, #e0a800);
+}
+
+.bg-danger-gradient {
+    background: linear-gradient(45deg, #dc3545, #c82333);
+}
+
+.badge {
+    font-size: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+}
+
+.table {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.table thead th {
+    background: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+    color: #495057;
+}
+
+.alert {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.page-header {
+    background: transparent;
+    color: #333;
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+    border-radius: 0 0 15px 15px;
+}
+
+.page-title {
+    margin: 0;
+    font-weight: 600;
+    color: #333;
+}
+
+.breadcrumb {
+    background: transparent;
+    margin: 0;
+    padding: 0;
+}
+
+.breadcrumb-item a {
+    color: #666;
+    text-decoration: none;
+}
+
+.breadcrumb-item.active {
+    color: #333;
+}
+
+/* Animation for cards */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    .avatar-xxl {
+        width: 80px;
+        height: 80px;
+    }
+}
+</style>
+{% endblock %}

@@ -1,1 +1,1 @@
-# This file makes the commands directory a Python package 
+# Commands package for offers app 

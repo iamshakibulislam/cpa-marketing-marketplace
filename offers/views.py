@@ -1180,3 +1180,29 @@ def payment_methods(request):
     }
     
     return render(request, 'dashboard/payment.html', context)
+
+@login_required
+def invoice_list(request):
+    """Display user's invoices"""
+    from .models import Invoice
+    
+    # Get user's invoices
+    invoices = Invoice.objects.filter(user=request.user).order_by('-created_at')
+    
+    # Get summary statistics
+    total_invoices = invoices.count()
+    total_pending = invoices.filter(status='pending').count()
+    total_paid = invoices.filter(status='paid').count()
+    total_rejected = invoices.filter(status='rejected').count()
+    total_amount = sum(invoice.amount for invoice in invoices.filter(status='paid'))
+    
+    context = {
+        'invoices': invoices,
+        'total_invoices': total_invoices,
+        'total_pending': total_pending,
+        'total_paid': total_paid,
+        'total_rejected': total_rejected,
+        'total_amount': total_amount,
+    }
+    
+    return render(request, 'dashboard/invoice.html', context)

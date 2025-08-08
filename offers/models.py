@@ -568,3 +568,88 @@ class PaymentMethod(models.Model):
         verbose_name = "Payment Method"
         verbose_name_plural = "Payment Methods"
 
+
+class Invoice(models.Model):
+    """
+    Invoice model to track user payments and balance transfers
+    """
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('paid', 'Paid'),
+        ('rejected', 'Rejected'),
+    ]
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='invoices', verbose_name="User")
+    invoice_number = models.CharField(max_length=50, unique=True, verbose_name="Invoice Number")
+    amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Amount (USD)")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending', verbose_name="Status")
+    payment_method = models.ForeignKey(PaymentMethod, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Payment Method")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Created At")
+    paid_at = models.DateTimeField(null=True, blank=True, verbose_name="Paid At")
+    notes = models.TextField(blank=True, null=True, verbose_name="Notes")
+    
+    class Meta:
+        verbose_name = "Invoice"
+        verbose_name_plural = "Invoices"
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"Invoice #{self.invoice_number} - {self.user.full_name} - ${self.amount} - {self.status}"
+    
+    def save(self, *args, **kwargs):
+        """Override save method to generate invoice number if not provided"""
+        if not self.invoice_number:
+            # Generate invoice number: INV-YYYYMMDD-XXXX
+            today = timezone.now().strftime('%Y%m%d')
+            last_invoice = Invoice.objects.filter(
+                invoice_number__startswith=f'INV-{today}'
+            ).order_by('-invoice_number').first()
+            
+            if last_invoice:
+                # Extract the last number and increment
+                last_number = int(last_invoice.invoice_number.split('-')[-1])
+                new_number = last_number + 1
+            else:
+                new_number = 1
+            
+            self.invoice_number = f'INV-{today}-{new_number:04d}'
+        
+        super().save(*args, **kwargs)
+    
+    @property
+    def formatted_amount(self):
+        """Return formatted amount with currency"""
+        return f"${self.amount:,.2f}"
+    
+    @property
+    def formatted_created_at(self):
+        """Return formatted creation date"""
+        return self.created_at.strftime('%B %d, %Y')
+    
+    @property
+    def formatted_paid_at(self):
+        """Return formatted paid date"""
+        if self.paid_at:
+            return self.paid_at.strftime('%B %d, %Y')
+        return "Not paid yet"
+    
+    def get_status_badge_class(self):
+        """Return Bootstrap badge class for status"""
+        status_classes = {
+            'pending': 'badge bg-warning',
+            'paid': 'badge bg-success',
+            'rejected': 'badge bg-danger',
+        }
+        return status_classes.get(self.status, 'badge bg-secondary')
+    
+    def mark_as_paid(self):
+        """Mark invoice as paid"""
+        self.status = 'paid'
+        self.paid_at = timezone.now()
+        self.save()
+    
+    def mark_as_rejected(self):
+        """Mark invoice as rejected"""
+        self.status = 'rejected'
+        self.save()
+
