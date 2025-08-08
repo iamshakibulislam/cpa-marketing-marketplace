@@ -24,9 +24,14 @@ def signup(request):
         niches = request.POST.get('niches')
         promotion_description = request.POST.get('promotion_description')
         heard_about_us = request.POST.get('heard_about_us')
+        terms_agreement = request.POST.get('terms_agreement')
 
         if password != confirm_password:
             messages.error(request, 'Passwords do not match.')
+            return render(request, 'home/signup.html', request.POST)
+
+        if not terms_agreement:
+            messages.error(request, 'You must agree to the Terms and Conditions to continue.')
             return render(request, 'home/signup.html', request.POST)
 
         try:
