@@ -19,4 +19,9 @@ urlpatterns = [
     path('subid-reports/', views.subid_reports, name='subid_reports'),
     path('payment/', views.payment_methods, name='payment_methods'),
     path('invoice/', views.invoice_list, name='invoice_list'),
+    
+    # Referral system URLs
+    path('referral/', views.referral_dashboard, name='referral_dashboard'),
+    path('referral/earnings/', views.referral_earnings, name='referral_earnings'),
+    path('referral/users/', views.referral_users, name='referral_users'),
 ]

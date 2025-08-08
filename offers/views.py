@@ -14,6 +14,15 @@ from user.models import User
 import json
 import requests
 from datetime import datetime
+from django.db.models import Sum, Count
+from decimal import Decimal
+import logging
+from .models import (
+    Offer, UserOfferRequest, ClickTracking, Conversion, SiteSettings, 
+    CPANetwork, Manager, PaymentMethod, Invoice, ReferralLink, Referral, ReferralEarning
+)
+
+logger = logging.getLogger(__name__)
 
 def get_client_ip(request):
     """Get client IP address - improved version based on Stack Overflow best practices"""
@@ -1206,3 +1215,175 @@ def invoice_list(request):
     }
     
     return render(request, 'dashboard/invoice.html', context)
+
+@login_required
+def referral_dashboard(request):
+    """Display user's referral dashboard"""
+    # Get or create referral link for the user
+    referral_link, created = ReferralLink.objects.get_or_create(
+        user=request.user,
+        defaults={'is_active': True}
+    )
+    
+    # Get user's referrals
+    referrals = Referral.objects.filter(referrer=request.user, is_active=True).order_by('-referred_at')
+    
+    # Get total earnings from referrals
+    total_earnings = ReferralEarning.objects.filter(
+        referral__referrer=request.user
+    ).aggregate(total=Sum('amount'))['total'] or Decimal('0.00')
+    
+    # Get earnings by referred user
+    earnings_by_user = []
+    for referral in referrals:
+        user_earnings = ReferralEarning.objects.filter(referral=referral).aggregate(
+            total=Sum('amount')
+        )['total'] or Decimal('0.00')
+        
+        earnings_by_user.append({
+            'referred_user': referral.referred_user,
+            'referred_at': referral.referred_at,
+            'total_earnings': user_earnings,
+            'conversions_count': ReferralEarning.objects.filter(referral=referral).count()
+        })
+    
+    # Get recent referral earnings
+    recent_earnings = ReferralEarning.objects.filter(
+        referral__referrer=request.user
+    ).order_by('-created_at')[:10]
+    
+    # Get site settings for referral percentage
+    site_settings = SiteSettings.get_settings()
+    
+    # Check if user has any active referral tracking (for testing purposes)
+    from .utils import is_referral_active, get_referral_link_info
+    has_active_referral = is_referral_active(request)
+    current_referral = get_referral_link_info(request)
+    
+    context = {
+        'referral_link': referral_link,
+        'referrals': referrals,
+        'total_referrals': referrals.count(),
+        'total_earnings': total_earnings,
+        'earnings_by_user': earnings_by_user,
+        'recent_earnings': recent_earnings,
+        'site_settings': site_settings,
+        'has_active_referral': has_active_referral,
+        'current_referral': current_referral,
+    }
+    
+    return render(request, 'dashboard/referral.html', context)
+
+
+def process_referral(request, referral_code):
+    """Process referral link and redirect to homepage"""
+    try:
+        # Find the referral link
+        referral_link = get_object_or_404(ReferralLink, referral_code=referral_code, is_active=True)
+        
+        # Store referral information in session
+        request.session['referral_code'] = referral_code
+        request.session['referrer_id'] = referral_link.user.id
+        
+        # Set cookie for persistent referral tracking (30 days expiry)
+        response = redirect('index')
+        response.set_cookie(
+            'referral_code', 
+            referral_code, 
+            max_age=30*24*60*60,  # 30 days
+            httponly=True,
+            samesite='Lax'
+        )
+        response.set_cookie(
+            'referrer_id', 
+            str(referral_link.user.id), 
+            max_age=30*24*60*60,  # 30 days
+            httponly=True,
+            samesite='Lax'
+        )
+        
+        return response
+        
+    except ReferralLink.DoesNotExist:
+        messages.error(request, "Invalid referral link.")
+        return redirect('index')
+
+
+@login_required
+def referral_earnings(request):
+    """Display detailed referral earnings"""
+    # Get user's referral earnings
+    earnings = ReferralEarning.objects.filter(
+        referral__referrer=request.user
+    ).select_related('referral', 'referral__referred_user', 'conversion', 'conversion__click_tracking__offer').order_by('-created_at')
+    
+    # Get summary statistics
+    total_earnings = earnings.aggregate(total=Sum('amount'))['total'] or Decimal('0.00')
+    total_conversions = earnings.count()
+    
+    # Calculate average earnings
+    average_earnings = Decimal('0.00')
+    if total_conversions > 0:
+        average_earnings = total_earnings / total_conversions
+    
+    # Get earnings by month
+    monthly_earnings = earnings.extra(
+        select={'month': "DATE_TRUNC('month', created_at)"}
+    ).values('month').annotate(
+        total=Sum('amount'),
+        count=Count('id')
+    ).order_by('-month')
+    
+    # Get site settings for referral percentage
+    site_settings = SiteSettings.get_settings()
+    
+    context = {
+        'earnings': earnings,
+        'total_earnings': total_earnings,
+        'total_conversions': total_conversions,
+        'average_earnings': average_earnings,
+        'monthly_earnings': monthly_earnings,
+        'site_settings': site_settings,
+    }
+    
+    return render(request, 'dashboard/referral_earnings.html', context)
+
+
+@login_required
+def referral_users(request):
+    """Display list of referred users and their earnings"""
+    # Get user's referrals with earnings
+    referrals = Referral.objects.filter(
+        referrer=request.user, 
+        is_active=True
+    ).select_related('referred_user').prefetch_related('referral_earnings').order_by('-referred_at')
+    
+    # Calculate earnings for each referred user and sum up totals
+    total_referred_earnings = Decimal('0.00')
+    total_referred_conversions = 0
+    
+    for referral in referrals:
+        referral.total_user_earnings = ReferralEarning.objects.filter(
+            referral=referral
+        ).aggregate(total=Sum('amount'))['total'] or Decimal('0.00')
+        
+        referral.conversions_count = ReferralEarning.objects.filter(
+            referral=referral
+        ).count()
+        
+        total_referred_earnings += referral.total_user_earnings
+        total_referred_conversions += referral.conversions_count
+    
+    # Calculate average earnings per user
+    average_earnings_per_user = Decimal('0.00')
+    if referrals.count() > 0:
+        average_earnings_per_user = total_referred_earnings / referrals.count()
+    
+    context = {
+        'referrals': referrals,
+        'total_referred_earnings': total_referred_earnings,
+        'total_referred_conversions': total_referred_conversions,
+        'average_earnings_per_user': average_earnings_per_user,
+    }
+    
+    return render(request, 'dashboard/referral_users.html', context)

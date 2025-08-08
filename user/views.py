@@ -6,6 +6,7 @@ from django.db import IntegrityError
 from django.contrib.auth import authenticate, login as auth_login
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
+from offers.models import ReferralLink, Referral
 
 def signup(request):
     if request.method == 'POST':
@@ -46,14 +47,52 @@ def signup(request):
                 is_active=True  # Set to False if you want to require email verification before login
             )
             
+            # Handle referral tracking - check both session and cookies
+            referral_code = request.session.get('referral_code') or request.COOKIES.get('referral_code')
+            referrer_id = request.session.get('referrer_id') or request.COOKIES.get('referrer_id')
+            
+            if referral_code and referrer_id:
+                try:
+                    # Find the referral link
+                    referral_link = ReferralLink.objects.get(
+                        referral_code=referral_code,
+                        user_id=referrer_id,
+                        is_active=True
+                    )
+                    
+                    # Create referral record
+                    Referral.objects.create(
+                        referrer=referral_link.user,
+                        referred_user=user,
+                        referral_link=referral_link
+                    )
+                    
+                    # Clear session data
+                    if 'referral_code' in request.session:
+                        del request.session['referral_code']
+                    if 'referrer_id' in request.session:
+                        del request.session['referrer_id']
+                    
+                except ReferralLink.DoesNotExist:
+                    # Invalid referral link, but continue with signup
+                    pass
+            
+            messages.success(request, 'Signup successful!')
+            
             # Assign a random manager to the user
             assigned_manager = user.assign_random_manager()
             if assigned_manager:
-                messages.success(request, f'Signup successful! Your assigned manager is {assigned_manager.name}.')
-            else:
-                messages.success(request, 'Signup successful! Please verify your email')
+                messages.success(request, f'Your assigned manager is {assigned_manager.name}.')
             
-            return render(request, 'home/signup.html')
+            # Create response to clear cookies after successful signup
+            response = render(request, 'home/signup.html')
+            if referral_code:
+                response.delete_cookie('referral_code')
+            if referrer_id:
+                response.delete_cookie('referrer_id')
+            
+            return response
+            
         except IntegrityError:
             messages.error(request, 'A user with this email already exists.')
             return render(request, 'home/signup.html', request.POST)

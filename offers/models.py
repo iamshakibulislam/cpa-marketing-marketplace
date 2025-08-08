@@ -33,6 +33,13 @@ class SiteSettings(models.Model):
         verbose_name="Site URL",
         help_text="Full site URL with protocol (e.g., https://yourdomain.com)"
     )
+    referral_percentage = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        default=5.00,
+        verbose_name="Referral Percentage",
+        help_text="Percentage of commission to give to referrers (e.g., 5.00 for 5%)"
+    )
     is_active = models.BooleanField(default=True, verbose_name="Is Active")
     created_at = models.DateTimeField(default=timezone.now, verbose_name="Created At")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Updated At")
@@ -419,7 +426,7 @@ class Conversion(models.Model):
         return f"{self.click_tracking.offer.offer_name} - ${self.payout} - {self.status.upper()} - {self.conversion_date.strftime('%Y-%m-%d')}"
     
     def save(self, *args, **kwargs):
-        """Override save method to handle balance updates"""
+        """Override save method to handle balance updates and referral earnings"""
         # Get the offer's payout amount (the amount set in admin panel)
         offer_payout = self.click_tracking.offer.payout
         
@@ -437,11 +444,16 @@ class Conversion(models.Model):
                         user = self.click_tracking.user
                         user.add_to_balance(-offer_payout)
                         logger.info(f"Conversion rejected: User {user.id} balance decreased by {offer_payout} (offer payout)")
+                        
+                        # Handle referral earnings reversal
+                        self._handle_referral_earnings_reversal()
+                        
                     elif old_status == 'rejected' and self.status == 'approved':
                         # Status changed from rejected to approved - add balance
                         user = self.click_tracking.user
                         user.add_to_balance(offer_payout)
                         logger.info(f"Conversion approved: User {user.id} balance increased by {offer_payout} (offer payout)")
+                        
                     else:
                         user = self.click_tracking.user
                         logger.info(f"Conversion updated: User {user.id} balance unchanged (status: {old_status} -> {self.status})")
@@ -454,12 +466,91 @@ class Conversion(models.Model):
                 user = self.click_tracking.user
                 user.add_to_balance(offer_payout)
                 logger.info(f"New conversion approved: User {user.id} balance increased by {offer_payout} (offer payout)")
+                
             else:
                 user = self.click_tracking.user
                 logger.info(f"New conversion created: User {user.id} balance unchanged (status: {self.status}, offer payout: {offer_payout})")
         
-        # Call the parent save method
+        # Call the parent save method first
         super().save(*args, **kwargs)
+        
+        # Handle referral earnings after the conversion is saved (so it has an ID)
+        if self.status == 'approved':
+            self._handle_referral_earnings()
+    
+    def _handle_referral_earnings(self):
+        """Handle referral earnings for this conversion"""
+        try:
+            # Check if the user was referred by someone
+            referral = Referral.objects.filter(referred_user=self.click_tracking.user, is_active=True).first()
+            
+            if referral:
+                logger.info(f"Found referral for user {self.click_tracking.user.id}: {referral.id}")
+                
+                # Get site settings for referral percentage
+                site_settings = SiteSettings.get_settings()
+                if site_settings and site_settings.referral_percentage > 0:
+                    # Calculate referral earning
+                    referral_amount = (self.click_tracking.offer.payout * site_settings.referral_percentage) / 100
+                    
+                    logger.info(f"Calculated referral amount: ${referral_amount} (offer payout: ${self.click_tracking.offer.payout}, percentage: {site_settings.referral_percentage}%)")
+                    
+                    # Check if referral earning already exists for this conversion
+                    existing_earning = ReferralEarning.objects.filter(
+                        referral=referral,
+                        conversion=self
+                    ).first()
+                    
+                    if existing_earning:
+                        logger.info(f"Referral earning already exists for conversion {self.id}: ${existing_earning.amount}")
+                        return
+                    
+                    # Create referral earning record
+                    referral_earning = ReferralEarning.objects.create(
+                        referral=referral,
+                        conversion=self,
+                        amount=referral_amount,
+                        percentage_used=site_settings.referral_percentage
+                    )
+                    
+                    logger.info(f"Created referral earning record: {referral_earning.id}")
+                    
+                    # Add to referrer's balance
+                    referrer = referral.referrer
+                    old_balance = referrer.balance
+                    referrer.add_to_balance(referral_amount)
+                    new_balance = referrer.balance
+                    
+                    logger.info(f"Referral earning: User {referrer.id} balance updated from ${old_balance} to ${new_balance} (+${referral_amount}) from referral {referral.id}")
+                    
+                else:
+                    logger.warning(f"No site settings found or referral percentage is 0 for conversion {self.id}")
+            else:
+                logger.info(f"No active referral found for user {self.click_tracking.user.id}")
+                
+        except Exception as e:
+            logger.error(f"Error handling referral earnings for conversion {self.id}: {str(e)}")
+            import traceback
+            logger.error(f"Traceback: {traceback.format_exc()}")
+    
+    def _handle_referral_earnings_reversal(self):
+        """Handle referral earnings reversal when conversion is rejected"""
+        try:
+            # Find existing referral earnings for this conversion
+            referral_earnings = ReferralEarning.objects.filter(conversion=self)
+            
+            for earning in referral_earnings:
+                # Deduct from referrer's balance
+                referrer = earning.referral.referrer
+                referrer.add_to_balance(-earning.amount)
+                
+                # Delete the referral earning record
+                earning.delete()
+                
+                logger.info(f"Referral earning reversed: User {referrer.id} lost ${earning.amount} from referral {earning.referral.id}")
+                
+        except Exception as e:
+            logger.error(f"Error handling referral earnings reversal for conversion {self.id}: {str(e)}")
 
 
 # Custom form for admin
@@ -652,4 +743,101 @@ class Invoice(models.Model):
         """Mark invoice as rejected"""
         self.status = 'rejected'
         self.save()
+
+
+class ReferralLink(models.Model):
+    """Referral link for users to share"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='referral_links', verbose_name="Referrer")
+    referral_code = models.CharField(max_length=50, unique=True, verbose_name="Referral Code")
+    is_active = models.BooleanField(default=True, verbose_name="Is Active")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Created At")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Updated At")
+    
+    class Meta:
+        verbose_name = "Referral Link"
+        verbose_name_plural = "Referral Links"
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"Referral Link for {self.user.full_name} ({self.referral_code})"
+    
+    def save(self, *args, **kwargs):
+        if not self.referral_code:
+            self.referral_code = self.generate_referral_code()
+        super().save(*args, **kwargs)
+    
+    def generate_referral_code(self):
+        """Generate a unique referral code"""
+        while True:
+            code = str(uuid.uuid4())[:8].upper()
+            if not ReferralLink.objects.filter(referral_code=code).exists():
+                return code
+    
+    @property
+    def referral_url(self):
+        """Get the full referral URL"""
+        from django.conf import settings
+        site_settings = SiteSettings.get_settings()
+        if site_settings:
+            return f"{site_settings.site_url}/ref/{self.referral_code}/"
+        return f"/ref/{self.referral_code}/"
+    
+    @property
+    def total_referrals(self):
+        """Get total number of referrals"""
+        return self.referrals.count()
+    
+    @property
+    def total_earnings(self):
+        """Get total earnings from referrals"""
+        return sum(referral.total_earnings for referral in self.referrals.all())
+
+
+class Referral(models.Model):
+    """Track referrals between users"""
+    referrer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='referrals_given', verbose_name="Referrer")
+    referred_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='referrals_received', verbose_name="Referred User")
+    referral_link = models.ForeignKey(ReferralLink, on_delete=models.CASCADE, related_name='referrals', verbose_name="Referral Link")
+    referred_at = models.DateTimeField(auto_now_add=True, verbose_name="Referred At")
+    is_active = models.BooleanField(default=True, verbose_name="Is Active")
+    
+    class Meta:
+        verbose_name = "Referral"
+        verbose_name_plural = "Referrals"
+        unique_together = ['referrer', 'referred_user']
+        ordering = ['-referred_at']
+    
+    def __str__(self):
+        return f"{self.referrer.full_name} → {self.referred_user.full_name}"
+    
+    @property
+    def total_earnings(self):
+        """Calculate total earnings from this referred user"""
+        return sum(earning.amount for earning in self.referral_earnings.all())
+
+
+class ReferralEarning(models.Model):
+    """Track earnings from referrals"""
+    referral = models.ForeignKey(Referral, on_delete=models.CASCADE, related_name='referral_earnings', verbose_name="Referral")
+    conversion = models.ForeignKey(Conversion, on_delete=models.CASCADE, related_name='referral_earnings', verbose_name="Conversion")
+    amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Earning Amount")
+    percentage_used = models.DecimalField(max_digits=5, decimal_places=2, verbose_name="Percentage Used")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Created At")
+    
+    class Meta:
+        verbose_name = "Referral Earning"
+        verbose_name_plural = "Referral Earnings"
+        ordering = ['-created_at']
+        unique_together = ['referral', 'conversion']
+    
+    def __str__(self):
+        return f"${self.amount} from {self.referral.referred_user.full_name}"
+    
+    @property
+    def formatted_amount(self):
+        return f"${self.amount:,.2f}"
+    
+    @property
+    def formatted_percentage(self):
+        return f"{self.percentage_used}%"
 

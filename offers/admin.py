@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.utils.html import format_html
 from django.utils import timezone
-from .models import Offer, OfferAdminForm, UserOfferRequest, ClickTracking, Conversion, SiteSettings, CPANetwork, Manager, PaymentMethod, Invoice
+from .models import Offer, OfferAdminForm, UserOfferRequest, ClickTracking, Conversion, SiteSettings, CPANetwork, Manager, PaymentMethod, Invoice, ReferralLink, Referral, ReferralEarning
 
 @admin.register(CPANetwork)
 class CPANetworkAdmin(admin.ModelAdmin):
@@ -136,6 +136,7 @@ class SiteSettingsAdmin(admin.ModelAdmin):
         'site_name',
         'domain_name',
         'site_url',
+        'referral_percentage',
         'is_active',
         'created_at'
     ]
@@ -147,6 +148,10 @@ class SiteSettingsAdmin(admin.ModelAdmin):
     fieldsets = (
         ('Basic Information', {
             'fields': ('site_name', 'domain_name', 'site_url', 'is_active')
+        }),
+        ('Referral Settings', {
+            'fields': ('referral_percentage',),
+            'description': 'Configure referral commission percentage for affiliates'
         }),
         ('Timestamps', {
             'fields': ('created_at', 'updated_at'),
@@ -475,3 +480,113 @@ class InvoiceAdmin(admin.ModelAdmin):
             level='SUCCESS'
         )
     mark_as_rejected.short_description = "Mark selected invoices as rejected"
+
+@admin.register(ReferralLink)
+class ReferralLinkAdmin(admin.ModelAdmin):
+    list_display = [
+        'user',
+        'referral_code',
+        'total_referrals',
+        'total_earnings',
+        'is_active',
+        'created_at'
+    ]
+    
+    list_filter = ['is_active', 'created_at']
+    
+    search_fields = [
+        'user__full_name',
+        'user__email',
+        'referral_code'
+    ]
+    
+    readonly_fields = ['referral_code', 'created_at', 'updated_at']
+    
+    fieldsets = (
+        ('Basic Information', {
+            'fields': ('user', 'is_active')
+        }),
+        ('Referral Details', {
+            'fields': ('referral_code',)
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def total_referrals(self, obj):
+        return obj.total_referrals
+    total_referrals.short_description = 'Total Referrals'
+    
+    def total_earnings(self, obj):
+        return f"${obj.total_earnings:,.2f}"
+    total_earnings.short_description = 'Total Earnings'
+
+
+@admin.register(Referral)
+class ReferralAdmin(admin.ModelAdmin):
+    list_display = [
+        'referrer',
+        'referred_user',
+        'referral_link',
+        'total_earnings',
+        'referred_at',
+        'is_active'
+    ]
+    
+    list_filter = ['is_active', 'referred_at']
+    
+    search_fields = [
+        'referrer__full_name',
+        'referrer__email',
+        'referred_user__full_name',
+        'referred_user__email'
+    ]
+    
+    readonly_fields = ['referred_at']
+    
+    fieldsets = (
+        ('Referral Information', {
+            'fields': ('referrer', 'referred_user', 'referral_link', 'is_active')
+        }),
+        ('Timestamps', {
+            'fields': ('referred_at',),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def total_earnings(self, obj):
+        return f"${obj.total_earnings:,.2f}"
+    total_earnings.short_description = 'Total Earnings'
+
+
+@admin.register(ReferralEarning)
+class ReferralEarningAdmin(admin.ModelAdmin):
+    list_display = [
+        'referral',
+        'conversion',
+        'amount',
+        'percentage_used',
+        'created_at'
+    ]
+    
+    list_filter = ['created_at', 'percentage_used']
+    
+    search_fields = [
+        'referral__referrer__full_name',
+        'referral__referred_user__full_name',
+        'conversion__click_tracking__offer__offer_name'
+    ]
+    
+    readonly_fields = ['created_at']
+    
+    fieldsets = (
+        ('Earning Information', {
+            'fields': ('referral', 'conversion', 'amount', 'percentage_used')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at',),
+            'classes': ('collapse',)
+        }),
+    )
