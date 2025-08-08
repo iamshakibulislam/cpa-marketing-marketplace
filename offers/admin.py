@@ -3,8 +3,8 @@ from django.urls import path
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.utils.html import format_html
-from .models import Offer, OfferAdminForm, UserOfferRequest, ClickTracking, Conversion, SiteSettings, CPANetwork, Manager
 from django.utils import timezone
+from .models import Offer, OfferAdminForm, UserOfferRequest, ClickTracking, Conversion, SiteSettings, CPANetwork, Manager, PaymentMethod
 
 @admin.register(CPANetwork)
 class CPANetworkAdmin(admin.ModelAdmin):
@@ -361,6 +361,8 @@ class ConversionAdmin(admin.ModelAdmin):
     
     readonly_fields = ['conversion_date']
     
+    list_editable = ['status']
+    
     fieldsets = (
         ('Conversion Information', {
             'fields': ('click_tracking', 'conversion_date', 'payout', 'status')
@@ -370,6 +372,13 @@ class ConversionAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
+    
+    def get_queryset(self, request):
+        """Custom queryset to include related data"""
+        return super().get_queryset(request).select_related(
+            'click_tracking__user', 
+            'click_tracking__offer'
+        )
 
 @admin.register(Manager)
 class ManagerAdmin(admin.ModelAdmin):
@@ -378,3 +387,27 @@ class ManagerAdmin(admin.ModelAdmin):
     search_fields = ['name', 'email', 'telegram']
     ordering = ['name']
     readonly_fields = ['created_at', 'updated_at']
+
+@admin.register(PaymentMethod)
+class PaymentMethodAdmin(admin.ModelAdmin):
+    list_display = ['user', 'binance_email', 'status', 'created_at', 'updated_at']
+    list_filter = ['status', 'created_at', 'updated_at']
+    search_fields = ['user__email', 'binance_email']
+    readonly_fields = ['created_at', 'updated_at']
+    list_editable = ['status']
+    
+    fieldsets = (
+        ('User Information', {
+            'fields': ('user', 'binance_email')
+        }),
+        ('ID Verification', {
+            'fields': ('id_front', 'id_back')
+        }),
+        ('Status & Notes', {
+            'fields': ('status', 'admin_notes')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )

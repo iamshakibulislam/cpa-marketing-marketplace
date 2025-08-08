@@ -6,6 +6,10 @@ import uuid
 import datetime
 import requests
 import json
+import logging
+
+# Set up logging
+logger = logging.getLogger(__name__)
 
 def generate_click_id(user_id, offer_id):
     """Generate unique click ID"""
@@ -381,11 +385,28 @@ class ClickTracking(models.Model):
 
 
 class Conversion(models.Model):
-    """Track conversions from CPA networks"""
+    """
+    Track conversions from CPA networks
+    
+    This model automatically updates the user's balance when:
+    - A new conversion is created with 'approved' status (adds the offer's payout amount)
+    - An existing conversion's status changes to 'approved' (adds the offer's payout amount)
+    - An existing conversion's status changes from 'approved' to 'rejected' (subtracts the offer's payout amount)
+    - An existing conversion's status changes from 'rejected' to 'approved' (adds the offer's payout amount)
+    
+    The balance updates use the offer's payout amount (set in admin panel) NOT the network payout.
+    The balance updates are handled in the save() method and use the User.add_to_balance() method
+    for safe balance updates with proper logging.
+    """
+    STATUS_CHOICES = [
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]
+    
     click_tracking = models.ForeignKey(ClickTracking, on_delete=models.CASCADE, verbose_name="Click Tracking")
     conversion_date = models.DateTimeField(default=timezone.now, verbose_name="Conversion Date")
     payout = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Payout (USD)")
-    status = models.CharField(max_length=20, default='pending', verbose_name="Status")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='approved', verbose_name="Status")
     network_click_id = models.CharField(max_length=100, blank=True, null=True, verbose_name="Network Click ID")
     network_payout = models.CharField(max_length=100, blank=True, null=True, verbose_name="Network Payout")
     
@@ -395,7 +416,50 @@ class Conversion(models.Model):
         ordering = ['-conversion_date']
     
     def __str__(self):
-        return f"{self.click_tracking.offer.offer_name} - ${self.payout} - {self.conversion_date.strftime('%Y-%m-%d')}"
+        return f"{self.click_tracking.offer.offer_name} - ${self.payout} - {self.status.upper()} - {self.conversion_date.strftime('%Y-%m-%d')}"
+    
+    def save(self, *args, **kwargs):
+        """Override save method to handle balance updates"""
+        # Get the offer's payout amount (the amount set in admin panel)
+        offer_payout = self.click_tracking.offer.payout
+        
+        # Check if this is a new conversion or an update
+        if self.pk:
+            # This is an update - check if status changed
+            try:
+                old_conversion = Conversion.objects.get(pk=self.pk)
+                old_status = old_conversion.status
+                
+                # Handle status changes
+                if old_status != self.status:
+                    if old_status == 'approved' and self.status == 'rejected':
+                        # Status changed from approved to rejected - deduct balance
+                        user = self.click_tracking.user
+                        user.add_to_balance(-offer_payout)
+                        logger.info(f"Conversion rejected: User {user.id} balance decreased by {offer_payout} (offer payout)")
+                    elif old_status == 'rejected' and self.status == 'approved':
+                        # Status changed from rejected to approved - add balance
+                        user = self.click_tracking.user
+                        user.add_to_balance(offer_payout)
+                        logger.info(f"Conversion approved: User {user.id} balance increased by {offer_payout} (offer payout)")
+                    else:
+                        user = self.click_tracking.user
+                        logger.info(f"Conversion updated: User {user.id} balance unchanged (status: {old_status} -> {self.status})")
+            except Conversion.DoesNotExist:
+                # This shouldn't happen, but handle it gracefully
+                pass
+        else:
+            # This is a new conversion - add the offer payout if status is approved
+            if self.status == 'approved' and offer_payout > 0:
+                user = self.click_tracking.user
+                user.add_to_balance(offer_payout)
+                logger.info(f"New conversion approved: User {user.id} balance increased by {offer_payout} (offer payout)")
+            else:
+                user = self.click_tracking.user
+                logger.info(f"New conversion created: User {user.id} balance unchanged (status: {self.status}, offer payout: {offer_payout})")
+        
+        # Call the parent save method
+        super().save(*args, **kwargs)
 
 
 # Custom form for admin
@@ -479,4 +543,28 @@ class Manager(models.Model):
         # Remove any non-digit characters except +
         clean_number = ''.join(c for c in self.whatsapp if c.isdigit() or c == '+')
         return f"https://wa.me/{clean_number}"
+
+
+class PaymentMethod(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='payment_methods')
+    binance_email = models.EmailField()
+    id_front = models.ImageField(upload_to='payment_ids/front/')
+    id_back = models.ImageField(upload_to='payment_ids/back/')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    admin_notes = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"{self.user.email} - {self.binance_email} ({self.status})"
+    
+    class Meta:
+        verbose_name = "Payment Method"
+        verbose_name_plural = "Payment Methods"
 

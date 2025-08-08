@@ -408,29 +408,26 @@ def handle_postback(request):
         except ClickTracking.DoesNotExist:
             return HttpResponse("Click tracking record not found", status=404)
 
-        # Convert payout to decimal
-        try:
-            payout = float(network_payout) if network_payout else 0.0
-        except (ValueError, TypeError):
-            payout = 0.0
+        # Use the offer's payout amount (set in admin panel) instead of network payout
+        offer_payout = click_tracking.offer.payout
 
         # Create or update conversion record
         conversion, created = Conversion.objects.get_or_create(
             click_tracking=click_tracking,
             defaults={
-                'payout': payout,
+                'payout': offer_payout,  # Use offer payout instead of network payout
                 'status': 'approved', # Default status for new conversions
                 'network_click_id': network_click_id,
-                'network_payout': network_payout
+                'network_payout': network_payout  # Store network payout for reference
             }
         )
 
         if not created:
             # Update existing conversion
-            conversion.payout = payout
+            conversion.payout = offer_payout  # Use offer payout instead of network payout
             conversion.network_click_id = network_click_id
             conversion.network_payout = network_payout
-            conversion.save()
+            conversion.save()  # This will automatically handle balance updates
 
         return HttpResponse("OK", status=200)
 
@@ -1142,3 +1139,44 @@ def subid_reports(request):
     }
     
     return render(request, 'dashboard/subid_report.html', context)
+
+@login_required
+def payment_methods(request):
+    """Handle payment method submission and display"""
+    from .models import PaymentMethod
+    
+    # Get user's payment methods
+    approved_payment = PaymentMethod.objects.filter(user=request.user, status='approved').first()
+    pending_payment = PaymentMethod.objects.filter(user=request.user, status='pending').first()
+    rejected_payment = PaymentMethod.objects.filter(user=request.user, status='rejected').first()
+    
+    # Determine if user can add a new payment method
+    can_add_payment = not (approved_payment or pending_payment)
+    
+    if request.method == 'POST':
+        binance_email = request.POST.get('binance_email')
+        id_front = request.FILES.get('id_front')
+        id_back = request.FILES.get('id_back')
+        
+        if binance_email and id_front and id_back:
+            # Create new payment method
+            payment_method = PaymentMethod.objects.create(
+                user=request.user,
+                binance_email=binance_email,
+                id_front=id_front,
+                id_back=id_back,
+                status='pending'
+            )
+            messages.success(request, 'Payment method submitted successfully! It will be reviewed by our admin team.')
+            return redirect('payment_methods')
+        else:
+            messages.error(request, 'Please fill in all required fields.')
+    
+    context = {
+        'approved_payment': approved_payment,
+        'pending_payment': pending_payment,
+        'rejected_payment': rejected_payment,
+        'can_add_payment': can_add_payment,
+    }
+    
+    return render(request, 'dashboard/payment.html', context)

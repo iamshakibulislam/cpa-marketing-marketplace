@@ -1,5 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
+from decimal import Decimal
+import logging
+
+# Set up logging
+logger = logging.getLogger(__name__)
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -35,6 +40,15 @@ class User(AbstractBaseUser, PermissionsMixin):
     promotion_description = models.TextField(blank=True, help_text="How will you promote CPA/CPL offers or landing page URL")
     heard_about_us = models.CharField(max_length=255, blank=True, help_text="How did you hear about us?")
     
+    # Balance field with default value of 0
+    balance = models.DecimalField(
+        max_digits=10, 
+        decimal_places=2, 
+        default=0.00,
+        verbose_name="Balance",
+        help_text="User's current balance in USD"
+    )
+    
     # Manager assignment
     manager = models.ForeignKey(
         'offers.Manager',
@@ -56,6 +70,45 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+    
+    def add_to_balance(self, amount):
+        """
+        Safely add amount to user's balance
+        
+        This method ensures that:
+        - The amount is properly converted to Decimal for precision
+        - The balance never goes negative (sets to 0.00 if it would)
+        - All balance updates are logged for audit purposes
+        
+        Args:
+            amount (Decimal or float): Amount to add to balance (positive for credit, negative for debit)
+            
+        Returns:
+            Decimal: New balance after the update
+            
+        Example:
+            user.add_to_balance(25.50)  # Adds $25.50 to balance
+            user.add_to_balance(-10.00) # Subtracts $10.00 from balance
+        """
+        if not isinstance(amount, Decimal):
+            amount = Decimal(str(amount))
+        
+        old_balance = self.balance
+        self.balance += amount
+        
+        # Ensure balance doesn't go negative
+        if self.balance < 0:
+            self.balance = Decimal('0.00')
+            logger.warning(f"User {self.id} balance would have gone negative. Set to 0.00")
+        
+        self.save()
+        
+        logger.info(f"User {self.id} balance updated: {old_balance} + {amount} = {self.balance}")
+        return self.balance
+    
+    def get_balance_display(self):
+        """Return formatted balance for display"""
+        return f"${self.balance:,.2f}"
     
     def assign_random_manager(self):
         """Assign a random active manager to this user"""
