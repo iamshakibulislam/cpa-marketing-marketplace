@@ -1,0 +1,362 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Referral Dashboard - CPA Network{% endblock %}
+
+{% block content %}
+<!--app-content open-->
+<div class="app-content">
+	<div class="side-app">
+
+		<!-- PAGE-HEADER -->
+		<div class="page-header">
+			<div>
+				<h1 class="page-title">Referral Dashboard</h1>
+				<ol class="breadcrumb">
+					<li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+					<li class="breadcrumb-item active">Referral Dashboard</li>
+				</ol>
+			</div>
+		</div>
+		<!-- PAGE-HEADER END -->
+
+		<!-- ROW -->
+		<div class="row">
+			<!-- Referral Link Card -->
+			<div class="col-xl-12 col-lg-12">
+				<div class="card">
+					<div class="card-header bg-primary-gradient">
+						<h3 class="card-title text-white mb-0">
+							<i class="fas fa-share-alt me-2"></i>Your Referral Link
+						</h3>
+					</div>
+					<div class="card-body">
+						<div class="row align-items-center">
+							<div class="col-md-8">
+								<div class="input-group">
+									<input type="text" class="form-control" id="referralLink" value="{{ referral_link.referral_url }}" readonly>
+									<button class="btn btn-primary" type="button" onclick="copyReferralLink()">
+										<i class="fas fa-copy me-1"></i>Copy Link
+									</button>
+								</div>
+								<small class="text-muted mt-2 d-block">
+									Share this link with others to earn {{ site_settings.referral_percentage|default:5 }}% commission on their earnings!
+								</small>
+								<div class="alert alert-info mt-3" role="alert">
+									<div class="d-flex align-items-center">
+										<i class="fas fa-info-circle me-2"></i>
+										<div>
+											<strong>Cookie-Based Tracking:</strong> Our referral system uses cookies to track referrals across all pages. 
+											When someone clicks your referral link, the system will remember them for 30 days, even if they visit other pages or come back later.
+										</div>
+									</div>
+								</div>
+								
+								<!-- Current Referral Status (for testing) -->
+								{% if has_active_referral and current_referral %}
+								<div class="alert alert-warning mt-3" role="alert">
+									<div class="d-flex align-items-center">
+										<i class="fas fa-exclamation-triangle me-2"></i>
+										<div>
+											<strong>Active Referral Detected:</strong> You are currently being tracked as a referral of 
+											<strong>{{ current_referral.user.full_name }}</strong>. This tracking will persist for 30 days.
+										</div>
+									</div>
+								</div>
+								{% endif %}
+							</div>
+							<div class="col-md-4 text-end">
+								<div class="d-flex flex-column align-items-end">
+									<span class="h2 text-primary mb-0">{{ total_referrals }}</span>
+									<small class="text-muted">Total Referrals</small>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- ROW END -->
+
+		<!-- ROW -->
+		<div class="row">
+			<!-- Total Earnings Card -->
+			<div class="col-xl-3 col-lg-6 col-md-6">
+				<div class="card">
+					<div class="card-body">
+						<div class="row">
+							<div class="col-8">
+								<div class="mt-0 text-start">
+									<span class="fs-14 font-weight-semibold">Total Earnings</span>
+									<h3 class="mb-0 mt-1 text-primary">${{ total_earnings|floatformat:2 }}</h3>
+								</div>
+							</div>
+							<div class="col-4">
+								<div class="mt-0 text-end">
+									<span class="fs-25 text-primary"><i class="fas fa-dollar-sign"></i></span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Total Referrals Card -->
+			<div class="col-xl-3 col-lg-6 col-md-6">
+				<div class="card">
+					<div class="card-body">
+						<div class="row">
+							<div class="col-8">
+								<div class="mt-0 text-start">
+									<span class="fs-14 font-weight-semibold">Total Referrals</span>
+									<h3 class="mb-0 mt-1 text-success">{{ total_referrals }}</h3>
+								</div>
+							</div>
+							<div class="col-4">
+								<div class="mt-0 text-end">
+									<span class="fs-25 text-success"><i class="fas fa-users"></i></span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Active Referrals Card -->
+			<div class="col-xl-3 col-lg-6 col-md-6">
+				<div class="card">
+					<div class="card-body">
+						<div class="row">
+							<div class="col-8">
+								<div class="mt-0 text-start">
+									<span class="fs-14 font-weight-semibold">Active Referrals</span>
+									<h3 class="mb-0 mt-1 text-info">{{ referrals.count }}</h3>
+								</div>
+							</div>
+							<div class="col-4">
+								<div class="mt-0 text-end">
+									<span class="fs-25 text-info"><i class="fas fa-user-check"></i></span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Commission Rate Card -->
+			<div class="col-xl-3 col-lg-6 col-md-6">
+				<div class="card">
+					<div class="card-body">
+						<div class="row">
+							<div class="col-8">
+								<div class="mt-0 text-start">
+									<span class="fs-14 font-weight-semibold">Commission Rate</span>
+									<h3 class="mb-0 mt-1 text-warning">{{ site_settings.referral_percentage|default:5 }}%</h3>
+								</div>
+							</div>
+							<div class="col-4">
+								<div class="mt-0 text-end">
+									<span class="fs-25 text-warning"><i class="fas fa-percentage"></i></span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- ROW END -->
+
+		<!-- ROW -->
+		<div class="row">
+			<!-- Referred Users -->
+			<div class="col-xl-8 col-lg-8">
+				<div class="card">
+					<div class="card-header">
+						<h3 class="card-title">Referred Users</h3>
+						<div class="card-options">
+							<a href="{% url 'referral_users' %}" class="btn btn-primary btn-sm">View All</a>
+						</div>
+					</div>
+					<div class="card-body">
+						{% if earnings_by_user %}
+						<div class="table-responsive">
+							<table class="table table-bordered text-nowrap border-bottom">
+								<thead>
+									<tr>
+										<th class="border-bottom-0">User</th>
+										<th class="border-bottom-0">Referred Date</th>
+										<th class="border-bottom-0">Conversions</th>
+										<th class="border-bottom-0">Earnings</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for earning in earnings_by_user %}
+									<tr>
+										<td>
+											<div class="d-flex align-items-center">
+												<div class="me-3">
+													<span class="avatar avatar-md bg-primary-gradient rounded-circle">
+														<i class="fas fa-user text-white"></i>
+													</span>
+												</div>
+												<div>
+													<h6 class="mb-0 fw-semibold">{{ earning.referred_user.full_name }}</h6>
+													<small class="text-muted">{{ earning.referred_user.email }}</small>
+												</div>
+											</div>
+										</td>
+										<td>
+											<span class="text-muted">{{ earning.referred_at|date:"M d, Y" }}</span>
+										</td>
+										<td>
+											<span class="badge bg-success">{{ earning.conversions_count }}</span>
+										</td>
+										<td>
+											<span class="fw-semibold fs-16 text-primary">${{ earning.total_earnings|floatformat:2 }}</span>
+										</td>
+									</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+						</div>
+						{% else %}
+						<div class="text-center py-5">
+							<div class="mb-4">
+								<span class="avatar avatar-xxl bg-light rounded-circle">
+									<i class="fas fa-users text-muted" style="font-size: 3rem;"></i>
+								</span>
+							</div>
+							<h4 class="text-muted mb-3">No Referrals Yet</h4>
+							<p class="text-muted mb-4">Start sharing your referral link to earn commissions from your referrals!</p>
+						</div>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+
+			<!-- Recent Earnings -->
+			<div class="col-xl-4 col-lg-4">
+				<div class="card">
+					<div class="card-header">
+						<h3 class="card-title">Recent Earnings</h3>
+						<div class="card-options">
+							<a href="{% url 'referral_earnings' %}" class="btn btn-primary btn-sm">View All</a>
+						</div>
+					</div>
+					<div class="card-body">
+						{% if recent_earnings %}
+						<div class="list-group list-group-flush">
+							{% for earning in recent_earnings %}
+							<div class="list-group-item border-0 px-0">
+								<div class="d-flex align-items-center">
+									<div class="me-3">
+										<span class="avatar avatar-sm bg-success-gradient rounded-circle">
+											<i class="fas fa-dollar-sign text-white"></i>
+										</span>
+									</div>
+									<div class="flex-grow-1">
+										<h6 class="mb-1">{{ earning.referral.referred_user.full_name }}</h6>
+										<small class="text-muted">{{ earning.created_at|date:"M d, Y" }}</small>
+									</div>
+									<div class="text-end">
+										<span class="fw-semibold text-success">${{ earning.amount|floatformat:2 }}</span>
+									</div>
+								</div>
+							</div>
+							{% endfor %}
+						</div>
+						{% else %}
+						<div class="text-center py-4">
+							<span class="avatar avatar-lg bg-light rounded-circle">
+								<i class="fas fa-dollar-sign text-muted" style="font-size: 2rem;"></i>
+							</span>
+							<p class="text-muted mt-3 mb-0">No earnings yet</p>
+						</div>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- ROW END -->
+
+	</div>
+</div>
+<!--app-content close-->
+
+<script>
+function copyReferralLink() {
+    const referralLink = document.getElementById('referralLink');
+    referralLink.select();
+    referralLink.setSelectionRange(0, 99999);
+    document.execCommand('copy');
+    
+    // Show success message
+    const button = event.target;
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-check me-1"></i>Copied!';
+    button.classList.remove('btn-primary');
+    button.classList.add('btn-success');
+    
+    setTimeout(() => {
+        button.innerHTML = originalText;
+        button.classList.remove('btn-success');
+        button.classList.add('btn-primary');
+    }, 2000);
+}
+</script>
+
+<style>
+.card {
+    border: none;
+    box-shadow: 0 0 20px rgba(0,0,0,0.08);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+}
+
+.bg-primary-gradient {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+}
+
+.bg-success-gradient {
+    background: linear-gradient(45deg, #28a745, #1e7e34);
+}
+
+.avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.table {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.table thead th {
+    background: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+    color: #495057;
+}
+
+.badge {
+    font-size: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+}
+
+.list-group-item {
+    border: none;
+    padding: 1rem 0;
+}
+
+.list-group-item:not(:last-child) {
+    border-bottom: 1px solid #e9ecef;
+}
+</style>
+{% endblock %} 

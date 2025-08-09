@@ -1,0 +1,197 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Referred Users - CPA Network{% endblock %}
+
+{% block content %}
+<!--app-content open-->
+<div class="app-content">
+	<div class="side-app">
+
+		<!-- PAGE-HEADER -->
+		<div class="page-header">
+			<div>
+				<h1 class="page-title">Referred Users</h1>
+				<ol class="breadcrumb">
+					<li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+					<li class="breadcrumb-item"><a href="{% url 'referral_dashboard' %}">Referrals</a></li>
+					<li class="breadcrumb-item active">Referred Users</li>
+				</ol>
+			</div>
+		</div>
+		<!-- PAGE-HEADER END -->
+
+		<!-- ROW -->
+		<div class="row">
+			<div class="col-12">
+				<div class="card">
+					<div class="card-header">
+						<h3 class="card-title">Your Referred Users</h3>
+						<div class="card-options">
+							<span class="text-muted">Users you've referred and their performance</span>
+						</div>
+					</div>
+					<div class="card-body">
+						{% if referrals %}
+						<div class="table-responsive">
+							<table class="table table-bordered text-nowrap border-bottom">
+								<thead>
+									<tr>
+										<th class="border-bottom-0">User</th>
+										<th class="border-bottom-0">Referred Date</th>
+										<th class="border-bottom-0">Conversions</th>
+										<th class="border-bottom-0">Total Earnings</th>
+										<th class="border-bottom-0">Status</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for referral in referrals %}
+									<tr>
+										<td>
+											<div class="d-flex align-items-center">
+												<div class="me-3">
+													<span class="avatar avatar-md bg-primary-gradient rounded-circle">
+														<i class="fas fa-user text-white"></i>
+													</span>
+												</div>
+												<div>
+													<h6 class="mb-0 fw-semibold">{{ referral.referred_user.full_name }}</h6>
+													<small class="text-muted">{{ referral.referred_user.email }}</small>
+												</div>
+											</div>
+										</td>
+										<td>
+											<span class="text-muted">{{ referral.referred_at|date:"M d, Y" }}</span>
+										</td>
+										<td>
+											<span class="badge bg-success">{{ referral.conversions_count }}</span>
+										</td>
+										<td>
+											<span class="fw-semibold fs-16 text-primary">${{ referral.total_user_earnings|floatformat:2 }}</span>
+										</td>
+										<td>
+											{% if referral.is_active %}
+												<span class="badge bg-success">Active</span>
+											{% else %}
+												<span class="badge bg-secondary">Inactive</span>
+											{% endif %}
+										</td>
+									</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+						</div>
+						{% else %}
+						<div class="text-center py-5">
+							<div class="mb-4">
+								<span class="avatar avatar-xxl bg-light rounded-circle">
+									<i class="fas fa-users text-muted" style="font-size: 3rem;"></i>
+								</span>
+							</div>
+							<h4 class="text-muted mb-3">No Referred Users Yet</h4>
+							<p class="text-muted mb-4">Start sharing your referral link to see referred users here!</p>
+							<a href="{% url 'referral_dashboard' %}" class="btn btn-primary">
+								<i class="fas fa-share-alt me-2"></i>Get Your Referral Link
+							</a>
+						</div>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- ROW END -->
+
+		<!-- ROW -->
+		{% if referrals %}
+		<div class="row">
+			<div class="col-12">
+				<div class="card">
+					<div class="card-header">
+						<h3 class="card-title">Performance Summary</h3>
+					</div>
+					<div class="card-body">
+						<div class="row">
+							<div class="col-md-3">
+								<div class="text-center">
+									<div class="h2 text-primary mb-0">{{ referrals.count }}</div>
+									<small class="text-muted">Total Referred Users</small>
+								</div>
+							</div>
+							<div class="col-md-3">
+								<div class="text-center">
+									<div class="h2 text-success mb-0">
+										{{ total_referred_conversions }}
+									</div>
+									<small class="text-muted">Total Conversions</small>
+								</div>
+							</div>
+							<div class="col-md-3">
+								<div class="text-center">
+									<div class="h2 text-info mb-0">
+										${{ total_referred_earnings|floatformat:2 }}
+									</div>
+									<small class="text-muted">Total Earnings</small>
+								</div>
+							</div>
+							<div class="col-md-3">
+								<div class="text-center">
+									<div class="h2 text-warning mb-0">
+										${{ average_earnings_per_user|floatformat:2 }}
+									</div>
+									<small class="text-muted">Average Earnings per User</small>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		{% endif %}
+		<!-- ROW END -->
+
+	</div>
+</div>
+<!--app-content close-->
+
+<style>
+.card {
+    border: none;
+    box-shadow: 0 0 20px rgba(0,0,0,0.08);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+}
+
+.bg-primary-gradient {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+}
+
+.avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.table {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.table thead th {
+    background: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+    color: #495057;
+}
+
+.badge {
+    font-size: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+}
+</style>
+{% endblock %} 
