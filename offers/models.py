@@ -841,3 +841,18 @@ class ReferralEarning(models.Model):
     def formatted_percentage(self):
         return f"{self.percentage_used}%"
 
+
+class Noticeboard(models.Model):
+    content = models.TextField()
+    is_active = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'Notice'
+        verbose_name_plural = 'Noticeboard'
+    
+    def __str__(self):
+        return f"Notice - {self.content[:50]}{'...' if len(self.content) > 50 else ''}"
+

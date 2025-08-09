@@ -104,7 +104,12 @@ def signup(request):
 
 
 def dashboard(request):
-    return render(request, 'dashboard/index.html')
+    from offers.models import Noticeboard
+    active_notices = Noticeboard.objects.filter(is_active=True)
+    context = {
+        'active_notices': active_notices,
+    }
+    return render(request, 'dashboard/index.html', context)
 
 
 def login(request):

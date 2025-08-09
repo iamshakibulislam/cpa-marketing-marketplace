@@ -12,6 +12,15 @@ Dashboard
 <div class="app-content">
 	<div class="side-app">
 
+		<!-- Active Notices -->
+		{% if active_notices %}
+			{% for notice in active_notices %}
+				<div class="alert alert-danger text-center mb-3" style="background-color: #dc3545; color: white; border: none; border-radius: 8px; margin: 15px 0; padding: 15px 20px; font-weight: 500; box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);">
+					<div style="color: white; line-height: 1.5;">{{ notice.content|linebreaks }}</div>
+				</div>
+			{% endfor %}
+		{% endif %}
+
 		<div class="page-header">
 			<div>
 				<h1 class="page-title">Dashboard</h1>

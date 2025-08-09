@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.utils.html import format_html
 from django.utils import timezone
-from .models import Offer, OfferAdminForm, UserOfferRequest, ClickTracking, Conversion, SiteSettings, CPANetwork, Manager, PaymentMethod, Invoice, ReferralLink, Referral, ReferralEarning
+from .models import Offer, OfferAdminForm, UserOfferRequest, ClickTracking, Conversion, SiteSettings, CPANetwork, Manager, PaymentMethod, Invoice, ReferralLink, Referral, ReferralEarning, Noticeboard
 
 @admin.register(CPANetwork)
 class CPANetworkAdmin(admin.ModelAdmin):
@@ -590,3 +590,39 @@ class ReferralEarningAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
+
+
+@admin.register(Noticeboard)
+class NoticeboardAdmin(admin.ModelAdmin):
+    list_display = ['content_preview', 'is_active', 'created_at', 'updated_at']
+    list_filter = ['is_active', 'created_at']
+    search_fields = ['content']
+    list_editable = ['is_active']
+    ordering = ['-created_at']
+    actions = ['activate_notices', 'deactivate_notices']
+    
+    fieldsets = (
+        ('Notice Information', {
+            'fields': ('content', 'is_active')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    readonly_fields = ['created_at', 'updated_at']
+    
+    def content_preview(self, obj):
+        return f"{obj.content[:50]}{'...' if len(obj.content) > 50 else ''}"
+    content_preview.short_description = 'Content'
+    
+    def activate_notices(self, request, queryset):
+        updated = queryset.update(is_active=True)
+        self.message_user(request, f'{updated} notice(s) have been activated.')
+    activate_notices.short_description = "Activate selected notices"
+    
+    def deactivate_notices(self, request, queryset):
+        updated = queryset.update(is_active=False)
+        self.message_user(request, f'{updated} notice(s) have been deactivated.')
+    deactivate_notices.short_description = "Deactivate selected notices"
