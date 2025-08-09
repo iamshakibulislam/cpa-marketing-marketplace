@@ -24,4 +24,10 @@ urlpatterns = [
     path('referral/', views.referral_dashboard, name='referral_dashboard'),
     path('referral/earnings/', views.referral_earnings, name='referral_earnings'),
     path('referral/users/', views.referral_users, name='referral_users'),
+    
+    # Notification URLs
+    path('notifications/', views.notification_list, name='notification_list'),
+    path('notifications/<int:notification_id>/', views.notification_detail, name='notification_detail'),
+    path('notifications/<int:notification_id>/mark-read/', views.mark_notification_read, name='mark_notification_read'),
+    path('notifications/mark-all-read/', views.mark_all_notifications_read, name='mark_all_notifications_read'),
 ]

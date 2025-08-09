@@ -66,10 +66,20 @@ def signup(request):
                     )
                     
                     # Create referral record
-                    Referral.objects.create(
+                    referral = Referral.objects.create(
                         referrer=referral_link.user,
                         referred_user=user,
                         referral_link=referral_link
+                    )
+                    
+                    # Create notification for referrer
+                    from offers.models import Notification
+                    Notification.create_notification(
+                        user=referral_link.user,
+                        notification_type='referral_joined',
+                        title='New Referral Joined! 🎯',
+                        message=f'Great news! {user.full_name} ({user.email}) has joined using your referral link. You will earn a percentage of their conversions. Keep sharing your referral link to earn more!',
+                        related_object=referral
                     )
                     
                     # Clear session data

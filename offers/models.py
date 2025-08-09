@@ -448,6 +448,15 @@ class Conversion(models.Model):
                         # Handle referral earnings reversal
                         self._handle_referral_earnings_reversal()
                         
+                        # Create notification for lead rejection
+                        Notification.create_notification(
+                            user=user,
+                            notification_type='lead_rejected',
+                            title='Lead Rejected ❌',
+                            message=f'Your conversion for "{self.click_tracking.offer.offer_name}" has been rejected. The payout of ${offer_payout} has been deducted from your balance. Please ensure you follow the offer requirements to avoid rejections.',
+                            related_object=self
+                        )
+                        
                     elif old_status == 'rejected' and self.status == 'approved':
                         # Status changed from rejected to approved - add balance
                         user = self.click_tracking.user
@@ -655,6 +664,41 @@ class PaymentMethod(models.Model):
     def __str__(self):
         return f"{self.user.email} - {self.binance_email} ({self.status})"
     
+    def save(self, *args, **kwargs):
+        """Override save method to handle notifications"""
+        is_new = self.pk is None
+        old_status = None
+        
+        if not is_new:
+            try:
+                old_payment = PaymentMethod.objects.get(pk=self.pk)
+                old_status = old_payment.status
+            except PaymentMethod.DoesNotExist:
+                pass
+        
+        super().save(*args, **kwargs)
+        
+        # Create notifications
+        if is_new:
+            # Payment method submitted notification
+            Notification.create_notification(
+                user=self.user,
+                notification_type='payment_method_submitted',
+                title='Payment Method Submitted 💳',
+                message=f'Your payment method with Binance email {self.binance_email} has been submitted for review. We will verify your documents and notify you once approved. This usually takes 24-48 hours.',
+                related_object=self
+            )
+        elif old_status and old_status != self.status:
+            # Status changed
+            if self.status == 'approved':
+                Notification.create_notification(
+                    user=self.user,
+                    notification_type='payment_method_approved',
+                    title='Payment Method Approved! ✅',
+                    message=f'Great news! Your payment method with Binance email {self.binance_email} has been approved. You can now receive payments to this account when invoices are processed.',
+                    related_object=self
+                )
+    
     class Meta:
         verbose_name = "Payment Method"
         verbose_name_plural = "Payment Methods"
@@ -688,7 +732,17 @@ class Invoice(models.Model):
         return f"Invoice #{self.invoice_number} - {self.user.full_name} - ${self.amount} - {self.status}"
     
     def save(self, *args, **kwargs):
-        """Override save method to generate invoice number if not provided"""
+        """Override save method to generate invoice number and handle notifications"""
+        is_new = self.pk is None
+        old_status = None
+        
+        if not is_new:
+            try:
+                old_invoice = Invoice.objects.get(pk=self.pk)
+                old_status = old_invoice.status
+            except Invoice.DoesNotExist:
+                pass
+        
         if not self.invoice_number:
             # Generate invoice number: INV-YYYYMMDD-XXXX
             today = timezone.now().strftime('%Y%m%d')
@@ -706,6 +760,35 @@ class Invoice(models.Model):
             self.invoice_number = f'INV-{today}-{new_number:04d}'
         
         super().save(*args, **kwargs)
+        
+        # Create notifications
+        if is_new:
+            # Invoice created notification
+            Notification.create_notification(
+                user=self.user,
+                notification_type='invoice_created',
+                title='Invoice Created 📄',
+                message=f'Invoice {self.invoice_number} has been created for ${self.amount}. Your balance has been moved to this invoice and will be processed within 3 business days.',
+                related_object=self
+            )
+        elif old_status and old_status != self.status:
+            # Status changed
+            if self.status == 'paid':
+                Notification.create_notification(
+                    user=self.user,
+                    notification_type='invoice_paid',
+                    title='Invoice Paid! 💰',
+                    message=f'Great news! Invoice {self.invoice_number} for ${self.amount} has been paid and transferred to your Binance account. Please check your Binance wallet.',
+                    related_object=self
+                )
+            elif self.status == 'rejected':
+                Notification.create_notification(
+                    user=self.user,
+                    notification_type='invoice_rejected',
+                    title='Invoice Rejected ❌',
+                    message=f'Invoice {self.invoice_number} for ${self.amount} has been rejected. The amount has been returned to your balance. Please check your payment method details.',
+                    related_object=self
+                )
     
     @property
     def formatted_amount(self):
@@ -855,4 +938,57 @@ class Noticeboard(models.Model):
     
     def __str__(self):
         return f"Notice - {self.content[:50]}{'...' if len(self.content) > 50 else ''}"
+
+
+class Notification(models.Model):
+    NOTIFICATION_TYPES = [
+        ('account_approved', 'Account Approved'),
+        ('referral_joined', 'Referral Joined'),
+        ('lead_rejected', 'Lead Rejected'),
+        ('payment_method_submitted', 'Payment Method Submitted'),
+        ('payment_method_approved', 'Payment Method Approved'),
+        ('invoice_created', 'Invoice Created'),
+        ('invoice_rejected', 'Invoice Rejected'),
+        ('invoice_paid', 'Invoice Paid'),
+    ]
+    
+    user = models.ForeignKey('user.User', on_delete=models.CASCADE, related_name='notifications')
+    notification_type = models.CharField(max_length=30, choices=NOTIFICATION_TYPES)
+    title = models.CharField(max_length=200)
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    # Optional fields for linking to related objects
+    related_object_id = models.PositiveIntegerField(null=True, blank=True)
+    related_object_type = models.CharField(max_length=50, null=True, blank=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'Notification'
+        verbose_name_plural = 'Notifications'
+    
+    def __str__(self):
+        return f"{self.user.email} - {self.title}"
+    
+    def mark_as_read(self):
+        """Mark notification as read"""
+        self.is_read = True
+        self.save(update_fields=['is_read'])
+    
+    @staticmethod
+    def create_notification(user, notification_type, title, message, related_object=None):
+        """Helper method to create notifications"""
+        notification_data = {
+            'user': user,
+            'notification_type': notification_type,
+            'title': title,
+            'message': message,
+        }
+        
+        if related_object:
+            notification_data['related_object_id'] = related_object.pk
+            notification_data['related_object_type'] = related_object.__class__.__name__
+        
+        return Notification.objects.create(**notification_data)
 

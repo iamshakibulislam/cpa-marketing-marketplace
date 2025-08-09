@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.utils.html import format_html
 from django.utils import timezone
-from .models import Offer, OfferAdminForm, UserOfferRequest, ClickTracking, Conversion, SiteSettings, CPANetwork, Manager, PaymentMethod, Invoice, ReferralLink, Referral, ReferralEarning, Noticeboard
+from .models import Offer, OfferAdminForm, UserOfferRequest, ClickTracking, Conversion, SiteSettings, CPANetwork, Manager, PaymentMethod, Invoice, ReferralLink, Referral, ReferralEarning, Noticeboard, Notification
 
 @admin.register(CPANetwork)
 class CPANetworkAdmin(admin.ModelAdmin):
@@ -626,3 +626,38 @@ class NoticeboardAdmin(admin.ModelAdmin):
         updated = queryset.update(is_active=False)
         self.message_user(request, f'{updated} notice(s) have been deactivated.')
     deactivate_notices.short_description = "Deactivate selected notices"
+
+
+@admin.register(Notification)
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ['user', 'notification_type', 'title', 'is_read', 'created_at']
+    list_filter = ['notification_type', 'is_read', 'created_at']
+    search_fields = ['user__email', 'user__full_name', 'title', 'message']
+    list_editable = ['is_read']
+    ordering = ['-created_at']
+    readonly_fields = ['created_at', 'related_object_id', 'related_object_type']
+    actions = ['mark_as_read', 'mark_as_unread']
+    
+    fieldsets = (
+        ('Notification Details', {
+            'fields': ('user', 'notification_type', 'title', 'message', 'is_read')
+        }),
+        ('Related Object', {
+            'fields': ('related_object_type', 'related_object_id'),
+            'classes': ('collapse',)
+        }),
+        ('Timestamps', {
+            'fields': ('created_at',),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def mark_as_read(self, request, queryset):
+        updated = queryset.update(is_read=True)
+        self.message_user(request, f'{updated} notification(s) marked as read.')
+    mark_as_read.short_description = "Mark selected notifications as read"
+    
+    def mark_as_unread(self, request, queryset):
+        updated = queryset.update(is_read=False)
+        self.message_user(request, f'{updated} notification(s) marked as unread.')
+    mark_as_unread.short_description = "Mark selected notifications as unread"

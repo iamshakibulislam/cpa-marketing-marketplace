@@ -254,6 +254,16 @@
 							</a>
 						</li>
 						
+						<li class="slide">
+							<a class="side-menu__item position-relative" href="{% url 'notification_list' %}">
+								<i class="side-menu__icon fe fe-bell"></i>
+								<span class="side-menu__label">Notifications</span>
+								{% if notification_count > 0 %}
+								<span class="badge bg-danger rounded-pill ms-auto">{{ notification_count }}</span>
+								{% endif %}
+							</a>
+						</li>
+						
 						
 						
 					</ul>
@@ -306,51 +316,83 @@
 										<i class="fe fe-minimize fullscreen-button"></i>
 									</a>
 								</div><!-- FULL-SCREEN -->
+
+								
+								<!-- NEW NOTIFICATIONS -->
 								<div class="dropdown d-none d-md-flex notifications">
-									<a class="nav-link icon" data-bs-toggle="dropdown"><i class="fe fe-bell"></i><span class=" pulse"></span>
+									<a class="nav-link icon position-relative" data-bs-toggle="dropdown">
+										<i class="fe fe-bell"></i>
+										{% if notification_count > 0 %}
+										<span class="pulse position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success" style="font-size: 10px;">
+											{{ notification_count }}
+										</span>
+										{% endif %}
 									</a>
-									<div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow ">
+									<div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" style="width: 350px;">
 										<div class="drop-heading border-bottom">
 											<div class="d-flex">
-												<h6 class="mt-1 mb-0 fs-16 fw-semibold">You have Notification</h6>
+												<h6 class="mt-1 mb-0 fs-16 fw-semibold">
+													Notifications
+													{% if notification_count > 0 %}
+													<span class="badge bg-primary ms-2">{{ notification_count }}</span>
+													{% endif %}
+												</h6>
 												<div class="ms-auto">
-													<span class="badge bg-success rounded-pill"></span>
+													<a href="{% url 'notification_list' %}" class="btn btn-sm btn-primary">View All</a>
 												</div>
 											</div>
 										</div>
-										<div class="notifications-menu">
-											<a class="dropdown-item d-flex" href="#">
-												<div class="me-3 notifyimg  bg-primary-gradient brround box-shadow-primary">
-													<i class="fe fe-mail"></i>
+										<div class="notifications-menu" style="max-height: 300px; overflow-y: auto;">
+											{% if recent_notifications %}
+												{% for notification in recent_notifications %}
+												<a class="dropdown-item d-flex {% if not notification.is_read %}bg-light{% endif %}" href="{% url 'notification_detail' notification.id %}">
+													<div class="me-3 notifyimg bg-primary-gradient brround box-shadow-primary">
+														{% if notification.notification_type == 'account_approved' %}
+															<i class="fe fe-user-check"></i>
+														{% elif notification.notification_type == 'referral_joined' %}
+															<i class="fe fe-user-plus"></i>
+														{% elif notification.notification_type == 'lead_rejected' %}
+															<i class="fe fe-x-circle"></i>
+														{% elif notification.notification_type == 'payment_method_submitted' %}
+															<i class="fe fe-credit-card"></i>
+														{% elif notification.notification_type == 'payment_method_approved' %}
+															<i class="fe fe-check-circle"></i>
+														{% elif notification.notification_type == 'invoice_created' %}
+															<i class="fe fe-file-text"></i>
+														{% elif notification.notification_type == 'invoice_rejected' %}
+															<i class="fe fe-x"></i>
+														{% elif notification.notification_type == 'invoice_paid' %}
+															<i class="fe fe-dollar-sign"></i>
+														{% else %}
+															<i class="fe fe-bell"></i>
+														{% endif %}
+													</div>
+													<div class="mt-1 flex-grow-1">
+														<h6 class="notification-label mb-1 {% if not notification.is_read %}fw-bold{% endif %}">
+															{{ notification.title|truncatechars:30 }}
+														</h6>
+														<span class="notification-subtext">{{ notification.created_at|timesince }} ago</span>
+														{% if not notification.is_read %}
+														<span class="badge bg-success ms-2" style="font-size: 9px;">New</span>
+														{% endif %}
+													</div>
+												</a>
+												{% endfor %}
+											{% else %}
+												<div class="text-center py-3">
+													<i class="fe fe-bell-off text-muted"></i>
+													<p class="text-muted mb-0">No notifications</p>
 												</div>
-												<div class="mt-1">
-													<h5 class="notification-label mb-1">New review received</h5>
-													<span class="notification-subtext">2 hours ago</span>
-												</div>
-											</a>
-											<a class="dropdown-item d-flex" href="#">
-												<div class="me-3 notifyimg  bg-secondary-gradient brround box-shadow-primary">
-													<i class="fe fe-check-circle"></i>
-												</div>
-												<div class="mt-1">
-													<h5 class="notification-label mb-1">Project has been approved</h5>
-													<span class="notification-subtext">1 week ago</span>
-												</div>
-											</a>
-											<a class="dropdown-item d-flex" href="#">
-												<div class="me-3 notifyimg  bg-success-gradient brround box-shadow-primary">
-													<i class="fe fe-shopping-cart"></i>
-												</div>
-												<div class="mt-1">
-													<h5 class="notification-label mb-1">New Order Received</h5>
-													<span class="notification-subtext">1 day ago</span>
-												</div>
-											</a>
+											{% endif %}
 										</div>
+										{% if notification_count > 0 %}
 										<div class="dropdown-divider m-0"></div>
-										<a href="#" class="dropdown-item text-center p-3 text-muted">View all Notification</a>
+										<a href="#" class="dropdown-item text-center p-3 text-primary" onclick="markAllNotificationsRead()">
+											<i class="fe fe-check-circle me-1"></i>Mark All as Read
+										</a>
+										{% endif %}
 									</div>
-								</div><!-- NOTIFICATIONS -->
+								</div><!-- NEW NOTIFICATIONS -->
 								
 								<div class="dropdown d-none d-md-flex profile-1">
 									<a href="#" data-bs-toggle="dropdown" class="nav-link pe-2 leading-none d-flex">
@@ -413,51 +455,7 @@
 									<i class="fe fe-minimize fullscreen-button"></i>
 								</a>
 							</div><!-- FULL-SCREEN -->
-							<div class="dropdown  d-md-flex notifications">
-								<a class="nav-link icon" data-bs-toggle="dropdown"><i class="fe fe-bell"></i><span class=" pulse"></span>
-								</a>
-								<div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-									<div class="drop-heading border-bottom">
-										<div class="d-flex">
-											<h6 class="mt-1 mb-0 fs-16 fw-semibold">You have Notification</h6>
-											<div class="ms-auto">
-												<span class="badge bg-success rounded-pill"></span>
-											</div>
-										</div>
-									</div>
-									<div class="notifications-menu">
-										<a class="dropdown-item d-flex" href="#">
-											<div class="me-3 notifyimg  bg-primary-gradient brround box-shadow-primary">
-												<i class="fe fe-mail"></i>
-											</div>
-											<div class="mt-1">
-												<h5 class="notification-label mb-1">New review received</h5>
-												<span class="notification-subtext">2 hours ago</span>
-											</div>
-										</a>
-										<a class="dropdown-item d-flex" href="#">
-											<div class="me-3 notifyimg  bg-secondary-gradient brround box-shadow-primary">
-												<i class="fe fe-check-circle"></i>
-											</div>
-											<div class="mt-1">
-												<h5 class="notification-label mb-1">Project has been approved</h5>
-												<span class="notification-subtext">1 week ago</span>
-											</div>
-										</a>
-										<a class="dropdown-item d-flex" href="#">
-											<div class="me-3 notifyimg  bg-success-gradient brround box-shadow-primary">
-												<i class="fe fe-shopping-cart"></i>
-											</div>
-											<div class="mt-1">
-												<h5 class="notification-label mb-1">New Order Received</h5>
-												<span class="notification-subtext">1 day ago</span>
-											</div>
-										</a>
-									</div>
-									<div class="dropdown-divider m-0"></div>
-									<a href="#" class="dropdown-item text-center p-3 text-muted">View all Notification</a>
-								</div>
-							</div><!-- NOTIFICATIONS -->
+
 							
 							<div class="dropdown d-md-flex profile-1">
 								<a href="#" data-bs-toggle="dropdown" class="nav-link pe-2 leading-none d-flex">
@@ -709,6 +707,48 @@
 			}
 		</script>
 		{% endif %}
+
+		<!-- Notification JavaScript -->
+		<script>
+		function markAllNotificationsRead() {
+			if (confirm('Mark all notifications as read?')) {
+				fetch('/offers/notifications/mark-all-read/', {
+					method: 'POST',
+					headers: {
+						'X-CSRFToken': getCookie('csrftoken'),
+						'Content-Type': 'application/json',
+					},
+				})
+				.then(response => response.json())
+				.then(data => {
+					if (data.status === 'success') {
+						// Reload page to update notification counts
+						location.reload();
+					}
+				})
+				.catch(error => {
+					console.error('Error:', error);
+					alert('Failed to mark all notifications as read');
+				});
+			}
+		}
+
+		// Function to get CSRF token from cookies
+		function getCookie(name) {
+			let cookieValue = null;
+			if (document.cookie && document.cookie !== '') {
+				const cookies = document.cookie.split(';');
+				for (let i = 0; i < cookies.length; i++) {
+					const cookie = cookies[i].trim();
+					if (cookie.substring(0, name.length + 1) === (name + '=')) {
+						cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+						break;
+					}
+				}
+			}
+			return cookieValue;
+		}
+		</script>
 
 	</body>
 </html>

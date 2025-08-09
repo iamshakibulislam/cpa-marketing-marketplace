@@ -19,7 +19,7 @@ from decimal import Decimal
 import logging
 from .models import (
     Offer, UserOfferRequest, ClickTracking, Conversion, SiteSettings, 
-    CPANetwork, Manager, PaymentMethod, Invoice, ReferralLink, Referral, ReferralEarning
+    CPANetwork, Manager, PaymentMethod, Invoice, ReferralLink, Referral, ReferralEarning, Notification
 )
 
 logger = logging.getLogger(__name__)
@@ -1387,3 +1387,77 @@ def referral_users(request):
     }
     
     return render(request, 'dashboard/referral_users.html', context)
+
+
+# Notification Views
+@login_required
+def notification_list(request):
+    """Display list of user notifications"""
+    notifications = Notification.objects.filter(user=request.user).order_by('-created_at')
+    
+    # Pagination
+    paginator = Paginator(notifications, 20)  # Show 20 notifications per page
+    page = request.GET.get('page')
+    
+    try:
+        notifications = paginator.page(page)
+    except PageNotAnInteger:
+        notifications = paginator.page(1)
+    except EmptyPage:
+        notifications = paginator.page(paginator.num_pages)
+    
+    # Count unread notifications
+    unread_count = Notification.objects.filter(user=request.user, is_read=False).count()
+    
+    context = {
+        'notifications': notifications,
+        'unread_count': unread_count,
+    }
+    
+    return render(request, 'dashboard/notifications.html', context)
+
+
+@login_required
+def notification_detail(request, notification_id):
+    """Display notification detail and mark as read"""
+    notification = get_object_or_404(Notification, id=notification_id, user=request.user)
+    
+    # Mark as read if not already read
+    if not notification.is_read:
+        notification.mark_as_read()
+    
+    context = {
+        'notification': notification,
+    }
+    
+    return render(request, 'dashboard/notification_detail.html', context)
+
+
+@login_required
+@require_POST
+def mark_notification_read(request, notification_id):
+    """Mark a specific notification as read"""
+    notification = get_object_or_404(Notification, id=notification_id, user=request.user)
+    notification.mark_as_read()
+    
+    return JsonResponse({'status': 'success', 'message': 'Notification marked as read'})
+
+
+@login_required
+@require_POST
+def mark_all_notifications_read(request):
+    """Mark all user notifications as read"""
+    updated_count = Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
+    
+    return JsonResponse({
+        'status': 'success', 
+        'message': f'{updated_count} notifications marked as read',
+        'count': updated_count
+    })
+
+
+def get_notification_count(user):
+    """Helper function to get unread notification count for a user"""
+    if user.is_authenticated:
+        return Notification.objects.filter(user=user, is_read=False).count()
+    return 0
