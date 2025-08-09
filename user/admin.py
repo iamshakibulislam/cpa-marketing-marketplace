@@ -8,6 +8,8 @@ class UserAdmin(BaseUserAdmin):
     list_filter = ['is_active', 'date_joined', 'manager']
     search_fields = ['email', 'full_name']
     ordering = ['-date_joined']
+    list_editable = ['is_active']
+    actions = ['activate_users', 'deactivate_users']
     
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
@@ -27,3 +29,13 @@ class UserAdmin(BaseUserAdmin):
             'fields': ('email', 'full_name', 'password1', 'password2'),
         }),
     )
+    
+    def activate_users(self, request, queryset):
+        updated = queryset.update(is_active=True)
+        self.message_user(request, f'{updated} user(s) have been activated.')
+    activate_users.short_description = "Activate selected users"
+    
+    def deactivate_users(self, request, queryset):
+        updated = queryset.update(is_active=False)
+        self.message_user(request, f'{updated} user(s) have been deactivated.')
+    deactivate_users.short_description = "Deactivate selected users"

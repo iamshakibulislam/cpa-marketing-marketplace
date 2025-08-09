@@ -49,7 +49,7 @@ def signup(request):
                 niches=niches,
                 promotion_description=promotion_description,
                 heard_about_us=heard_about_us,
-                is_active=True  # Set to False if you want to require email verification before login
+                is_active=False  # Account needs admin approval
             )
             
             # Handle referral tracking - check both session and cookies
@@ -82,12 +82,10 @@ def signup(request):
                     # Invalid referral link, but continue with signup
                     pass
             
-            messages.success(request, 'Signup successful!')
+            messages.info(request, 'Your application is pending review. You will get update soon.')
             
             # Assign a random manager to the user
             assigned_manager = user.assign_random_manager()
-            if assigned_manager:
-                messages.success(request, f'Your assigned manager is {assigned_manager.name}.')
             
             # Create response to clear cookies after successful signup
             response = render(request, 'home/signup.html')
@@ -115,8 +113,12 @@ def login(request):
         password = request.POST.get('password')
         user = authenticate(request, email=email, password=password)
         if user is not None:
-            auth_login(request, user)
-            return redirect('dashboard')
+            if user.is_active:
+                auth_login(request, user)
+                return redirect('dashboard')
+            else:
+                messages.warning(request, 'Your application is pending review. You will get update soon.')
+                return render(request, 'home/login.html')
         else:
             messages.error(request, 'Invalid email or password.')
             return render(request, 'home/login.html')
