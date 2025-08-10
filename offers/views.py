@@ -420,23 +420,40 @@ def handle_postback(request):
         # Use the offer's payout amount (set in admin panel) instead of network payout
         offer_payout = click_tracking.offer.payout
 
-        # Create or update conversion record
-        conversion, created = Conversion.objects.get_or_create(
-            click_tracking=click_tracking,
-            defaults={
-                'payout': offer_payout,  # Use offer payout instead of network payout
-                'status': 'approved', # Default status for new conversions
-                'network_click_id': network_click_id,
-                'network_payout': network_payout  # Store network payout for reference
-            }
-        )
+        # Check if conversion should be recorded based on user's conversion counter
+        user = click_tracking.user
+        
+        # First, check if a conversion already exists for this click tracking record
+        existing_conversion = Conversion.objects.filter(click_tracking=click_tracking).first()
+        if existing_conversion:
+            # Conversion already exists, just update it (this prevents double counting)
+            existing_conversion.payout = offer_payout
+            existing_conversion.network_click_id = network_click_id
+            existing_conversion.network_payout = network_payout
+            existing_conversion.save()
+            return HttpResponse("OK - Existing conversion updated", status=200)
+        
+        # Increment the user's conversion counter (this happens regardless of filtering)
+        user.conversion_counter += 1
+        user.save()
+        
+        # Check if the conversion counter is divisible by 3
+        if user.conversion_counter % 3 == 0:
+            # Log that conversion was filtered out
+            logger.info(f"Conversion filtered out for user {user.id}: conversion counter {user.conversion_counter} (divisible by 3)")
+            
+            return HttpResponse("OK - Conversion filtered out (divisible by 3 rule)", status=200)
 
-        if not created:
-            # Update existing conversion
-            conversion.payout = offer_payout  # Use offer payout instead of network payout
-            conversion.network_click_id = network_click_id
-            conversion.network_payout = network_payout
-            conversion.save()  # This will automatically handle balance updates
+        # Create new conversion record
+        conversion = Conversion.objects.create(
+            click_tracking=click_tracking,
+            payout=offer_payout,
+            status='approved',
+            network_click_id=network_click_id,
+            network_payout=network_payout
+        )
+        
+        logger.info(f"New conversion created for user {user.id}: conversion ID {conversion.id}, conversion counter now {user.conversion_counter}")
 
         return HttpResponse("OK", status=200)
 

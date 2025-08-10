@@ -91,6 +91,13 @@ class User(AbstractBaseUser, PermissionsMixin):
         help_text="User's current balance in USD"
     )
     
+    # Conversion counter field to track all conversion attempts
+    conversion_counter = models.PositiveIntegerField(
+        default=0,
+        verbose_name="Conversion Counter",
+        help_text="Total number of conversion attempts (including filtered ones)"
+    )
+    
     # Manager assignment
     manager = models.ForeignKey(
         'offers.Manager',
@@ -189,5 +196,17 @@ class User(AbstractBaseUser, PermissionsMixin):
             return "Verification Pending"
         else:
             return "Not Verified"
+    
+    def get_conversion_counter_display(self):
+        """Return formatted conversion counter for display"""
+        return f"{self.conversion_counter:,}"
+    
+    def reset_conversion_counter(self):
+        """Reset the conversion counter to 0"""
+        old_counter = self.conversion_counter
+        self.conversion_counter = 0
+        self.save()
+        logger.info(f"User {self.id} conversion counter reset from {old_counter} to 0")
+        return self.conversion_counter
 
 
