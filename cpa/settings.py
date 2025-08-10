@@ -134,6 +134,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'user.User'
 
+# Authentication settings
+LOGIN_URL = '/user/login/'
+LOGIN_REDIRECT_URL = '/user/dashboard/'
+LOGOUT_REDIRECT_URL = '/user/login/'
+
 # Tracking domains for affiliate links
 TRACKING_DOMAINS = [
     'http://localhost:8000',

@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.conf import settings
 from .models import User, EmailVerification
 from django.db import IntegrityError, models
-from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth import authenticate, login as auth_login, logout
 from django.http import HttpResponse, Http404
 from django.contrib.auth.decorators import login_required
 from offers.models import ReferralLink, Referral
@@ -359,6 +359,12 @@ def login(request):
             messages.error(request, 'Invalid email or password.')
             return render(request, 'home/login.html')
     return render(request, 'home/login.html')
+
+
+def logout_view(request):
+    logout(request)
+    messages.success(request, 'You have been successfully logged out.')
+    return redirect('login')
 
 
 @login_required
