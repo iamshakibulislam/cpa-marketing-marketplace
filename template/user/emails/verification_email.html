@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Your Email - {{ site_name }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .email-container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #007bff;
+            margin: 0;
+            font-size: 24px;
+        }
+        .content {
+            margin-bottom: 30px;
+        }
+        .verification-button {
+            display: inline-block;
+            background-color: #007bff;
+            color: #ffffff !important;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+            transition: background-color 0.3s;
+            text-decoration: none !important;
+        }
+        .verification-button:hover {
+            background-color: #0056b3;
+            color: #ffffff !important;
+            text-decoration: none !important;
+        }
+        .verification-button:hover {
+            background-color: #0056b3;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #666;
+            font-size: 14px;
+        }
+        .warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .info-box {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <h1>{{ site_name }}</h1>
+            <p>Email Verification Required</p>
+        </div>
+        
+        <div class="content">
+            <p>Hello {{ user.full_name }},</p>
+            
+            <p>Thank you for creating an account with {{ site_name }}! To complete your registration, please verify your email address by clicking the button below:</p>
+            
+            <div style="text-align: center;">
+                <a href="{{ verification_url }}" class="verification-button" style="color: #ffffff !important; text-decoration: none !important;">Verify Email Address</a>
+            </div>
+            
+            <p>If the button above doesn't work, you can copy and paste this link into your browser:</p>
+            <p style="word-break: break-all; color: #007bff;">{{ verification_url }}</p>
+            
+            <div class="warning">
+                <strong>Important:</strong> This verification link will expire in 24 hours for security reasons.
+            </div>
+            
+            <div class="info-box">
+                <strong>What happens next?</strong><br>
+                After verifying your email, your account will be reviewed by our compliance team. This process typically takes up to 72 hours. You will receive an email notification once your account is approved.
+            </div>
+            
+            <p>If you didn't create this account, you can safely ignore this email.</p>
+        </div>
+        
+        <div class="footer">
+            <p>This email was sent from {{ site_name }}.</p>
+            <p>If you have any questions, please contact our support team.</p>
+            <p>&copy; {% now "Y" %} {{ site_name }}. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

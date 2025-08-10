@@ -1,12 +1,14 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.conf import settings
-from .models import User
-from django.db import IntegrityError
+from .models import User, EmailVerification
+from django.db import IntegrityError, models
 from django.contrib.auth import authenticate, login as auth_login
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.contrib.auth.decorators import login_required
 from offers.models import ReferralLink, Referral
+from .utils import send_verification_email, generate_verification_url
+from django.utils import timezone
 
 def signup(request):
     if request.method == 'POST':
@@ -49,7 +51,8 @@ def signup(request):
                 niches=niches,
                 promotion_description=promotion_description,
                 heard_about_us=heard_about_us,
-                is_active=False  # Account needs admin approval
+                is_active=False,  # Account needs admin approval
+                is_verified=False  # Email not verified yet
             )
             
             # Handle referral tracking - check both session and cookies
@@ -92,7 +95,26 @@ def signup(request):
                     # Invalid referral link, but continue with signup
                     pass
             
-            messages.info(request, 'Your application is pending review. You will get update soon.')
+            # Create email verification and send verification email
+            try:
+                verification_token = user.create_email_verification()
+                verification_url = generate_verification_url(verification_token)
+                
+                if verification_url:
+                    email_sent = send_verification_email(user, verification_token, verification_url)
+                    if email_sent:
+                        messages.success(request, 'Account created successfully! Please check your email to verify your account before logging in.')
+                    else:
+                        messages.warning(request, 'Account created but verification email could not be sent. Please contact support.')
+                else:
+                    messages.warning(request, 'Account created but verification URL could not be generated. Please contact support.')
+                    
+            except Exception as e:
+                messages.warning(request, 'Account created but verification email could not be sent. Please contact support.')
+                # Log the error for debugging
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.error(f"Error creating verification for user {user.id}: {str(e)}")
             
             # Assign a random manager to the user
             assigned_manager = user.assign_random_manager()
@@ -113,11 +135,119 @@ def signup(request):
     return render(request, 'home/signup.html')
 
 
+def verify_email(request, token):
+    """
+    Verify user email using verification token
+    """
+    import logging
+    logger = logging.getLogger(__name__)
+    
+    try:
+        logger.info(f"Starting email verification for token: {token}")
+        
+        # Get verification token
+        verification = get_object_or_404(EmailVerification, token=token)
+        logger.info(f"Found verification for user: {verification.user.email}")
+        
+        # Check if already used
+        if verification.is_used:
+            logger.info(f"Token already used for user: {verification.user.email}")
+            messages.error(request, 'This verification link has already been used.')
+            return render(request, 'user/email_verification.html', {'status': 'already_used'})
+        
+        # Check if expired
+        if verification.is_expired():
+            logger.info(f"Token expired for user: {verification.user.email}")
+            messages.error(request, 'This verification link has expired. Please request a new one.')
+            return render(request, 'user/email_verification.html', {'status': 'expired'})
+        
+        # Mark as verified
+        user = verification.user
+        user.is_verified = True
+        user.save()
+        logger.info(f"User {user.email} marked as verified")
+        
+        # Mark verification as used
+        verification.mark_as_used()
+        logger.info(f"Verification token marked as used for user: {user.email}")
+        
+        messages.success(request, 'Email verified successfully! Your account is now being reviewed by our compliance team. Please wait up to 72 hours for a decision.')
+        logger.info(f"Rendering verification success page for user: {user.email}")
+        return render(request, 'user/verification_success.html')
+        
+    except Http404:
+        logger.error(f"Invalid verification token: {token}")
+        messages.error(request, 'Invalid verification link.')
+        return render(request, 'user/email_verification.html', {'status': 'invalid'})
+    except Exception as e:
+        logger.error(f"Unexpected error during verification for token {token}: {str(e)}", exc_info=True)
+        messages.error(request, 'An error occurred during verification. Please try again or contact support.')
+        return render(request, 'user/email_verification.html', {'status': 'error'})
+
+
+def resend_verification(request):
+    """
+    Resend verification email for unverified users
+    """
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        
+        if not email:
+            messages.error(request, 'Please enter your email address.')
+            return render(request, 'user/resend_verification.html')
+        
+        try:
+            user = User.objects.get(email=email)
+            
+            # Check if user is already verified
+            if user.is_verified:
+                messages.info(request, 'Your email is already verified.')
+                return redirect('login')
+            
+            # Check if user is active (approved by admin)
+            if not user.is_active:
+                messages.warning(request, 'Your account is still pending admin approval. Please wait for approval before verifying your email.')
+                return render(request, 'user/resend_verification.html')
+            
+            # Create new verification token
+            verification_token = user.create_email_verification()
+            verification_url = generate_verification_url(verification_token)
+            
+            if verification_url:
+                email_sent = send_verification_email(user, verification_token, verification_url)
+                if email_sent:
+                    messages.success(request, 'Verification email sent successfully! Please check your inbox.')
+                else:
+                    messages.error(request, 'Failed to send verification email. Please try again or contact support.')
+            else:
+                messages.error(request, 'Failed to generate verification link. Please contact support.')
+                
+        except User.DoesNotExist:
+            messages.error(request, 'No account found with this email address.')
+        except Exception as e:
+            messages.error(request, 'An error occurred. Please try again or contact support.')
+    
+    return render(request, 'user/resend_verification.html')
+
+
+@login_required
 def dashboard(request):
-    from offers.models import Noticeboard
+    from offers.models import Noticeboard, Invoice
+    
+    # Get active notices
     active_notices = Noticeboard.objects.filter(is_active=True)
+    
+    # Calculate total paid amount for the current user
+    total_paid = Invoice.objects.filter(
+        user=request.user,
+        status='paid'
+    ).aggregate(
+        total=models.Sum('amount')
+    )['total'] or 0.00
+    
     context = {
         'active_notices': active_notices,
+        'total_paid': total_paid,
     }
     return render(request, 'dashboard/index.html', context)
 
@@ -129,8 +259,12 @@ def login(request):
         user = authenticate(request, email=email, password=password)
         if user is not None:
             if user.is_active:
-                auth_login(request, user)
-                return redirect('dashboard')
+                if user.is_verified:
+                    auth_login(request, user)
+                    return redirect('dashboard')
+                else:
+                    messages.warning(request, 'Please verify your email before logging in. Check your inbox for the verification link.')
+                    return render(request, 'home/login.html')
             else:
                 messages.warning(request, 'Your application is pending review. You will get update soon.')
                 return render(request, 'home/login.html')

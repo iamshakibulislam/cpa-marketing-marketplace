@@ -193,3 +193,12 @@ CRONTAB_DJANGO_MANAGE_PATH = str(BASE_DIR / 'manage.py')
 # CRONTAB_DJANGO_SETTINGS_MODULE - Django settings module
 # Default: From environment variable
 CRONTAB_DJANGO_SETTINGS_MODULE = 'cpa.settings'
+
+SMTP_SERVER = "mail.spacemail.com"
+SMTP_PORT = 465
+SMTP_USERNAME = "admin@affilomint.com"
+SMTP_PASSWORD = "Azmir2025##@@"
+SMTP_USE_TLS = False
+SMTP_USE_SSL = True
+SMTP_FROM_EMAIL = "admin@affilomint.com"
+SMTP_FROM_NAME = "admin"

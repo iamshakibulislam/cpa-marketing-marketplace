@@ -4,11 +4,11 @@ from .models import User
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
-    list_display = ['email', 'full_name', 'balance', 'manager', 'is_active', 'date_joined']
+    list_display = ['email', 'full_name', 'balance', 'manager','is_verified', 'is_active', 'date_joined']
     list_filter = ['is_active', 'date_joined', 'manager']
     search_fields = ['email', 'full_name']
     ordering = ['-date_joined']
-    list_editable = ['is_active']
+    list_editable = ['is_active','is_verified']
     actions = ['activate_users', 'deactivate_users']
     
     fieldsets = (

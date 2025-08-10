@@ -1,0 +1,169 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verified Successfully - Ultimate CPA Network</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f7fafc 0%, #e3e6f3 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .verification-card {
+            max-width: 600px;
+            margin: 60px auto;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(120deg, rgba(108,99,255,0.05) 0%, rgba(72,198,239,0.05) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+        }
+        .success-icon i {
+            font-size: 2.5rem;
+            color: white;
+        }
+        .verification-card h1 {
+            color: #2c3e50;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            font-size: 2.2rem;
+        }
+        .verification-card .subtitle {
+            color: #6c757d;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+        .info-box {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 1px solid #e1f5fe;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            text-align: left;
+        }
+        .info-box h5 {
+            color: #1976d2;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .info-box p {
+            color: #424242;
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #6c63ff 0%, #48c6ef 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 30px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(108, 99, 255, 0.3);
+        }
+        .btn-primary:hover {
+            background: linear-gradient(90deg, #48c6ef 0%, #6c63ff 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(108, 99, 255, 0.4);
+        }
+        .btn-secondary {
+            background: linear-gradient(90deg, #6c757d 0%, #495057 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 30px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            margin-left: 1rem;
+        }
+        .btn-secondary:hover {
+            background: linear-gradient(90deg, #495057 0%, #6c757d 100%);
+            transform: translateY(-2px);
+        }
+        .logo {
+            width: 100px;
+            margin-bottom: 2rem;
+        }
+        .status-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        @media (max-width: 768px) {
+            .verification-card {
+                margin: 30px 20px;
+                padding: 2rem 1.5rem;
+            }
+            .verification-card h1 {
+                font-size: 1.8rem;
+            }
+            .btn-primary, .btn-secondary {
+                display: block;
+                width: 100%;
+                margin: 0.5rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="verification-card">
+            <div class="text-center">
+                <img src="{% static 'homepage/img/demos/seo-2/logo.png' %}" alt="Ultimate CPA Network Logo" class="logo">
+                <div class="status-badge">
+                    <i class="fas fa-check-circle me-2"></i>VERIFIED
+                </div>
+                <h1>Congratulations! 🎉</h1>
+                <p class="subtitle">Your email has been verified successfully!</p>
+            </div>
+            
+            <div class="info-box">
+                <h5><i class="fas fa-info-circle me-2"></i>What happens next?</h5>
+                <p><strong>Your account is now being reviewed by our compliance team.</strong></p>
+                <p>This process typically takes up to <strong>72 hours</strong>.</p>
+                <p>You will receive an email notification once your account is approved.</p>
+                <p class="mb-0"><em>Thank you for your patience!</em></p>
+            </div>
+            
+            <div class="text-center mt-4">
+                <a href="{% url 'login' %}" class="btn btn-primary">
+                    <i class="fas fa-sign-in-alt me-2"></i>Go to Login
+                </a>
+                <a href="{% url 'resend_verification' %}" class="btn btn-secondary">
+                    <i class="fas fa-envelope me-2"></i>Need Help?
+                </a>
+            </div>
+            
+            <div class="text-center mt-4">
+                <small class="text-muted">
+                    Need assistance? <a href="mailto:admin@affilomint.com" class="text-decoration-none">Contact Support</a>
+                </small>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

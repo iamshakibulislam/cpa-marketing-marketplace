@@ -1,0 +1,54 @@
+{% extends 'home/base.html' %}
+
+{% block title %}Resend Verification Email - {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow">
+                <div class="card-header text-center">
+                    <h3 class="mb-0">
+                        <i class="fas fa-envelope text-primary"></i> Resend Verification Email
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <h5 class="alert-heading">Need a new verification email?</h5>
+                        <p class="mb-0">Enter your email address below and we'll send you a new verification link.</p>
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="email" name="email" 
+                                   placeholder="Enter your email address" required>
+                            <div class="form-text">We'll send a new verification link to this email address.</div>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-paper-plane"></i> Send Verification Email
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <div class="mt-4 text-center">
+                        <a href="{% url 'login' %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Login
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="card-footer text-center text-muted">
+                    <small>
+                        <strong>Note:</strong> Verification links expire after 24 hours for security reasons.<br>
+                        Need help? <a href="mailto:support@{{ site_name|lower }}">Contact Support</a>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
