@@ -17411,6 +17411,14 @@ svg.table-delete {
     box-shadow: 0 5px 10px #efc2c9;
 }
 
+.box-shadow-info {
+    box-shadow: 0 5px 10px #99daea;
+}
+
+.box-shadow-warning {
+    box-shadow: 0 5px 10px #ffc107;
+}
+
 .sidebar .tab-menu-heading {
     background: #6259ca;
     color: #fff;

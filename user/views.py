@@ -10,6 +10,8 @@ from offers.models import ReferralLink, Referral
 from .utils import send_verification_email, generate_verification_url
 from django.utils import timezone
 
+from datetime import datetime, timedelta
+
 def signup(request):
     if request.method == 'POST':
         full_name = request.POST.get('full_name')
@@ -232,7 +234,25 @@ def resend_verification(request):
 
 @login_required
 def dashboard(request):
-    from offers.models import Noticeboard, Invoice
+    from offers.models import Noticeboard, Invoice, ClickTracking, Conversion
+    from django.utils import timezone
+    from django.db import models
+    
+    # Get date range from request parameters or default to today
+    start_date_str = request.GET.get('start_date')
+    end_date_str = request.GET.get('end_date')
+    
+    if start_date_str and end_date_str:
+        try:
+            start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
+            end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
+        except ValueError:
+            start_date = timezone.now().date()
+            end_date = timezone.now().date()
+    else:
+        # Default to today
+        end_date = timezone.now().date()
+        start_date = end_date
     
     # Get active notices
     active_notices = Noticeboard.objects.filter(is_active=True)
@@ -245,9 +265,69 @@ def dashboard(request):
         total=models.Sum('amount')
     )['total'] or 0.00
     
+    # Calculate metrics for the selected date range
+    # Clicks
+    total_clicks = ClickTracking.objects.filter(
+        user=request.user,
+        click_date__date__range=[start_date, end_date]
+    ).count()
+    
+    # Conversions
+    total_conversions = Conversion.objects.filter(
+        click_tracking__user=request.user,
+        conversion_date__date__range=[start_date, end_date],
+        status='approved'
+    ).count()
+    
+    # Earnings (from approved conversions)
+    total_earnings = Conversion.objects.filter(
+        click_tracking__user=request.user,
+        conversion_date__date__range=[start_date, end_date],
+        status='approved'
+    ).aggregate(
+        total=models.Sum('payout')
+    )['total'] or 0.00
+    
+    # Conversion Rate
+    conversion_rate = 0.00
+    if total_clicks > 0:
+        conversion_rate = (total_conversions / total_clicks) * 100
+    
+    # Get datewise data for the chart
+    chart_data = []
+    current_date = start_date
+    while current_date <= end_date:
+        # Get clicks for this date
+        daily_clicks = ClickTracking.objects.filter(
+            user=request.user,
+            click_date__date=current_date
+        ).count()
+        
+        # Get conversions (leads) for this date
+        daily_conversions = Conversion.objects.filter(
+            click_tracking__user=request.user,
+            conversion_date__date=current_date,
+            status='approved'
+        ).count()
+        
+        chart_data.append({
+            'date': current_date.strftime('%Y-%m-%d'),
+            'clicks': daily_clicks,
+            'leads': daily_conversions
+        })
+        
+        current_date += timedelta(days=1)
+    
     context = {
         'active_notices': active_notices,
         'total_paid': total_paid,
+        'start_date': start_date,
+        'end_date': end_date,
+        'total_clicks': total_clicks,
+        'total_conversions': total_conversions,
+        'total_earnings': total_earnings,
+        'conversion_rate': conversion_rate,
+        'chart_data': chart_data,
     }
     return render(request, 'dashboard/index.html', context)
 

@@ -25,39 +25,21 @@ Dashboard
 			<div>
 				<h1 class="page-title">Dashboard</h1>
 				<ol class="breadcrumb">
-					
+					<li class="breadcrumb-item active" aria-current="page">Performance Overview</li>
 				</ol>
 			</div>
-			</div>
-<!--
-		
-		<div class="page-header">
-			<div>
-				<h1 class="page-title">Dashboard 01</h1>
-				<ol class="breadcrumb">
-					<li class="breadcrumb-item"><a href="#">Home</a></li>
-					<li class="breadcrumb-item active" aria-current="page">Dashboard 01</li>
-				</ol>
-			</div>
-
-		
 			<div class="ms-auto pageheader-btn">
-				<a href="#" class="btn btn-primary btn-icon text-white me-2">
-					<span>
-						<i class="fe fe-plus"></i>
-					</span> Add Account
-				</a>
-				<a href="#" class="btn btn-success btn-icon text-white">
-					<span>
-						<i class="fe fe-log-in"></i>
-					</span> Export
-				</a>
+				<div class="row">
+					<div class="col-lg-6 col-md-12 col-sm-12">
+						<div class="input-group">
+							<input type="text" class="form-control" id="dateRange" placeholder="Today" readonly style="background-color: white !important;">
+						</div>
+						<input type="hidden" id="start_date" name="start_date" value="{{ start_date|date:'Y-m-d' }}">
+						<input type="hidden" id="end_date" name="end_date" value="{{ end_date|date:'Y-m-d' }}">
+					</div>
+				</div>
 			</div>
-		
 		</div>
-
-	-->
-		<!-- PAGE-HEADER END -->
 
 		<!-- ROW-1 -->
 		<div class="row">
@@ -109,22 +91,19 @@ Dashboard
 				</div>
 				<!-- End Balance and Total Paid Cards Row -->
 				
+				<!-- Performance Metrics Cards Row -->
 				<div class="row">
 					<div class="col-lg-6 col-md-12 col-sm-12 col-xl-3">
 						<div class="card overflow-hidden">
 							<div class="card-body">
 								<div class="row">
 									<div class="col">
-										<h6 class="">Total Sales</h6>
-										<h3 class="mb-2 number-font">34,516</h3>
-										<p class="text-muted mb-0">
-											<span class="text-primary"><i class="fa fa-chevron-circle-up text-primary me-1"></i> 3%</span>
-											last month
-										</p>
+										<h6 class="">Clicks</h6>
+										<h3 class="mb-2 number-font" id="totalClicks">{{ total_clicks|default:0 }}</h3>
 									</div>
 									<div class="col col-auto">
 										<div class="counter-icon bg-primary-gradient box-shadow-primary brround ms-auto">
-											<i class="fe fe-trending-up text-white mb-5 "></i>
+											<i class="fa fa-mouse-pointer text-white mb-5"></i>
 										</div>
 									</div>
 								</div>
@@ -136,16 +115,12 @@ Dashboard
 							<div class="card-body">
 								<div class="row">
 									<div class="col">
-										<h6 class="">Total Leads</h6>
-										<h3 class="mb-2 number-font">56,992</h3>
-										<p class="text-muted mb-0">
-											<span class="text-secondary"><i class="fa fa-chevron-circle-up text-secondary me-1"></i> 3%</span>
-											last month
-										</p>
+										<h6 class="">Conversion</h6>
+										<h3 class="mb-2 number-font" id="totalConversions">{{ total_conversions|default:0 }}</h3>
 									</div>
 									<div class="col col-auto">
-										<div class="counter-icon bg-danger-gradient box-shadow-danger brround  ms-auto">
-											<i class="icon icon-rocket text-white mb-5 "></i>
+										<div class="counter-icon bg-success-gradient box-shadow-success brround ms-auto">
+											<i class="fa fa-check-circle text-white mb-5"></i>
 										</div>
 									</div>
 								</div>
@@ -157,16 +132,12 @@ Dashboard
 							<div class="card-body">
 								<div class="row">
 									<div class="col">
-										<h6 class="">Total Profit</h6>
-										<h3 class="mb-2 number-font">$42,567</h3>
-										<p class="text-muted mb-0">
-											<span class="text-success"><i class="fa fa-chevron-circle-down text-success me-1"></i> 0.5%</span>
-											last month
-										</p>
+										<h6 class="">Earnings</h6>
+										<h3 class="mb-2 number-font" id="totalEarnings">${{ total_earnings|floatformat:2|default:"0.00" }}</h3>
 									</div>
 									<div class="col col-auto">
-										<div class="counter-icon bg-secondary-gradient box-shadow-secondary brround ms-auto">
-											<i class="fe fe-dollar-sign text-white mb-5 "></i>
+										<div class="counter-icon bg-warning-gradient box-shadow-warning brround ms-auto">
+											<i class="fa fa-dollar-sign text-white mb-5"></i>
 										</div>
 									</div>
 								</div>
@@ -178,16 +149,12 @@ Dashboard
 							<div class="card-body">
 								<div class="row">
 									<div class="col">
-										<h6 class="">Total Cost</h6>
-										<h3 class="mb-2 number-font">$34,789</h3>
-										<p class="text-muted mb-0">
-											<span class="text-danger"><i class="fa fa-chevron-circle-down text-danger me-1"></i> 0.2%</span>
-											last month
-										</p>
+										<h6 class="">Conversion Rate</h6>
+										<h3 class="mb-2 number-font" id="conversionRate">{{ conversion_rate|floatformat:2 }}%</h3>
 									</div>
 									<div class="col col-auto">
-										<div class="counter-icon bg-success-gradient box-shadow-success brround  ms-auto">
-											<i class="fe fe-briefcase text-white mb-5 "></i>
+										<div class="counter-icon bg-info-gradient box-shadow-info brround ms-auto">
+											<i class="fa fa-percent text-white mb-5"></i>
 										</div>
 									</div>
 								</div>
@@ -195,16 +162,19 @@ Dashboard
 						</div>
 					</div>
 				</div>
+				<!-- End Performance Metrics Cards Row -->
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-sm-12 col-md-12 col-lg-12 col-xl-9">
 				<div class="card">
 					<div class="card-header">
-						<h3 class="card-title">Total Transactions</h3>
+						<h3 class="card-title">Clicks vs Leads</h3>
 					</div>
 					<div class="card-body pb-0">
-						<div id="chartArea" class="chart-donut"></div>
+						                    <div style="height: 400px; position: relative;">
+                        <canvas id="clicksVsLeadsChart" width="400" height="400"></canvas>
+                    </div>
 					</div>
 				</div>
 			</div><!-- COL END -->
@@ -588,5 +558,279 @@ Dashboard
 	</div>
 </div>
 
-
 {% endblock content %}
+
+{% block page_scripts %}
+<style>
+/* Custom styling for daterangepicker */
+.daterangepicker {
+    background-color: white !important;
+    border: 1px solid #ddd !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+}
+
+.daterangepicker .ranges li {
+    background-color: white !important;
+    color: #333 !important;
+}
+
+.daterangepicker .ranges li:hover {
+    background-color: #f8f9fa !important;
+}
+
+.daterangepicker .ranges li.active {
+    background-color: #007bff !important;
+    color: white !important;
+}
+
+.daterangepicker .calendar-table {
+    background-color: white !important;
+}
+
+.daterangepicker .drp-buttons {
+    background-color: white !important;
+    border-top: 1px solid #ddd !important;
+}
+
+.daterangepicker .drp-selected {
+    color: #333 !important;
+}
+
+.daterangepicker .calendar-table .next span, 
+.daterangepicker .calendar-table .prev span {
+    border-color: #333 !important;
+}
+
+.daterangepicker .calendar-table .next:hover span, 
+.daterangepicker .calendar-table .prev:hover span {
+    background-color: #f8f9fa !important;
+}
+
+/* Fix daterangepicker positioning and display issues */
+.daterangepicker {
+    z-index: 9999 !important;
+    position: absolute !important;
+    max-width: none !important;
+    overflow: visible !important;
+}
+
+.daterangepicker .ranges {
+    float: left !important;
+    width: auto !important;
+    min-width: 160px !important;
+}
+
+.daterangepicker .drp-calendar {
+    float: left !important;
+    width: auto !important;
+    min-width: 200px !important;
+}
+
+.daterangepicker .drp-buttons {
+    clear: both !important;
+    width: 100% !important;
+}
+
+/* Ensure the daterangepicker doesn't get cut off */
+.daterangepicker.drops-auto {
+    position: absolute !important;
+}
+
+.daterangepicker.drops-up {
+    position: absolute !important;
+}
+
+.daterangepicker.drops-down {
+    position: absolute !important;
+}
+
+/* Ensure date input has full white background */
+#dateRange {
+    background-color: white !important;
+    border: 1px solid #ddd !important;
+}
+
+#dateRange:focus {
+    background-color: white !important;
+    border-color: #007bff !important;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25) !important;
+}
+
+/* Adjust card spacing after removing subheadlines */
+.card-body .row .col h3 {
+    margin-bottom: 0.5rem !important;
+}
+</style>
+<script>
+// Simple daterangepicker initialization as per click_report.html
+function initializeDaterangepicker() {
+    if (typeof $ !== 'undefined' && typeof $.fn.daterangepicker !== 'undefined') {
+        $('#dateRange').daterangepicker({
+            startDate: moment(),
+            endDate: moment(),
+            ranges: {
+               'Today': [moment(), moment()],
+               'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+               'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+               'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+               'This Month': [moment().startOf('month'), moment().endOf('month')],
+               'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            locale: {
+                format: 'MM/DD/YYYY'
+            },
+            autoApply: true,
+            showDropdowns: true,
+            showCustomRangeLabel: true,
+            alwaysShowCalendars: true,
+            opens: 'center',
+            drops: 'auto'
+        }, function(start, end, label) {
+            // Update hidden inputs
+            $('#start_date').val(start.format('YYYY-MM-DD'));
+            $('#end_date').val(end.format('YYYY-MM-DD'));
+            
+            // Apply filters immediately
+            applyFilters();
+        });
+        
+        // Set current filter values if they exist
+        {% if start_date and end_date %}
+        var startDate = '{{ start_date|date:"Y-m-d" }}';
+        var endDate = '{{ end_date|date:"Y-m-d" }}';
+        $('#start_date').val(startDate);
+        $('#end_date').val(endDate);
+        
+        // Set the daterangepicker to current values
+        $('#dateRange').data('daterangepicker').setStartDate(moment(startDate));
+        $('#dateRange').data('daterangepicker').setEndDate(moment(endDate));
+        $('#dateRange').val('Today');
+        {% else %}
+        // Set default values to today
+        var startDate = moment().format('YYYY-MM-DD');
+        var endDate = moment().format('YYYY-MM-DD');
+        $('#start_date').val(startDate);
+        $('#end_date').val(endDate);
+        $('#dateRange').val('Today');
+        {% endif %}
+    } else {
+        // Retry after a short delay if jQuery or daterangepicker not ready
+        setTimeout(initializeDaterangepicker, 100);
+    }
+}
+
+// Initialize when document is ready
+$(document).ready(function() {
+    initializeDaterangepicker();
+    initializeClicksVsLeadsChart();
+});
+
+// Apply filters - redirect with date parameters
+function applyFilters() {
+    const startDate = $('#start_date').val();
+    const endDate = $('#end_date').val();
+    
+    // Build query parameters
+    const params = new URLSearchParams();
+    
+    if (startDate && endDate) {
+        params.append('start_date', startDate);
+        params.append('end_date', endDate);
+    }
+    
+    // Redirect with filters
+    window.location.href = `{% url 'dashboard' %}?${params.toString()}`;
+}
+
+// Initialize Clicks vs Leads Chart
+function initializeClicksVsLeadsChart() {
+    const ctx = document.getElementById('clicksVsLeadsChart');
+    if (!ctx) {
+        return;
+    }
+    
+    // Get chart data from Django context
+    const chartData = {{ chart_data|safe }};
+    
+    if (chartData && chartData.length > 0) {
+        const labels = chartData.map(item => {
+            const date = new Date(item.date);
+            return date.toLocaleDateString('en-US', { 
+                month: 'short', 
+                day: 'numeric' 
+            });
+        });
+        
+        const clicksData = chartData.map(item => item.clicks);
+        const leadsData = chartData.map(item => item.leads);
+        
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Leads',
+                        data: leadsData,
+                        backgroundColor: 'rgba(40, 167, 69, 0.8)',
+                        borderColor: 'rgba(40, 167, 69, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Clicks',
+                        data: clicksData,
+                        backgroundColor: 'rgba(0, 123, 255, 0.8)',
+                        borderColor: 'rgba(0, 123, 255, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                scales: {
+                    x: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: 'Date'
+                        }
+                    },
+                    y: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: 'Count'
+                        },
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                }
+            }
+        });
+    } else {
+        // Show message if no data
+        ctx.style.height = '200px';
+        ctx.style.display = 'flex';
+        ctx.style.alignItems = 'center';
+        ctx.style.justifyContent = 'center';
+        ctx.style.fontSize = '16px';
+        ctx.style.color = '#6c757d';
+        ctx.innerHTML = 'No data available for the selected date range';
+    }
+}
+</script>
+{% endblock %}
