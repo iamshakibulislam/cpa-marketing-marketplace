@@ -318,6 +318,12 @@ def dashboard(request):
         
         current_date += timedelta(days=1)
     
+    # Get latest 10 offers for the Latest Offers card
+    from offers.models import Offer
+    latest_offers = Offer.objects.filter(
+        is_active=True
+    ).order_by('-created_at')[:10]
+    
     context = {
         'active_notices': active_notices,
         'total_paid': total_paid,
@@ -328,6 +334,7 @@ def dashboard(request):
         'total_earnings': total_earnings,
         'conversion_rate': conversion_rate,
         'chart_data': chart_data,
+        'latest_offers': latest_offers,
     }
     return render(request, 'dashboard/index.html', context)
 
