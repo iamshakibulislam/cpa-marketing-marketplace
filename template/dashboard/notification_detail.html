@@ -1,0 +1,250 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}{{ notification.title }}{% endblock title %}
+
+{% block content %}
+<div class="app-content">
+    <div class="side-app">
+        <div class="main-container container-fluid">
+            
+            <!-- PAGE-HEADER -->
+            <div class="page-header">
+                <h1 class="page-title">Notification Details</h1>
+                <div>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'notification_list' %}">Notifications</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Details</li>
+                    </ol>
+                </div>
+            </div>
+            <!-- PAGE-HEADER END -->
+
+            <!-- Notification Detail -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <!-- Notification Icon -->
+                                {% if notification.notification_type == 'account_approved' %}
+                                    <div class="bg-success-gradient rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                                        <i class="fas fa-user-check text-white fa-lg"></i>
+                                    </div>
+                                {% elif notification.notification_type == 'referral_joined' %}
+                                    <div class="bg-info-gradient rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                                        <i class="fas fa-user-plus text-white fa-lg"></i>
+                                    </div>
+                                {% elif notification.notification_type == 'lead_rejected' %}
+                                    <div class="bg-danger-gradient rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                                        <i class="fas fa-times-circle text-white fa-lg"></i>
+                                    </div>
+                                {% elif notification.notification_type == 'payment_method_submitted' %}
+                                    <div class="bg-warning-gradient rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                                        <i class="fas fa-credit-card text-white fa-lg"></i>
+                                    </div>
+                                {% elif notification.notification_type == 'payment_method_approved' %}
+                                    <div class="bg-success-gradient rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                                        <i class="fas fa-credit-card text-white fa-lg"></i>
+                                    </div>
+                                {% elif notification.notification_type == 'invoice_created' %}
+                                    <div class="bg-primary-gradient rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                                        <i class="fas fa-file-invoice-dollar text-white fa-lg"></i>
+                                    </div>
+                                {% elif notification.notification_type == 'invoice_rejected' %}
+                                    <div class="bg-danger-gradient rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                                        <i class="fas fa-file-invoice text-white fa-lg"></i>
+                                    </div>
+                                {% elif notification.notification_type == 'invoice_paid' %}
+                                    <div class="bg-success-gradient rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                                        <i class="fas fa-money-check-alt text-white fa-lg"></i>
+                                    </div>
+                                {% else %}
+                                    <div class="bg-secondary-gradient rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                                        <i class="fas fa-bell text-white fa-lg"></i>
+                                    </div>
+                                {% endif %}
+                                
+                                <div>
+                                    <h3 class="card-title mb-0">{{ notification.title }}</h3>
+                                    <small class="text-muted">{{ notification.get_notification_type_display }}</small>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex align-items-center">
+                                {% if notification.is_read %}
+                                    <span class="badge bg-success me-2">
+                                        <i class="fas fa-check me-1"></i>Read
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-primary me-2">
+                                        <i class="fas fa-circle me-1"></i>Unread
+                                    </span>
+                                {% endif %}
+                                <a href="{% url 'notification_list' %}" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-arrow-left me-1"></i>Back to Notifications
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="card-body">
+                            <!-- Notification Meta Information -->
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <label class="fw-bold text-muted mb-1">Received:</label>
+                                        <div>{{ notification.created_at|date:"F d, Y g:i A" }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <label class="fw-bold text-muted mb-1">Type:</label>
+                                        <div>
+                                            <span class="badge bg-light text-dark">{{ notification.get_notification_type_display }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                                        <!-- Notification Content -->
+            <div class="notification-content">
+                <label class="fw-bold text-muted mb-2">Message:</label>
+                <div class="bg-light p-4 border" style="line-height: 1.6;">
+                    {{ notification.message|linebreaks }}
+                </div>
+            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="mt-4 d-flex justify-content-between align-items-center">
+                                <div>
+                                    {% if not notification.is_read %}
+                                    <button class="btn btn-success" onclick="markAsRead({{ notification.id }})">
+                                        <i class="fas fa-check me-1"></i>Mark as Read
+                                    </button>
+                                    {% endif %}
+                                </div>
+                                
+                                <div>
+                                    <!-- Action buttons based on notification type -->
+                                    {% if notification.notification_type == 'payment_method_submitted' or notification.notification_type == 'payment_method_approved' %}
+                                        <a href="{% url 'payment_methods' %}" class="btn btn-primary">
+                                            <i class="fas fa-credit-card me-1"></i>View Payment Methods
+                                        </a>
+                                    {% elif notification.notification_type == 'invoice_created' or notification.notification_type == 'invoice_rejected' or notification.notification_type == 'invoice_paid' %}
+                                        <a href="{% url 'invoice_list' %}" class="btn btn-primary">
+                                            <i class="fas fa-file-invoice-dollar me-1"></i>View Invoices
+                                        </a>
+                                    {% elif notification.notification_type == 'referral_joined' %}
+                                        <a href="{% url 'referral_dashboard' %}" class="btn btn-primary">
+                                            <i class="fas fa-share-2 me-1"></i>View Referrals
+                                        </a>
+                                    {% elif notification.notification_type == 'lead_rejected' %}
+                                        <a href="{% url 'conversion_reports' %}" class="btn btn-primary">
+                                            <i class="fas fa-chart-bar me-1"></i>View Conversions
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+.info-item {
+    margin-bottom: 1rem;
+}
+
+.info-item label {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.notification-content {
+    margin-top: 2rem;
+}
+
+.notification-content .bg-light {
+    border: 1px solid #dee2e6;
+}
+
+.card-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 2px solid #dee2e6;
+}
+
+.btn {
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+</style>
+
+<script>
+function markAsRead(notificationId) {
+    fetch(`/offers/notifications/${notificationId}/mark-read/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            // Update the badge
+            const badge = document.querySelector('.badge.bg-primary');
+            if (badge) {
+                badge.className = 'badge bg-success me-2';
+                badge.innerHTML = '<i class="fas fa-check me-1"></i>Read';
+            }
+            
+            // Remove the mark as read button
+            const markReadBtn = document.querySelector('.btn-success');
+            if (markReadBtn && markReadBtn.textContent.includes('Mark as Read')) {
+                markReadBtn.remove();
+            }
+            
+            // Show success message
+            showMessage('Notification marked as read', 'success');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showMessage('Failed to mark notification as read', 'error');
+    });
+}
+
+function showMessage(message, type) {
+    const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+    const alertHtml = `
+        <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+    
+    const container = document.querySelector('.main-container');
+    container.insertAdjacentHTML('afterbegin', alertHtml);
+    
+    // Auto-dismiss after 3 seconds
+    setTimeout(() => {
+        const alert = container.querySelector('.alert');
+        if (alert) alert.remove();
+    }, 3000);
+}
+</script>
+
+<!-- CSRF Token for AJAX requests -->
+<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+{% endblock content %}
