@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Affilomint!</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+        .welcome-message {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .welcome-message h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .content {
+            margin-bottom: 25px;
+        }
+        .cta-buttons {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            margin: 0 10px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+        .features {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 25px 0;
+        }
+        .features h3 {
+            color: #007bff;
+            margin-top: 0;
+        }
+        .features ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .features li {
+            margin-bottom: 8px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #666;
+            font-size: 14px;
+        }
+        .highlight {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">Affilomint</div>
+            <p>Your Ultimate CPA Network</p>
+        </div>
+        
+        <div class="welcome-message">
+            <h1>🎉 Congratulations!</h1>
+            <p>Your application has been approved!</p>
+        </div>
+        
+        <div class="content">
+            <p>Dear <strong>{{ user.full_name }}</strong>,</p>
+            
+            <p>We're thrilled to inform you that your Affilomint account has been approved and is now active! Welcome to our community of successful affiliates.</p>
+            
+            <div class="highlight">
+                <strong>What's Next?</strong><br>
+                You can now access your account and start promoting our exclusive CPA offers to earn commissions.
+            </div>
+        </div>
+        
+        <div class="features">
+            <h3>🚀 What You Can Do Now:</h3>
+            <ul>
+                <li><strong>Access Your Dashboard:</strong> View your performance metrics and earnings</li>
+                <li><strong>Browse Offers:</strong> Choose from our curated selection of high-converting CPA offers</li>
+                <li><strong>Get Tracking Links:</strong> Generate personalized tracking links for your campaigns</li>
+                <li><strong>Track Performance:</strong> Monitor clicks, conversions, and earnings in real-time</li>
+                <li><strong>Earn Commissions:</strong> Start building your income through successful conversions</li>
+            </ul>
+        </div>
+        
+        <div class="cta-buttons">
+            <a href="{{ login_url }}" class="btn">Login to Your Account</a>
+            <a href="{{ dashboard_url }}" class="btn btn-secondary">Go to Dashboard</a>
+        </div>
+        
+        <div class="content">
+            <p><strong>Important:</strong> Make sure to complete your profile and verify your payment information to start receiving commissions.</p>
+            
+            <p>If you have any questions or need assistance, our support team is here to help you succeed.</p>
+            
+            <p>Welcome to the Affilomint family! We're excited to see you grow and succeed.</p>
+            
+            <p>Best regards,<br>
+            <strong>The Affilomint Team</strong></p>
+        </div>
+        
+        <div class="footer">
+            <p>This email was sent to {{ user.email }} because your Affilomint account was approved.</p>
+            <p>&copy; 2025 Affilomint. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -29,6 +29,26 @@ class CustomUserManager(BaseUserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
         return self.create_user(email, password, **extra_fields)
+    
+    def activate_user(self, user):
+        """
+        Custom method to activate a user and ensure welcome email is sent
+        """
+        if not user.is_active:
+            user.is_active = True
+            user.save()
+            return True
+        return False
+    
+    def bulk_activate_users(self, queryset):
+        """
+        Bulk activate users and ensure welcome emails are sent
+        """
+        activated_count = 0
+        for user in queryset:
+            if self.activate_user(user):
+                activated_count += 1
+        return activated_count
 
 class EmailVerification(models.Model):
     """Model for managing email verification tokens"""
@@ -113,6 +133,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now_add=True)
+    last_activated = models.DateTimeField(null=True, blank=True, verbose_name="Last Activated")
+    
+    # Cronjob tracking field
+    previous_is_active = models.BooleanField(default=False, verbose_name="Previous Activation Status", 
+                                           help_text="Used by cronjob to track activation status changes")
 
     objects = CustomUserManager()
 
@@ -160,6 +185,39 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_balance_display(self):
         """Return formatted balance for display"""
         return f"${self.balance:,.2f}"
+    
+    def save(self, *args, **kwargs):
+        """
+        Custom save method to handle welcome email when user is approved
+        """
+        # Check if this is an existing user being updated
+        if self.pk:
+            try:
+                # Get the old instance from the database
+                old_instance = User.objects.get(pk=self.pk)
+                
+                # If is_active changed from False to True, send welcome email
+                if not old_instance.is_active and self.is_active:
+                    logger.info(f"User {self.email} activated - sending welcome email")
+                    
+                    # Set the last_activated timestamp
+                    from django.utils import timezone
+                    self.last_activated = timezone.now()
+                    
+                    # Import here to avoid circular imports
+                    from .signals import send_welcome_email
+                    try:
+                        send_welcome_email(self)
+                        logger.info(f"Welcome email sent successfully to {self.email}")
+                    except Exception as e:
+                        logger.error(f"Failed to send welcome email to {self.email}: {str(e)}")
+                        
+            except User.DoesNotExist:
+                pass  # This is a new user
+            except Exception as e:
+                logger.error(f"Error in save method for user {self.email}: {str(e)}")
+        
+        super().save(*args, **kwargs)
     
     def assign_random_manager(self):
         """Assign a random active manager to this user"""

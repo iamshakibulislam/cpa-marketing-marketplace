@@ -126,7 +126,6 @@ STATIC_ROOT = BASE_DIR / 'static'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
@@ -153,16 +152,10 @@ DEFAULT_TRACKING_DOMAIN = 'https://aim4jobs.com'
 # ============================
 
 # CRONJOBS - List of scheduled jobs
-# Format: (cron_timing, python_module_path, [args], {kwargs}, suffix)
-# Cron timing format: minute hour day month weekday
-# Examples:
-# '0 6 * * *' - Every day at 6:00 AM
-# '0 6 * * 1' - Every Monday at 6:00 AM
-# '0 6 1 * *' - First day of every month at 6:00 AM
-
 CRONJOBS = [
-    # Run payment processing every day at 6:00 AM
     ('0 6 * * *', 'django.core.management.call_command', ['process_payments'], {}, '>> /var/log/cpa_cron.log 2>&1'),
+    # Check user activation status every minute
+    ('*/1 * * * *', 'user.cron.check_user_activation_status', '>> /tmp/user_activation_check.log 2>&1'),
 ]
 
 # CRONTAB_LOCK_JOBS - Prevent overlapping jobs
@@ -204,3 +197,27 @@ SMTP_USE_TLS = False
 SMTP_USE_SSL = True
 SMTP_FROM_EMAIL = "admin@affilomint.com"
 SMTP_FROM_NAME = "admin"
+
+# Email Configuration
+# ==================
+
+# Email backend for production (SMTP)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = SMTP_SERVER
+EMAIL_PORT = SMTP_PORT
+EMAIL_USE_TLS = SMTP_USE_TLS
+EMAIL_USE_SSL = SMTP_USE_SSL
+EMAIL_HOST_USER = SMTP_USERNAME
+EMAIL_HOST_PASSWORD = SMTP_PASSWORD
+
+# Default from email
+DEFAULT_FROM_EMAIL = f'{SMTP_FROM_NAME} <{SMTP_FROM_EMAIL}>'
+
+# Email settings for production (uncomment when ready to use SMTP)
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = SMTP_SERVER
+# EMAIL_PORT = SMTP_PORT
+# EMAIL_USE_TLS = SMTP_USE_TLS
+# EMAIL_USE_SSL = SMTP_USE_SSL
+# EMAIL_HOST_USER = SMTP_USERNAME
+# EMAIL_HOST_PASSWORD = SMTP_PASSWORD
