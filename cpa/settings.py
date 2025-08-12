@@ -141,16 +141,13 @@ LOGOUT_REDIRECT_URL = '/user/login/'
 
 # Tracking domains for affiliate links
 TRACKING_DOMAINS = [
-    'http://localhost:8000',
-    'https://track1.yourdomain.com',
-    'https://track2.yourdomain.com',
-    'https://track3.yourdomain.com',
-    'https://track4.yourdomain.com',
-    'https://track5.yourdomain.com',
+    'https://aim4jobs.com',
+    'https://go4aims.com',
+    'https://aim4offer.click',
 ]
 
 # Default tracking domain
-DEFAULT_TRACKING_DOMAIN = 'http://localhost:8000'
+DEFAULT_TRACKING_DOMAIN = 'https://aim4jobs.com'
 
 # Django Crontab Configuration
 # ============================
