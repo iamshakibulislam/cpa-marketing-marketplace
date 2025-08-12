@@ -52,6 +52,8 @@
 									<span class="ms-2">Your request is under review. We'll notify you once approved.</span>
 								{% elif status_display == 'Rejected' %}
 									<span class="ms-2">Your request was not approved. Please contact support for more information.</span>
+								{% elif status_display == 'Approved' %}
+									<span class="ms-2">You have access to this offer. Get your tracking link below.</span>
 								{% elif status_display == 'Need Approval' %}
 									<span class="ms-2">You need to request access to this offer before getting your tracking link.</span>
 								{% else %}
@@ -220,6 +222,57 @@
 													<p class="text-muted mt-2">Your request was not approved. Please contact support for more information.</p>
 												</div>
 												
+											{% elif status_display == 'Approved' %}
+												<!-- Approved - Show Tracking Options -->
+												<h5 class="fw-bold mb-3">
+													<i class="fa fa-link me-2 text-success"></i>Get Your Tracking Link
+												</h5>
+												
+												<div class="row g-3 mb-4">
+													<div class="col-md-6">
+														<label for="trackingDomain" class="form-label fw-semibold">Tracking Domain</label>
+														<select class="form-select" id="trackingDomain">
+															{% for domain in tracking_domains %}
+																<option value="{{ domain.value }}" {% if domain.value == default_domain %}selected{% endif %}>
+																	{{ domain.display }}
+																</option>
+															{% endfor %}
+														</select>
+													</div>
+													<div class="col-md-6">
+														<label for="trackingLink" class="form-label fw-semibold">Your Tracking Link</label>
+														<div class="input-group">
+															<input type="text" class="form-control" id="trackingLink" readonly>
+															<button class="btn btn-outline-secondary" type="button" id="copyTrackingLinkBtn" title="Copy to clipboard">
+																<i class="fa fa-copy"></i>
+															</button>
+														</div>
+													</div>
+												</div>
+												
+												<!-- Subid Parameters -->
+												<div class="row g-3 mb-4">
+													<div class="col-md-4">
+														<label for="subid1" class="form-label fw-semibold">Subid 1 (Optional)</label>
+														<input type="text" class="form-control" id="subid1" placeholder="Enter subid 1">
+													</div>
+													<div class="col-md-4">
+														<label for="subid2" class="form-label fw-semibold">Subid 2 (Optional)</label>
+														<input type="text" class="form-control" id="subid2" placeholder="Enter subid 2">
+													</div>
+													<div class="col-md-4">
+														<label for="subid3" class="form-label fw-semibold">Subid 3 (Optional)</label>
+														<input type="text" class="form-control" id="subid3" placeholder="Enter subid 3">
+													</div>
+												</div>
+												
+												<div class="text-center">
+													<p class="text-muted mb-0">
+														<i class="fa fa-info-circle me-2"></i>
+														Use this tracking link to promote the offer. All clicks and conversions will be tracked automatically.
+													</p>
+												</div>
+												
 											{% else %}
 												<!-- Need Approval - Show Request Button -->
 												<div class="text-center py-4">
@@ -327,6 +380,12 @@ document.addEventListener('DOMContentLoaded', function() {
     if (canAccess) {
         console.log('User has access, initializing tracking link...');
         // Set initial tracking link immediately
+        updateTrackingLink();
+    }
+    
+    // Also initialize for Approved status
+    if (document.querySelector('[data-status="Approved"]')) {
+        console.log('Approved status detected, initializing tracking link...');
         updateTrackingLink();
     }
     

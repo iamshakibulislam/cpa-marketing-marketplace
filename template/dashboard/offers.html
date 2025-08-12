@@ -122,6 +122,12 @@
 												<a href="#" class="btn btn-sm btn-outline-warning disabled">
 													<i class="fa fa-clock me-1"></i>Pending Review
 												</a>
+											{% elif offer_data.status_display == 'Approved' %}
+												<button type="button" class="btn btn-sm btn-outline-success get-tracking-link-btn" 
+														data-offer-id="{{ offer_data.offer.id }}" 
+														data-user-id="{{ request.user.id }}">
+													<i class="fa fa-link me-1"></i>Get Link
+												</button>
 											{% elif offer_data.status_display == 'Need Approval' %}
 												<button type="button" class="btn btn-sm btn-outline-info request-access-btn" 
 														data-offer-id="{{ offer_data.offer.id }}" 

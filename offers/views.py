@@ -82,9 +82,15 @@ def view_offer(request, offer_id):
             status_class = 'bg-warning'
             can_access = False
     except UserOfferRequest.DoesNotExist:
-        status_display = 'Need Approval'
-        status_class = 'bg-secondary'
-        can_access = False
+        # Check if offer needs approval
+        if not offer.need_approval:
+            status_display = 'Approved'
+            status_class = 'bg-success'
+            can_access = True
+        else:
+            status_display = 'Need Approval'
+            status_class = 'bg-secondary'
+            can_access = False
         user_request = None
     
     # Get tracking domains
@@ -117,8 +123,17 @@ def approved_offers(request):
         status='approved'
     ).values_list('offer_id', flat=True)
     
+    # Also get offers that don't need approval (direct access)
+    direct_access_offers = Offer.objects.filter(
+        is_active=True,
+        need_approval=False
+    ).values_list('id', flat=True)
+    
+    # Combine both sets of offer IDs
+    all_accessible_offer_ids = list(user_requests) + list(direct_access_offers)
+    
     offers_list = Offer.objects.filter(
-        id__in=user_requests,
+        id__in=all_accessible_offer_ids,
         is_active=True
     )
     
@@ -130,13 +145,17 @@ def approved_offers(request):
             models.Q(cpa_network__name__icontains=search_query)
         )
     
-    # Prepare offers data with status information (all will be approved)
+    # Prepare offers data with status information
     offers_data = []
     for offer in offers_list:
+        # All offers in this view are approved (either through approval or direct access)
+        status_display = 'Approved'
+        status_class = 'bg-success'
+        
         offers_data.append({
             'offer': offer,
-            'status_display': 'Approved',
-            'status_class': 'bg-success'
+            'status_display': status_display,
+            'status_class': status_class
         })
     
     # Pagination
@@ -187,8 +206,13 @@ def offers_list(request):
                 status_display = 'Pending'
                 status_class = 'bg-warning'
         else:
-            status_display = 'Need Approval'
-            status_class = 'bg-secondary'
+            # Check if offer needs approval
+            if not offer.need_approval:
+                status_display = 'Approved'
+                status_class = 'bg-success'
+            else:
+                status_display = 'Need Approval'
+                status_class = 'bg-secondary'
         
         offers_data.append({
             'offer': offer,
@@ -223,6 +247,13 @@ def request_offer_access(request):
             return JsonResponse({'success': False, 'message': 'Offer ID is required'})
         
         offer = get_object_or_404(Offer, id=offer_id, is_active=True)
+        
+        # Check if offer needs approval
+        if not offer.need_approval:
+            return JsonResponse({
+                'success': False, 
+                'message': 'This offer does not require approval. You can access it directly.'
+            })
         
         # Check if user already has a request for this offer
         existing_request, created = UserOfferRequest.objects.get_or_create(
@@ -273,7 +304,10 @@ def track_click(request):
             if user_request.status != 'approved':
                 return HttpResponse("Access denied", status=403)
         except UserOfferRequest.DoesNotExist:
-            return HttpResponse("Access denied", status=403)
+            # Check if offer needs approval
+            if offer.need_approval:
+                return HttpResponse("Access denied", status=403)
+            # If no approval needed, allow access
 
         # Generate click ID
         from .models import generate_click_id
