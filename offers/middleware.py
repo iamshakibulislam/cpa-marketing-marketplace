@@ -158,6 +158,7 @@ class TrackingDomainAccessMiddleware(MiddlewareMixin):
             '/media/',            # Media files
             '/admin/',            # Admin access (if needed)
             '/api/',              # API endpoints
+            '/offers/offer/',
         ]
         
         # Check if current path is allowed on tracking domains
