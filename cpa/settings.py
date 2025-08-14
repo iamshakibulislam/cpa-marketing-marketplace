@@ -52,6 +52,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'offers.middleware.ReferralTrackingMiddleware',  # Add referral tracking middleware
+    'offers.middleware.TrackingDomainAccessMiddleware',  # Add tracking domain access control middleware
 ]
 
 ROOT_URLCONF = 'cpa.urls'
@@ -147,6 +148,9 @@ TRACKING_DOMAINS = [
 
 # Default tracking domain
 DEFAULT_TRACKING_DOMAIN = 'https://aim4jobs.com'
+
+# Main domain for redirects when accessing restricted content on tracking domains
+MAIN_DOMAIN = 'https://affilomint.com'
 
 # Django Crontab Configuration
 # ============================
