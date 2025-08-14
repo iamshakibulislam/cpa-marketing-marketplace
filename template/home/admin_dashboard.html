@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .card { border: 1px solid #ddd; padding: 20px; margin: 10px; border-radius: 5px; display: inline-block; width: 300px; }
+        .filter { margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .btn { padding: 8px 15px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        .number { font-size: 2em; font-weight: bold; color: #28a745; }
+        input[type="date"] { padding: 5px; margin: 0 10px; }
+    </style>
+</head>
+<body>
+    <h1>Admin Dashboard</h1>
+    
+    <div class="filter">
+        <form method="GET">
+            Start Date: <input type="date" name="start_date" value="{{ start_date|date:'Y-m-d' }}">
+            End Date: <input type="date" name="end_date" value="{{ end_date|date:'Y-m-d' }}">
+            <button type="submit" class="btn">Filter</button>
+            <a href="{% url 'admin_dashboard' %}" class="btn">Today</a>
+        </form>
+    </div>
+
+    <div class="card">
+        <h3>Total Leads</h3>
+        <div class="number">{{ total_leads }}</div>
+        <p>{{ start_date|date:'M j' }} - {{ end_date|date:'M j, Y' }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Total Earnings</h3>
+        <div class="number">${{ total_earnings|floatformat:2 }}</div>
+        <p>{{ start_date|date:'M j' }} - {{ end_date|date:'M j, Y' }}</p>
+    </div>
+</body>
+</html>
