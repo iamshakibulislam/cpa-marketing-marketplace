@@ -16,7 +16,7 @@ class Command(BaseCommand):
                 'description': 'NexusSyner CPA Network',
                 'click_id_parameter': 's2',
                 'postback_click_id_parameter': 'click_id',
-                'postback_payout_parameter': 'payout',
+                'click_id_wrapper': '{}',
                 'is_active': True
             },
             {
@@ -25,7 +25,7 @@ class Command(BaseCommand):
                 'description': 'DreamAff CPA Network',
                 'click_id_parameter': 'subid',
                 'postback_click_id_parameter': 'subid',
-                'postback_payout_parameter': 'sum',
+                'click_id_wrapper': '{}',
                 'is_active': True
             },
             {
@@ -34,7 +34,7 @@ class Command(BaseCommand):
                 'description': 'AffRoyal CPA Network',
                 'click_id_parameter': 'subid',
                 'postback_click_id_parameter': 'subid',
-                'postback_payout_parameter': 'sum',
+                'click_id_wrapper': '{}',
                 'is_active': True
             },
             {
@@ -43,7 +43,7 @@ class Command(BaseCommand):
                 'description': 'OfferGreenlineMedia CPA Network',
                 'click_id_parameter': 'subid',
                 'postback_click_id_parameter': 'subid',
-                'postback_payout_parameter': 'sum',
+                'click_id_wrapper': '{}',
                 'is_active': True
             },
             {
@@ -52,7 +52,7 @@ class Command(BaseCommand):
                 'description': 'AdGainMedia CPA Network',
                 'click_id_parameter': 'subid',
                 'postback_click_id_parameter': 'subid',
-                'postback_payout_parameter': 'sum',
+                'click_id_wrapper': '{}',
                 'is_active': True
             },
             {
@@ -61,7 +61,7 @@ class Command(BaseCommand):
                 'description': 'OMSolution CPA Network',
                 'click_id_parameter': 'subid',
                 'postback_click_id_parameter': 'subid',
-                'postback_payout_parameter': 'sum',
+                'click_id_wrapper': '{}',
                 'is_active': True
             },
             {
@@ -70,7 +70,7 @@ class Command(BaseCommand):
                 'description': 'GlobalAds CPA Network',
                 'click_id_parameter': 'subid',
                 'postback_click_id_parameter': 'subid',
-                'postback_payout_parameter': 'sum',
+                'click_id_wrapper': '{}',
                 'is_active': True
             },
             {
@@ -79,7 +79,6 @@ class Command(BaseCommand):
                 'description': 'Olavivo CPA Network',
                 'click_id_parameter': 'subid',
                 'postback_click_id_parameter': 'subid',
-                'postback_payout_parameter': 'sum',
                 'is_active': True
             },
             {
@@ -88,7 +87,6 @@ class Command(BaseCommand):
                 'description': 'Crack Revenue CPA Network',
                 'click_id_parameter': 'subid',
                 'postback_click_id_parameter': 'subid',
-                'postback_payout_parameter': 'sum',
                 'is_active': True
             },
             {
@@ -97,7 +95,6 @@ class Command(BaseCommand):
                 'description': 'AdBlueMedia CPA Network',
                 'click_id_parameter': 'subid',
                 'postback_click_id_parameter': 'subid',
-                'postback_payout_parameter': 'sum',
                 'is_active': True
             },
             {
@@ -106,7 +103,6 @@ class Command(BaseCommand):
                 'description': 'CPAGrip CPA Network',
                 'click_id_parameter': 'subid',
                 'postback_click_id_parameter': 'subid',
-                'postback_payout_parameter': 'sum',
                 'is_active': True
             },
             {
@@ -115,7 +111,6 @@ class Command(BaseCommand):
                 'description': 'CPA Lead Network',
                 'click_id_parameter': 'subid',
                 'postback_click_id_parameter': 'subid',
-                'postback_payout_parameter': 'sum',
                 'is_active': True
             },
             {
@@ -124,7 +119,6 @@ class Command(BaseCommand):
                 'description': 'AffMine CPA Network',
                 'click_id_parameter': 'subid',
                 'postback_click_id_parameter': 'subid',
-                'postback_payout_parameter': 'sum',
                 'is_active': True
             },
             {
@@ -133,7 +127,6 @@ class Command(BaseCommand):
                 'description': 'CMAffs CPA Network',
                 'click_id_parameter': 'subid',
                 'postback_click_id_parameter': 'subid',
-                'postback_payout_parameter': 'sum',
                 'is_active': True
             },
             {
@@ -142,7 +135,6 @@ class Command(BaseCommand):
                 'description': 'Surflink.io CPA Network',
                 'click_id_parameter': 'subid',
                 'postback_click_id_parameter': 'subid',
-                'postback_payout_parameter': 'sum',
                 'is_active': True
             },
             {
@@ -151,7 +143,6 @@ class Command(BaseCommand):
                 'description': 'AdMolly CPA Network',
                 'click_id_parameter': 'subid',
                 'postback_click_id_parameter': 'subid',
-                'postback_payout_parameter': 'sum',
                 'is_active': True
             },
             {
@@ -160,7 +151,6 @@ class Command(BaseCommand):
                 'description': 'ClicksAdv CPA Network',
                 'click_id_parameter': 'subid',
                 'postback_click_id_parameter': 'subid',
-                'postback_payout_parameter': 'sum',
                 'is_active': True
             },
             {
@@ -169,7 +159,6 @@ class Command(BaseCommand):
                 'description': 'AffClickMedia CPA Network',
                 'click_id_parameter': 'subid',
                 'postback_click_id_parameter': 'subid',
-                'postback_payout_parameter': 'sum',
                 'is_active': True
             },
             {
@@ -277,7 +266,7 @@ class Command(BaseCommand):
                 'description': 'ILSMedia CPA Network',
                 'click_id_parameter': 'subid',
                 'postback_click_id_parameter': 'subid',
-                'postback_payout_parameter': 'sum',
+                'click_id_wrapper': '{}',
                 'is_active': True
             },
             
@@ -288,7 +277,7 @@ class Command(BaseCommand):
                 'description': 'Traffe 18+ CPA Network',
                 'click_id_parameter': 'subid',
                 'postback_click_id_parameter': 'subid',
-                'postback_payout_parameter': 'sum',
+                'click_id_wrapper': '{}',
                 'is_active': True
             },
             {
@@ -297,7 +286,7 @@ class Command(BaseCommand):
                 'description': 'Datify.link 18+ CPA Network',
                 'click_id_parameter': 'subid',
                 'postback_click_id_parameter': 'subid',
-                'postback_payout_parameter': 'sum',
+                'click_id_wrapper': '{}',
                 'is_active': True
             },
             {
@@ -306,7 +295,7 @@ class Command(BaseCommand):
                 'description': 'Losspollos 18+ CPA Network',
                 'click_id_parameter': 'subid',
                 'postback_click_id_parameter': 'subid',
-                'postback_payout_parameter': 'sum',
+                'click_id_wrapper': '{}',
                 'is_active': True
             },
             {
@@ -315,7 +304,7 @@ class Command(BaseCommand):
                 'description': 'My Lead 18+ CPA Network',
                 'click_id_parameter': 'subid',
                 'postback_click_id_parameter': 'subid',
-                'postback_payout_parameter': 'sum',
+                'click_id_wrapper': '{}',
                 'is_active': True
             },
             {
@@ -324,7 +313,7 @@ class Command(BaseCommand):
                 'description': 'PaySale 18+ CPA Network',
                 'click_id_parameter': 'subid',
                 'postback_click_id_parameter': 'subid',
-                'postback_payout_parameter': 'sum',
+                'click_id_wrapper': '{}',
                 'is_active': True
             },
         ]
@@ -362,6 +351,7 @@ class Command(BaseCommand):
                 '\n📝 NOTES:'
                 '\n- Most networks use "subid" for click ID parameter'
                 '\n- NexusSyner uses "s2" parameter (special case)'
+                '\n- Click ID wrapper can be customized (e.g., {} for {s2}, # for #s2#, [] for [s2])'
                 '\n- Payout is set when creating offers, not from postback'
                 '\n- You can edit parameters in Django Admin → CPA Networks'
             )

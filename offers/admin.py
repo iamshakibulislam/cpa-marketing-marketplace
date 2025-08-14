@@ -14,7 +14,7 @@ class CPANetworkAdmin(admin.ModelAdmin):
         'network_key',
         'click_id_parameter',
         'postback_click_id_parameter',
-        'postback_payout_parameter',
+        'click_id_wrapper',
         'is_active',
         'created_at'
     ]
@@ -28,7 +28,7 @@ class CPANetworkAdmin(admin.ModelAdmin):
             'fields': ('network_key', 'name', 'description', 'is_active')
         }),
         ('Parameters', {
-            'fields': ('click_id_parameter', 'postback_click_id_parameter', 'postback_payout_parameter')
+            'fields': ('click_id_parameter', 'postback_click_id_parameter', 'click_id_wrapper')
         }),
         ('Timestamps', {
             'fields': ('created_at', 'updated_at'),

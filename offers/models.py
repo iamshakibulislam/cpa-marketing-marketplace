@@ -88,10 +88,11 @@ class CPANetwork(models.Model):
         verbose_name="Postback Click ID Parameter",
         help_text="Parameter name for receiving click ID in postback"
     )
-    postback_payout_parameter = models.CharField(
-        max_length=100,
-        verbose_name="Postback Payout Parameter",
-        help_text="Parameter name for receiving payout in postback"
+    click_id_wrapper = models.CharField(
+        max_length=10,
+        default='{}',
+        verbose_name="Click ID Wrapper",
+        help_text="Wrapper characters around click ID (e.g., {} for {s2}, # for #s2#, [] for [s2])"
     )
     is_active = models.BooleanField(
         default=True,
@@ -115,7 +116,21 @@ class CPANetwork(models.Model):
             return ""
         
         base_url = f"{site_settings.site_url}/offers/postback/?network={self.network_key}"
-        postback_url = f"{base_url}&{self.postback_click_id_parameter}={{{self.click_id_parameter}}}"
+        
+        # Use the wrapper to format the click ID parameter
+        if len(self.click_id_wrapper) == 2:
+            # Two-character wrapper like {} or # or []
+            start_wrapper = self.click_id_wrapper[0]
+            end_wrapper = self.click_id_wrapper[1]
+            formatted_click_id = f"{start_wrapper}{self.click_id_parameter}{end_wrapper}"
+        elif len(self.click_id_wrapper) == 1:
+            # Single character wrapper like # or *
+            formatted_click_id = f"{self.click_id_wrapper}{self.click_id_parameter}{self.click_id_wrapper}"
+        else:
+            # Default to {} if wrapper is invalid
+            formatted_click_id = f"{{{self.click_id_parameter}}}"
+        
+        postback_url = f"{base_url}&{self.postback_click_id_parameter}={formatted_click_id}"
         return postback_url
 
 
