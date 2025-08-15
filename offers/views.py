@@ -436,7 +436,7 @@ def handle_postback(request):
 
         # Get click ID and payout from the postback
         click_id_param = cpa_network.postback_click_id_parameter
-        payout_param = cpa_network.postback_payout_parameter
+        payout_param = "payout"
 
         # Try to get values from both GET and POST
         network_click_id = request.GET.get(click_id_param) or request.POST.get(click_id_param)
