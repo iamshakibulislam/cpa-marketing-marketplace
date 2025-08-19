@@ -422,48 +422,73 @@ def get_tracking_domains(request):
 @csrf_exempt
 def handle_postback(request):
     """Handle postback from CPA networks"""
+    # Add proper headers for HTTP status validators
+    def create_postback_response(data, status_code=200):
+        """Create a properly formatted postback response"""
+        response = JsonResponse(data, status=status_code)
+        response['Content-Type'] = 'application/json'
+        response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response['Pragma'] = 'no-cache'
+        response['Expires'] = '0'
+        return response
+    
+    # Log the incoming request for debugging
+    logger.info(f"Postback received: Method={request.method}, GET={dict(request.GET)}, POST={dict(request.POST)}")
+    
     try:
         # Get the CPA network from the request
         network_key = request.GET.get('network') or request.POST.get('network')
-
         
-
         if not network_key:
-            return HttpResponse("Network parameter required", status=400)
+            logger.warning("Postback received without network parameter")
+            return create_postback_response({
+                'success': False, 
+                'message': 'Network parameter required',
+                'error_code': 'MISSING_NETWORK'
+            }, 400)
 
         # Get the CPA network
         try:
             cpa_network = CPANetwork.objects.get(network_key=network_key, is_active=True)
         except CPANetwork.DoesNotExist:
-            return JsonResponse({'success': False, 'message': f'Unknown network: {network_key}'}, status=200)
+            logger.warning(f"Postback received for unknown network: {network_key}")
+            return create_postback_response({
+                'success': False, 
+                'message': f'Unknown network: {network_key}',
+                'error_code': 'UNKNOWN_NETWORK'
+            }, 200)
 
         # Get click ID and payout from the postback
         click_id_param = cpa_network.postback_click_id_parameter
-
-        try:
-            open(str(network_key)+str(click_id_param)+".txt", "w")
-        except Exception as e:
-            print(f"Error opening file: {e}")
-
         payout_param = "payout"
 
         # Try to get values from both GET and POST
         network_click_id = request.GET.get(click_id_param) or request.POST.get(click_id_param)
         network_payout = request.GET.get(payout_param) or request.POST.get(payout_param)
 
+        logger.info(f"Postback data: network={network_key}, click_id_param={click_id_param}, click_id={network_click_id}, payout={network_payout}")
+
         if not network_click_id:
-            return JsonResponse({'success': False, 'message': f'Missing {click_id_param} parameter'}, status=200)
+            logger.warning(f"Postback missing click ID parameter: {click_id_param}")
+            return create_postback_response({
+                'success': False, 
+                'message': f'Missing {click_id_param} parameter',
+                'error_code': 'MISSING_CLICK_ID'
+            }, 200)
 
         # Find the click tracking record
         try:
             click_tracking = ClickTracking.objects.get(click_id=network_click_id)
         except ClickTracking.DoesNotExist:
-            return JsonResponse({'success': False, 'message': 'Click tracking record not found'}, status=200)
+            logger.warning(f"Click tracking record not found for click_id: {network_click_id}")
+            return create_postback_response({
+                'success': False, 
+                'message': 'Click tracking record not found',
+                'error_code': 'CLICK_NOT_FOUND'
+            }, 200)
 
         # Use the offer's payout amount (set in admin panel) instead of network payout
         offer_payout = click_tracking.offer.payout
-
-        # Check if conversion should be recorded based on user's conversion counter
         user = click_tracking.user
         
         # First, check if a conversion already exists for this click tracking record
@@ -474,7 +499,13 @@ def handle_postback(request):
             existing_conversion.network_click_id = network_click_id
             existing_conversion.network_payout = network_payout
             existing_conversion.save()
-            return JsonResponse({'success': True, 'message': 'Existing conversion updated'}, status=200)
+            
+            logger.info(f"Updated existing conversion for user {user.id}, click_id: {network_click_id}")
+            return create_postback_response({
+                'success': True, 
+                'message': 'Existing conversion updated',
+                'conversion_id': existing_conversion.id
+            }, 200)
         
         # Increment the user's conversion counter (this happens regardless of filtering)
         user.conversion_counter += 1
@@ -485,7 +516,12 @@ def handle_postback(request):
             # Log that conversion was filtered out
             logger.info(f"Conversion filtered out for user {user.id}: conversion counter {user.conversion_counter} (divisible by 3)")
             
-            return JsonResponse({'success': True, 'message': 'Conversion filtered out (divisible by 3 rule)'}, status=200)
+            return create_postback_response({
+                'success': True, 
+                'message': 'Conversion filtered out (divisible by 3 rule)',
+                'filtered': True,
+                'conversion_counter': user.conversion_counter
+            }, 200)
 
         # Create new conversion record
         conversion = Conversion.objects.create(
@@ -498,10 +534,20 @@ def handle_postback(request):
         
         logger.info(f"New conversion created for user {user.id}: conversion ID {conversion.id}, conversion counter now {user.conversion_counter}")
 
-        return JsonResponse({'success': True, 'message': 'Conversion created successfully'}, status=200)
+        return create_postback_response({
+            'success': True, 
+            'message': 'Conversion created successfully',
+            'conversion_id': conversion.id,
+            'conversion_counter': user.conversion_counter
+        }, 200)
 
     except Exception as e:
-        return JsonResponse({'success': False, 'message': str(e)}, status=200)
+        logger.error(f"Postback processing error: {str(e)}", exc_info=True)
+        return create_postback_response({
+            'success': False, 
+            'message': 'Internal server error',
+            'error_code': 'SERVER_ERROR'
+        }, 500)
 
 def test_cpa_networks(request):
     """Test view to check CPA network configurations"""
@@ -529,6 +575,58 @@ def test_cpa_networks(request):
         debug_info.append("")
     
     return HttpResponse("<br>".join(debug_info))
+
+def test_postback_endpoint(request):
+    """Test view to verify postback endpoint is working correctly"""
+    from django.http import JsonResponse
+    import requests
+    
+    # Get test parameters
+    network_key = request.GET.get('network', 'test_network')
+    click_id = request.GET.get('click_id', 'TEST-CLICK-ID-123')
+    payout = request.GET.get('payout', '10.00')
+    
+    # Build postback URL
+    postback_url = request.build_absolute_uri('/offers/postback/')
+    
+    # Test parameters
+    test_params = {
+        'network': network_key,
+        'click_id': click_id,  # This might need to match your CPA network's parameter name
+        'payout': payout
+    }
+    
+    result_info = []
+    result_info.append("=== POSTBACK ENDPOINT TEST ===")
+    result_info.append(f"Postback URL: {postback_url}")
+    result_info.append(f"Test Parameters: {test_params}")
+    result_info.append("")
+    
+    try:
+        # Test GET request
+        response = requests.get(postback_url, params=test_params, timeout=10)
+        result_info.append(f"GET Request Status: {response.status_code}")
+        result_info.append(f"GET Response Headers: {dict(response.headers)}")
+        result_info.append(f"GET Response Body: {response.text}")
+        result_info.append("")
+        
+        # Test POST request
+        response = requests.post(postback_url, data=test_params, timeout=10)
+        result_info.append(f"POST Request Status: {response.status_code}")
+        result_info.append(f"POST Response Headers: {dict(response.headers)}")
+        result_info.append(f"POST Response Body: {response.text}")
+        
+    except Exception as e:
+        result_info.append(f"Error testing postback: {str(e)}")
+    
+    result_info.append("")
+    result_info.append("=== AVAILABLE CPA NETWORKS ===")
+    networks = CPANetwork.objects.all()
+    for network in networks:
+        result_info.append(f"Network: {network.name} (Key: {network.network_key})")
+        result_info.append(f"  Postback Click ID Param: {network.postback_click_id_parameter}")
+    
+    return HttpResponse("<br>".join(result_info))
 
 def test_redirect_url(request):
     """Test view to verify redirect URL building"""

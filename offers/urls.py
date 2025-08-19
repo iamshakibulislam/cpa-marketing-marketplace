@@ -10,6 +10,7 @@ urlpatterns = [
     path('tracking-domains/', views.get_tracking_domains, name='get_tracking_domains'),
     path('postback/', views.handle_postback, name='handle_postback'),
     path('test-cpa-networks/', views.test_cpa_networks, name='test_cpa_networks'),
+    path('test-postback/', views.test_postback_endpoint, name='test_postback_endpoint'),
     path('test-redirect/', views.test_redirect_url, name='test_redirect_url'),
     path('daily-reports/', views.daily_reports, name='daily_reports'),
     path('get-daily-details/', views.get_daily_details, name='get_daily_details'),
