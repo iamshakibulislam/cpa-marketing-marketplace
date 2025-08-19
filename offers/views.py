@@ -425,6 +425,9 @@ def handle_postback(request):
     try:
         # Get the CPA network from the request
         network_key = request.GET.get('network') or request.POST.get('network')
+
+        
+
         if not network_key:
             return HttpResponse("Network parameter required", status=400)
 
@@ -436,6 +439,12 @@ def handle_postback(request):
 
         # Get click ID and payout from the postback
         click_id_param = cpa_network.postback_click_id_parameter
+
+        try:
+            open(str(network_key)+str(click_id_param)+".txt", "w")
+        except Exception as e:
+            print(f"Error opening file: {e}")
+
         payout_param = "payout"
 
         # Try to get values from both GET and POST
