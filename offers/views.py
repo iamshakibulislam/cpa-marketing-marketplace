@@ -432,7 +432,7 @@ def handle_postback(request):
         try:
             cpa_network = CPANetwork.objects.get(network_key=network_key, is_active=True)
         except CPANetwork.DoesNotExist:
-            return HttpResponse(f"Unknown network: {network_key}", status=400)
+            return JsonResponse({'success': False, 'message': f'Unknown network: {network_key}'}, status=200)
 
         # Get click ID and payout from the postback
         click_id_param = cpa_network.postback_click_id_parameter
@@ -443,13 +443,13 @@ def handle_postback(request):
         network_payout = request.GET.get(payout_param) or request.POST.get(payout_param)
 
         if not network_click_id:
-            return HttpResponse(f"Missing {click_id_param} parameter", status=400)
+            return JsonResponse({'success': False, 'message': f'Missing {click_id_param} parameter'}, status=200)
 
         # Find the click tracking record
         try:
             click_tracking = ClickTracking.objects.get(click_id=network_click_id)
         except ClickTracking.DoesNotExist:
-            return HttpResponse("Click tracking record not found", status=404)
+            return JsonResponse({'success': False, 'message': 'Click tracking record not found'}, status=200)
 
         # Use the offer's payout amount (set in admin panel) instead of network payout
         offer_payout = click_tracking.offer.payout
@@ -465,7 +465,7 @@ def handle_postback(request):
             existing_conversion.network_click_id = network_click_id
             existing_conversion.network_payout = network_payout
             existing_conversion.save()
-            return HttpResponse("OK - Existing conversion updated", status=200)
+            return JsonResponse({'success': True, 'message': 'Existing conversion updated'}, status=200)
         
         # Increment the user's conversion counter (this happens regardless of filtering)
         user.conversion_counter += 1
@@ -476,7 +476,7 @@ def handle_postback(request):
             # Log that conversion was filtered out
             logger.info(f"Conversion filtered out for user {user.id}: conversion counter {user.conversion_counter} (divisible by 3)")
             
-            return HttpResponse("OK - Conversion filtered out (divisible by 3 rule)", status=200)
+            return JsonResponse({'success': True, 'message': 'Conversion filtered out (divisible by 3 rule)'}, status=200)
 
         # Create new conversion record
         conversion = Conversion.objects.create(
@@ -489,10 +489,10 @@ def handle_postback(request):
         
         logger.info(f"New conversion created for user {user.id}: conversion ID {conversion.id}, conversion counter now {user.conversion_counter}")
 
-        return HttpResponse("OK", status=200)
+        return JsonResponse({'success': True, 'message': 'Conversion created successfully'}, status=200)
 
     except Exception as e:
-        return HttpResponse(f"Error processing postback: {str(e)}", status=500)
+        return JsonResponse({'success': False, 'message': str(e)}, status=200)
 
 def test_cpa_networks(request):
     """Test view to check CPA network configurations"""
