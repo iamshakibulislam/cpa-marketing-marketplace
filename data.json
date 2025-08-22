@@ -1,0 +1,3731 @@
+[
+{
+  "model": "admin.logentry",
+  "pk": 1,
+  "fields": {
+    "action_time": "2025-08-01T14:13:55.366Z",
+    "user": 1,
+    "content_type": 7,
+    "object_id": "1",
+    "object_repr": "test offer 1",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 2,
+  "fields": {
+    "action_time": "2025-08-01T14:29:02.422Z",
+    "user": 1,
+    "content_type": 7,
+    "object_id": "1",
+    "object_repr": "test offer 1",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"countries\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 3,
+  "fields": {
+    "action_time": "2025-08-01T14:35:37.047Z",
+    "user": 1,
+    "content_type": 7,
+    "object_id": "1",
+    "object_repr": "test offer 1",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"devices\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 4,
+  "fields": {
+    "action_time": "2025-08-01T14:36:24.261Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "1",
+    "object_repr": "md shakibul islam - test offer 1 (Pending)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 5,
+  "fields": {
+    "action_time": "2025-08-01T14:36:36.433Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "1",
+    "object_repr": "md shakibul islam - test offer 1 (Approved)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 6,
+  "fields": {
+    "action_time": "2025-08-01T14:37:01.967Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "1",
+    "object_repr": "md shakibul islam - test offer 1 (Rejected)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 7,
+  "fields": {
+    "action_time": "2025-08-01T14:37:27.233Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "1",
+    "object_repr": "md shakibul islam - test offer 1 (Rejected)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 8,
+  "fields": {
+    "action_time": "2025-08-01T14:48:20.391Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "2",
+    "object_repr": "md shakibul islam - test offer 1 (Pending)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 9,
+  "fields": {
+    "action_time": "2025-08-01T14:48:42.551Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "2",
+    "object_repr": "md shakibul islam - test offer 1 (Approved)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 10,
+  "fields": {
+    "action_time": "2025-08-01T14:51:03.845Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "2",
+    "object_repr": "md shakibul islam - test offer 1 (Pending)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 11,
+  "fields": {
+    "action_time": "2025-08-01T14:51:14.795Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "2",
+    "object_repr": "md shakibul islam - test offer 1 (Rejected)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 12,
+  "fields": {
+    "action_time": "2025-08-01T14:51:30.402Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "2",
+    "object_repr": "md shakibul islam - test offer 1 (Approved)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 13,
+  "fields": {
+    "action_time": "2025-08-01T14:55:13.751Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "2",
+    "object_repr": "md shakibul islam - test offer 1 (Pending)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 14,
+  "fields": {
+    "action_time": "2025-08-01T14:55:43.096Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "2",
+    "object_repr": "md shakibul islam - test offer 1 (Pending)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 15,
+  "fields": {
+    "action_time": "2025-08-01T15:09:06.408Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "3",
+    "object_repr": "md shakibul islam - test offer 1 (Pending)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 16,
+  "fields": {
+    "action_time": "2025-08-01T15:15:16.251Z",
+    "user": 1,
+    "content_type": 7,
+    "object_id": "2",
+    "object_repr": "uber job offer",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 17,
+  "fields": {
+    "action_time": "2025-08-01T15:15:56.611Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "5",
+    "object_repr": "md shakibul islam - uber job offer (Approved)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 18,
+  "fields": {
+    "action_time": "2025-08-02T13:42:47.350Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "4",
+    "object_repr": "md shakibul islam - test offer 1 (Approved)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 19,
+  "fields": {
+    "action_time": "2025-08-02T13:56:15.910Z",
+    "user": 1,
+    "content_type": 7,
+    "object_id": "3",
+    "object_repr": "job offer number 3",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 20,
+  "fields": {
+    "action_time": "2025-08-02T13:57:43.871Z",
+    "user": 1,
+    "content_type": 7,
+    "object_id": "3",
+    "object_repr": "job offer number 3",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"countries\", \"devices\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 21,
+  "fields": {
+    "action_time": "2025-08-02T14:14:26.164Z",
+    "user": 1,
+    "content_type": 7,
+    "object_id": "3",
+    "object_repr": "job offer number 3",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 22,
+  "fields": {
+    "action_time": "2025-08-02T14:14:26.165Z",
+    "user": 1,
+    "content_type": 7,
+    "object_id": "2",
+    "object_repr": "uber job offer",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 23,
+  "fields": {
+    "action_time": "2025-08-02T14:14:26.165Z",
+    "user": 1,
+    "content_type": 7,
+    "object_id": "1",
+    "object_repr": "test offer 1",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 24,
+  "fields": {
+    "action_time": "2025-08-02T14:58:52.173Z",
+    "user": 1,
+    "content_type": 11,
+    "object_id": "1",
+    "object_repr": "CPA Network (localhost:8000)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 25,
+  "fields": {
+    "action_time": "2025-08-02T15:07:29.222Z",
+    "user": 1,
+    "content_type": 11,
+    "object_id": "1",
+    "object_repr": "CPA Network (localhost:8000)",
+    "action_flag": 2,
+    "change_message": "[]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 26,
+  "fields": {
+    "action_time": "2025-08-02T16:03:20.845Z",
+    "user": 1,
+    "content_type": 7,
+    "object_id": "1",
+    "object_repr": "job offer usa (NexusSyner)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 27,
+  "fields": {
+    "action_time": "2025-08-02T16:10:28.365Z",
+    "user": 1,
+    "content_type": 7,
+    "object_id": "1",
+    "object_repr": "job offer usa (NexusSyner)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"countries\", \"devices\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 28,
+  "fields": {
+    "action_time": "2025-08-02T16:12:40.518Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "7",
+    "object_repr": "md shakibul islam - job offer usa (Rejected)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 29,
+  "fields": {
+    "action_time": "2025-08-02T16:12:53.760Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "7",
+    "object_repr": "md shakibul islam - job offer usa (Approved)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 30,
+  "fields": {
+    "action_time": "2025-08-02T16:13:48.952Z",
+    "user": 1,
+    "content_type": 9,
+    "object_id": "1",
+    "object_repr": "md shakibul islam - job offer usa - 2-1-161310-20250802",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 31,
+  "fields": {
+    "action_time": "2025-08-02T16:26:55.994Z",
+    "user": 1,
+    "content_type": 7,
+    "object_id": "1",
+    "object_repr": "job offer usa (NexusSyner)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Original Offer URL\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 32,
+  "fields": {
+    "action_time": "2025-08-02T16:27:17.174Z",
+    "user": 1,
+    "content_type": 7,
+    "object_id": "1",
+    "object_repr": "job offer usa (AffRoyal)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"CPA Network\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 33,
+  "fields": {
+    "action_time": "2025-08-02T16:28:54.449Z",
+    "user": 1,
+    "content_type": 7,
+    "object_id": "1",
+    "object_repr": "job offer usa (AffRoyal)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Original Offer URL\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 34,
+  "fields": {
+    "action_time": "2025-08-02T16:30:25.267Z",
+    "user": 1,
+    "content_type": 7,
+    "object_id": "1",
+    "object_repr": "job offer usa (AffRoyal)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Original Offer URL\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 35,
+  "fields": {
+    "action_time": "2025-08-02T16:30:48.620Z",
+    "user": 1,
+    "content_type": 7,
+    "object_id": "1",
+    "object_repr": "job offer usa (AffRoyal)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Original Offer URL\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 36,
+  "fields": {
+    "action_time": "2025-08-02T16:33:48.731Z",
+    "user": 1,
+    "content_type": 7,
+    "object_id": "1",
+    "object_repr": "job offer usa (NexusSyner)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"CPA Network\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 37,
+  "fields": {
+    "action_time": "2025-08-03T13:52:13.131Z",
+    "user": 1,
+    "content_type": 7,
+    "object_id": "1",
+    "object_repr": "job offer usa (NexusSyner)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Offer Description\", \"Offer Image\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 38,
+  "fields": {
+    "action_time": "2025-08-04T08:43:09.010Z",
+    "user": 1,
+    "content_type": 7,
+    "object_id": "2",
+    "object_repr": "canada job offer (NexusSyner)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 39,
+  "fields": {
+    "action_time": "2025-08-04T08:43:22.162Z",
+    "user": 1,
+    "content_type": 7,
+    "object_id": "2",
+    "object_repr": "canada job offer (NexusSyner)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"countries\", \"devices\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 40,
+  "fields": {
+    "action_time": "2025-08-04T08:45:53.945Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "8",
+    "object_repr": "md shakibul islam - canada job offer (Approved)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 41,
+  "fields": {
+    "action_time": "2025-08-04T15:07:30.854Z",
+    "user": 1,
+    "content_type": 7,
+    "object_id": "3",
+    "object_repr": "classical cpa offer (NexusSyner)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 42,
+  "fields": {
+    "action_time": "2025-08-06T10:01:36.978Z",
+    "user": 1,
+    "content_type": 13,
+    "object_id": "1",
+    "object_repr": "md shakibul islam (iamshakibulislam@gmail.com)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 43,
+  "fields": {
+    "action_time": "2025-08-06T10:08:26.137Z",
+    "user": 1,
+    "content_type": 6,
+    "object_id": "1",
+    "object_repr": "iamshakibulislam@gmail.com",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Assigned Manager\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 44,
+  "fields": {
+    "action_time": "2025-08-06T10:10:43.854Z",
+    "user": 1,
+    "content_type": 6,
+    "object_id": "2",
+    "object_repr": "uparjitobd@gmail.com",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Assigned Manager\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 45,
+  "fields": {
+    "action_time": "2025-08-06T10:21:20.384Z",
+    "user": 1,
+    "content_type": 13,
+    "object_id": "1",
+    "object_repr": "md shakibul islam (iamshakibulislam@gmail.com)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Profile Picture\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 46,
+  "fields": {
+    "action_time": "2025-08-06T10:21:44.476Z",
+    "user": 1,
+    "content_type": 13,
+    "object_id": "1",
+    "object_repr": "Azmir Hossain (iamshakibulislam@gmail.com)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Manager Name\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 47,
+  "fields": {
+    "action_time": "2025-08-08T07:16:23.955Z",
+    "user": 1,
+    "content_type": 14,
+    "object_id": "1",
+    "object_repr": "uparjitobd@gmail.com - iamshakibulislam@gmail.com (approved)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 48,
+  "fields": {
+    "action_time": "2025-08-08T07:16:34.288Z",
+    "user": 1,
+    "content_type": 14,
+    "object_id": "1",
+    "object_repr": "uparjitobd@gmail.com - iamshakibulislam@gmail.com (rejected)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 49,
+  "fields": {
+    "action_time": "2025-08-08T07:16:48.753Z",
+    "user": 1,
+    "content_type": 14,
+    "object_id": "1",
+    "object_repr": "uparjitobd@gmail.com - iamshakibulislam@gmail.com (approved)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 50,
+  "fields": {
+    "action_time": "2025-08-08T11:06:48.495Z",
+    "user": 1,
+    "content_type": 10,
+    "object_id": "8",
+    "object_repr": "job offer usa - $2.00 - REJECTED - 2025-08-08",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 51,
+  "fields": {
+    "action_time": "2025-08-08T11:07:01.708Z",
+    "user": 1,
+    "content_type": 10,
+    "object_id": "8",
+    "object_repr": "job offer usa - $2.00 - APPROVED - 2025-08-08",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 52,
+  "fields": {
+    "action_time": "2025-08-08T11:07:52.900Z",
+    "user": 1,
+    "content_type": 10,
+    "object_id": "9",
+    "object_repr": "canada job offer - $3.00 - REJECTED - 2025-08-08",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 53,
+  "fields": {
+    "action_time": "2025-08-08T13:34:01.727Z",
+    "user": 1,
+    "content_type": 15,
+    "object_id": "1",
+    "object_repr": "Invoice #INV-20250808-0001 - md shakibul islam - $100 - pending",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 54,
+  "fields": {
+    "action_time": "2025-08-08T13:34:26.042Z",
+    "user": 1,
+    "content_type": 15,
+    "object_id": "1",
+    "object_repr": "Invoice #INV-20250808-0001 - md shakibul islam - $100.00 - paid",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 55,
+  "fields": {
+    "action_time": "2025-08-08T13:34:50.166Z",
+    "user": 1,
+    "content_type": 15,
+    "object_id": "1",
+    "object_repr": "Invoice #INV-20250808-0001 - md shakibul islam - $100.00 - pending",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 56,
+  "fields": {
+    "action_time": "2025-08-08T13:36:27.407Z",
+    "user": 1,
+    "content_type": 15,
+    "object_id": "1",
+    "object_repr": "Invoice #INV-20250808-0001 - md shakibul islam - $100.00 - paid",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 57,
+  "fields": {
+    "action_time": "2025-08-08T14:47:51.726Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "10",
+    "object_repr": "test name - classical cpa offer (Approved)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 58,
+  "fields": {
+    "action_time": "2025-08-08T14:49:21.671Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "11",
+    "object_repr": "test name - canada job offer (Approved)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 59,
+  "fields": {
+    "action_time": "2025-08-09T06:55:38.907Z",
+    "user": 1,
+    "content_type": 6,
+    "object_id": "5",
+    "object_repr": "shakil@gmail.com",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Is active\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 60,
+  "fields": {
+    "action_time": "2025-08-09T07:21:33.627Z",
+    "user": 1,
+    "content_type": 19,
+    "object_id": "1",
+    "object_repr": "payment will be delayed",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 61,
+  "fields": {
+    "action_time": "2025-08-09T07:21:42.782Z",
+    "user": 1,
+    "content_type": 19,
+    "object_id": "1",
+    "object_repr": "payment will be delayed",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Is active\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 62,
+  "fields": {
+    "action_time": "2025-08-09T07:22:42.398Z",
+    "user": 1,
+    "content_type": 19,
+    "object_id": "1",
+    "object_repr": "payment will be delayed",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 63,
+  "fields": {
+    "action_time": "2025-08-09T07:25:22.953Z",
+    "user": 1,
+    "content_type": 19,
+    "object_id": "2",
+    "object_repr": "Notice - payment will be little delays. please wait patient...",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 64,
+  "fields": {
+    "action_time": "2025-08-09T07:25:50.661Z",
+    "user": 1,
+    "content_type": 19,
+    "object_id": "2",
+    "object_repr": "Notice - payment will be little delays. please wait patient...",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 65,
+  "fields": {
+    "action_time": "2025-08-09T15:19:20.693Z",
+    "user": 1,
+    "content_type": 20,
+    "object_id": "1",
+    "object_repr": "uparjitobd@gmail.com - your account is approved",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 66,
+  "fields": {
+    "action_time": "2025-08-09T15:26:55.009Z",
+    "user": 1,
+    "content_type": 6,
+    "object_id": "6",
+    "object_repr": "another@gmail.com",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Is active\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 67,
+  "fields": {
+    "action_time": "2025-08-09T15:28:17.401Z",
+    "user": 1,
+    "content_type": 10,
+    "object_id": "8",
+    "object_repr": "job offer usa - $2.00 - REJECTED - 2025-08-08",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 68,
+  "fields": {
+    "action_time": "2025-08-09T15:42:27.197Z",
+    "user": 1,
+    "content_type": 6,
+    "object_id": "7",
+    "object_repr": "sofia@gmail.com",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Is active\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 69,
+  "fields": {
+    "action_time": "2025-08-09T15:46:44.898Z",
+    "user": 1,
+    "content_type": 7,
+    "object_id": "4",
+    "object_repr": "canada updated job offer (NexusSyner)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 70,
+  "fields": {
+    "action_time": "2025-08-09T15:48:56.327Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "13",
+    "object_repr": "sofia khatun - classical cpa offer (Approved)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 71,
+  "fields": {
+    "action_time": "2025-08-09T15:49:09.488Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "12",
+    "object_repr": "sofia khatun - canada updated job offer (Rejected)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 72,
+  "fields": {
+    "action_time": "2025-08-09T15:51:19.632Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "12",
+    "object_repr": "sofia khatun - canada updated job offer (Approved)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 73,
+  "fields": {
+    "action_time": "2025-08-09T15:58:16.052Z",
+    "user": 1,
+    "content_type": 14,
+    "object_id": "2",
+    "object_repr": "sofia@gmail.com - testbinance@gmail.com (approved)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 74,
+  "fields": {
+    "action_time": "2025-08-09T15:58:43.962Z",
+    "user": 1,
+    "content_type": 14,
+    "object_id": "2",
+    "object_repr": "sofia@gmail.com - testbinance@gmail.com (rejected)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 75,
+  "fields": {
+    "action_time": "2025-08-09T15:59:03.780Z",
+    "user": 1,
+    "content_type": 14,
+    "object_id": "2",
+    "object_repr": "sofia@gmail.com - testbinance@gmail.com (approved)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 76,
+  "fields": {
+    "action_time": "2025-08-09T15:59:38.667Z",
+    "user": 1,
+    "content_type": 15,
+    "object_id": "1",
+    "object_repr": "Invoice #INV-20250808-0001 - md shakibul islam - $100.00 - pending",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 77,
+  "fields": {
+    "action_time": "2025-08-09T16:00:03.538Z",
+    "user": 1,
+    "content_type": 15,
+    "object_id": "1",
+    "object_repr": "Invoice #INV-20250808-0001 - md shakibul islam - $100.00 - paid",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 78,
+  "fields": {
+    "action_time": "2025-08-09T16:00:27.667Z",
+    "user": 1,
+    "content_type": 15,
+    "object_id": "1",
+    "object_repr": "Invoice #INV-20250808-0001 - md shakibul islam - $100.00 - rejected",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 79,
+  "fields": {
+    "action_time": "2025-08-09T16:10:23.975Z",
+    "user": 1,
+    "content_type": 7,
+    "object_id": "4",
+    "object_repr": "canada updated job offer (NexusSyner)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Original Offer URL\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 80,
+  "fields": {
+    "action_time": "2025-08-09T16:18:18.584Z",
+    "user": 1,
+    "content_type": 19,
+    "object_id": "3",
+    "object_repr": "Notice - sorry, there will be a payment delay for technical...",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 81,
+  "fields": {
+    "action_time": "2025-08-09T16:25:45.431Z",
+    "user": 1,
+    "content_type": 12,
+    "object_id": "2",
+    "object_repr": "AffRoyal (AffRoyal)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 82,
+  "fields": {
+    "action_time": "2025-08-09T16:25:45.431Z",
+    "user": 1,
+    "content_type": 12,
+    "object_id": "4",
+    "object_repr": "ClickBank (ClickBank)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 83,
+  "fields": {
+    "action_time": "2025-08-09T16:25:45.431Z",
+    "user": 1,
+    "content_type": 12,
+    "object_id": "5",
+    "object_repr": "CommissionJunction (CommissionJunction)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 84,
+  "fields": {
+    "action_time": "2025-08-09T16:25:45.431Z",
+    "user": 1,
+    "content_type": 12,
+    "object_id": "3",
+    "object_repr": "MaxBounty (MaxBounty)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 85,
+  "fields": {
+    "action_time": "2025-08-09T16:25:45.431Z",
+    "user": 1,
+    "content_type": 12,
+    "object_id": "6",
+    "object_repr": "ShareASale (ShareASale)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 86,
+  "fields": {
+    "action_time": "2025-08-10T14:31:03.017Z",
+    "user": 1,
+    "content_type": 6,
+    "object_id": "10",
+    "object_repr": "shakibulislamban@gmail.com",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 87,
+  "fields": {
+    "action_time": "2025-08-10T14:36:29.767Z",
+    "user": 1,
+    "content_type": 19,
+    "object_id": "3",
+    "object_repr": "Notice - sorry, there will be a payment delay for technical...",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 88,
+  "fields": {
+    "action_time": "2025-08-10T14:48:34.724Z",
+    "user": 1,
+    "content_type": 6,
+    "object_id": "12",
+    "object_repr": "shakibulislamagency@gmail.com",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Is active\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 89,
+  "fields": {
+    "action_time": "2025-08-10T14:48:34.728Z",
+    "user": 1,
+    "content_type": 6,
+    "object_id": "11",
+    "object_repr": "shakibulislamban@gmail.com",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Is active\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 90,
+  "fields": {
+    "action_time": "2025-08-10T14:48:34.731Z",
+    "user": 1,
+    "content_type": 6,
+    "object_id": "9",
+    "object_repr": "shakil4business@gmail.com",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Is active\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 91,
+  "fields": {
+    "action_time": "2025-08-10T14:51:29.962Z",
+    "user": 1,
+    "content_type": 6,
+    "object_id": "2",
+    "object_repr": "uparjitobd@gmail.com",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Email Verified\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 92,
+  "fields": {
+    "action_time": "2025-08-10T14:51:29.971Z",
+    "user": 1,
+    "content_type": 6,
+    "object_id": "1",
+    "object_repr": "iamshakibulislam@gmail.com",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Email Verified\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 93,
+  "fields": {
+    "action_time": "2025-08-10T14:52:06.462Z",
+    "user": 1,
+    "content_type": 15,
+    "object_id": "1",
+    "object_repr": "Invoice #INV-20250808-0001 - md shakibul islam - $100.00 - paid",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 94,
+  "fields": {
+    "action_time": "2025-08-10T16:53:24.087Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "14",
+    "object_repr": "test name - canada updated job offer (Approved)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 95,
+  "fields": {
+    "action_time": "2025-08-10T16:54:27.014Z",
+    "user": 1,
+    "content_type": 7,
+    "object_id": "4",
+    "object_repr": "canada updated job offer (NexusSyner)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Original Offer URL\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 96,
+  "fields": {
+    "action_time": "2025-08-10T17:12:55.354Z",
+    "user": 1,
+    "content_type": 10,
+    "object_id": "15",
+    "object_repr": "canada updated job offer - $4.00 - APPROVED - 2025-08-10",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 97,
+  "fields": {
+    "action_time": "2025-08-10T17:12:55.354Z",
+    "user": 1,
+    "content_type": 10,
+    "object_id": "14",
+    "object_repr": "canada updated job offer - $4.00 - APPROVED - 2025-08-10",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 98,
+  "fields": {
+    "action_time": "2025-08-10T17:12:55.354Z",
+    "user": 1,
+    "content_type": 10,
+    "object_id": "13",
+    "object_repr": "canada updated job offer - $4.00 - APPROVED - 2025-08-10",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 99,
+  "fields": {
+    "action_time": "2025-08-10T17:12:55.355Z",
+    "user": 1,
+    "content_type": 10,
+    "object_id": "12",
+    "object_repr": "canada updated job offer - $4.00 - APPROVED - 2025-08-09",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 100,
+  "fields": {
+    "action_time": "2025-08-10T17:12:55.355Z",
+    "user": 1,
+    "content_type": 10,
+    "object_id": "11",
+    "object_repr": "canada job offer - $3.00 - APPROVED - 2025-08-08",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 101,
+  "fields": {
+    "action_time": "2025-08-12T15:03:11.680Z",
+    "user": 1,
+    "content_type": 11,
+    "object_id": "1",
+    "object_repr": "Affilomint (affilomint.com)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Site Name\", \"Domain Name\", \"Site URL\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 114,
+  "fields": {
+    "action_time": "2025-08-12T18:02:28.826Z",
+    "user": 1,
+    "content_type": 6,
+    "object_id": "13",
+    "object_repr": "azmirhossain060@gmail.com",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 115,
+  "fields": {
+    "action_time": "2025-08-12T18:04:02.041Z",
+    "user": 1,
+    "content_type": 6,
+    "object_id": "14",
+    "object_repr": "azmirhossaina411@gmail.com",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Superuser status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 116,
+  "fields": {
+    "action_time": "2025-08-12T18:04:40.963Z",
+    "user": 1,
+    "content_type": 6,
+    "object_id": "14",
+    "object_repr": "azmirhossaina411@gmail.com",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 117,
+  "fields": {
+    "action_time": "2025-08-13T17:14:48.538Z",
+    "user": 16,
+    "content_type": 12,
+    "object_id": "7",
+    "object_repr": "DreamAff (azmir3290)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 118,
+  "fields": {
+    "action_time": "2025-08-13T17:24:41.420Z",
+    "user": 16,
+    "content_type": 12,
+    "object_id": "7",
+    "object_repr": "DreamAff (azmir3290)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 119,
+  "fields": {
+    "action_time": "2025-08-14T17:27:44.920Z",
+    "user": 16,
+    "content_type": 12,
+    "object_id": "1",
+    "object_repr": "NexusSyner (djgjs)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Network Key\", \"Description\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 120,
+  "fields": {
+    "action_time": "2025-08-14T17:32:13.796Z",
+    "user": 16,
+    "content_type": 12,
+    "object_id": "2",
+    "object_repr": "DreamAff (sfgsg)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 121,
+  "fields": {
+    "action_time": "2025-08-14T17:45:38.042Z",
+    "user": 16,
+    "content_type": 7,
+    "object_id": "6",
+    "object_repr": "Start A Career Today - Google Jobs From Home - (US) (NexusSyner)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 122,
+  "fields": {
+    "action_time": "2025-08-14T17:48:20.784Z",
+    "user": 16,
+    "content_type": 7,
+    "object_id": "6",
+    "object_repr": "Start A Career Today - Google Jobs From Home - (US) (NexusSyner)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"countries\", \"devices\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 123,
+  "fields": {
+    "action_time": "2025-08-14T18:28:55.734Z",
+    "user": 16,
+    "content_type": 12,
+    "object_id": "2",
+    "object_repr": "DreamAff (sfgsg)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Click ID Wrapper\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 124,
+  "fields": {
+    "action_time": "2025-08-14T18:36:35.366Z",
+    "user": 16,
+    "content_type": 12,
+    "object_id": "2",
+    "object_repr": "DreamAff (sfgsg)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 125,
+  "fields": {
+    "action_time": "2025-08-14T18:37:57.464Z",
+    "user": 16,
+    "content_type": 12,
+    "object_id": "3",
+    "object_repr": "Affmine (shdg)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 126,
+  "fields": {
+    "action_time": "2025-08-14T18:40:46.114Z",
+    "user": 16,
+    "content_type": 7,
+    "object_id": "7",
+    "object_repr": "UpLevelRewards - Costco $750 (Affmine)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 127,
+  "fields": {
+    "action_time": "2025-08-14T19:06:10.111Z",
+    "user": 16,
+    "content_type": 12,
+    "object_id": "4",
+    "object_repr": "Adbluemedia (efwgwr)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 128,
+  "fields": {
+    "action_time": "2025-08-15T09:53:31.497Z",
+    "user": 16,
+    "content_type": 13,
+    "object_id": "2",
+    "object_repr": "Olivia (olivia@affilomint.com)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 129,
+  "fields": {
+    "action_time": "2025-08-15T09:54:13.368Z",
+    "user": 16,
+    "content_type": 6,
+    "object_id": "15",
+    "object_repr": "mdsanzar260@gmail.com",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Assigned Manager\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 130,
+  "fields": {
+    "action_time": "2025-08-15T16:51:48.079Z",
+    "user": 16,
+    "content_type": 13,
+    "object_id": "2",
+    "object_repr": "Olivia (olivia@affilomint.com)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Profile Picture\", \"Telegram Username\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 131,
+  "fields": {
+    "action_time": "2025-08-15T17:04:39.288Z",
+    "user": 16,
+    "content_type": 12,
+    "object_id": "5",
+    "object_repr": "Omsolution (omshshf)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 132,
+  "fields": {
+    "action_time": "2025-08-15T18:11:42.079Z",
+    "user": 16,
+    "content_type": 13,
+    "object_id": "1",
+    "object_repr": "David (david@affilomint.com)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Manager Name\", \"Profile Picture\", \"WhatsApp Number\", \"Email Address\", \"Telegram Username\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 133,
+  "fields": {
+    "action_time": "2025-08-15T18:15:17.412Z",
+    "user": 16,
+    "content_type": 6,
+    "object_id": "15",
+    "object_repr": "mdsanzar260@gmail.com",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Assigned Manager\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 134,
+  "fields": {
+    "action_time": "2025-08-15T18:19:31.100Z",
+    "user": 16,
+    "content_type": 13,
+    "object_id": "3",
+    "object_repr": "Evelyn (evelyn@affilomint.com)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 135,
+  "fields": {
+    "action_time": "2025-08-15T18:19:50.415Z",
+    "user": 16,
+    "content_type": 6,
+    "object_id": "15",
+    "object_repr": "mdsanzar260@gmail.com",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Assigned Manager\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 136,
+  "fields": {
+    "action_time": "2025-08-15T18:24:42.399Z",
+    "user": 16,
+    "content_type": 13,
+    "object_id": "4",
+    "object_repr": "Maya (maya@affilomint.com)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 137,
+  "fields": {
+    "action_time": "2025-08-15T18:25:02.406Z",
+    "user": 16,
+    "content_type": 13,
+    "object_id": "2",
+    "object_repr": "Olivia (olivia@affilomint.com)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"WhatsApp Number\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 138,
+  "fields": {
+    "action_time": "2025-08-15T18:25:40.583Z",
+    "user": 16,
+    "content_type": 6,
+    "object_id": "15",
+    "object_repr": "mdsanzar260@gmail.com",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Assigned Manager\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 139,
+  "fields": {
+    "action_time": "2025-08-16T06:15:31.995Z",
+    "user": 1,
+    "content_type": 7,
+    "object_id": "8",
+    "object_repr": "test conversion (NexusSyner)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 140,
+  "fields": {
+    "action_time": "2025-08-16T06:52:08.230Z",
+    "user": 1,
+    "content_type": 7,
+    "object_id": "8",
+    "object_repr": "test conversion (NexusSyner)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 141,
+  "fields": {
+    "action_time": "2025-08-16T17:19:57.969Z",
+    "user": 16,
+    "content_type": 12,
+    "object_id": "6",
+    "object_repr": "aogma (aogma)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 142,
+  "fields": {
+    "action_time": "2025-08-16T17:21:05.960Z",
+    "user": 16,
+    "content_type": 12,
+    "object_id": "1",
+    "object_repr": "anexa (anexa)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Network Key\", \"Network Name\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 143,
+  "fields": {
+    "action_time": "2025-08-16T17:22:06.476Z",
+    "user": 16,
+    "content_type": 12,
+    "object_id": "3",
+    "object_repr": "aminea (aminea)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Network Key\", \"Network Name\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 144,
+  "fields": {
+    "action_time": "2025-08-16T17:22:50.272Z",
+    "user": 16,
+    "content_type": 12,
+    "object_id": "5",
+    "object_repr": "aomsa (aomsa)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Network Key\", \"Network Name\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 145,
+  "fields": {
+    "action_time": "2025-08-16T17:23:39.851Z",
+    "user": 16,
+    "content_type": 12,
+    "object_id": "4",
+    "object_repr": "abluea (abluea)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Network Key\", \"Network Name\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 146,
+  "fields": {
+    "action_time": "2025-08-16T17:24:45.979Z",
+    "user": 16,
+    "content_type": 7,
+    "object_id": "7",
+    "object_repr": "UpLevelRewards - Costco $750 (aminea)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 147,
+  "fields": {
+    "action_time": "2025-08-16T18:45:00.239Z",
+    "user": 16,
+    "content_type": 7,
+    "object_id": "9",
+    "object_repr": "Only Great Jobs- Kelly Services - CPL-(US) (anexa)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 148,
+  "fields": {
+    "action_time": "2025-08-16T18:51:28.232Z",
+    "user": 16,
+    "content_type": 7,
+    "object_id": "10",
+    "object_repr": "okwow - Walmart 500 (abluea)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 149,
+  "fields": {
+    "action_time": "2025-08-16T19:05:12.403Z",
+    "user": 16,
+    "content_type": 7,
+    "object_id": "11",
+    "object_repr": "HigherIncomeJobs - FedEx Jobs - CPL (US) (aomsa)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 150,
+  "fields": {
+    "action_time": "2025-08-16T19:08:52.268Z",
+    "user": 16,
+    "content_type": 7,
+    "object_id": "12",
+    "object_repr": "Expert Job Match - American Airlines Jobs (US) (aminea)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 151,
+  "fields": {
+    "action_time": "2025-08-17T06:01:45.073Z",
+    "user": 16,
+    "content_type": 7,
+    "object_id": "13",
+    "object_repr": "Airport Jobs Available - CPL(US) (aogma)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 152,
+  "fields": {
+    "action_time": "2025-08-17T16:54:25.434Z",
+    "user": 16,
+    "content_type": 7,
+    "object_id": "13",
+    "object_repr": "Airport Jobs Available - CPL(US) (aogma)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Offer Image\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 153,
+  "fields": {
+    "action_time": "2025-08-18T05:41:27.890Z",
+    "user": 16,
+    "content_type": 7,
+    "object_id": "14",
+    "object_repr": "Google Jobs From Home - (US) (anexa)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 154,
+  "fields": {
+    "action_time": "2025-08-18T07:28:09.317Z",
+    "user": 16,
+    "content_type": 7,
+    "object_id": "15",
+    "object_repr": "Ups Jobs - CPL-(US) (anexa)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 155,
+  "fields": {
+    "action_time": "2025-08-18T07:28:23.572Z",
+    "user": 16,
+    "content_type": 7,
+    "object_id": "15",
+    "object_repr": "Ups Jobs - CPL-(US) (anexa)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"countries\", \"devices\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 156,
+  "fields": {
+    "action_time": "2025-08-18T09:19:23.627Z",
+    "user": 16,
+    "content_type": 7,
+    "object_id": "16",
+    "object_repr": "Higher Income Jobs - Airport - CPL(US) (aomsa)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 157,
+  "fields": {
+    "action_time": "2025-08-18T16:56:12.595Z",
+    "user": 16,
+    "content_type": 12,
+    "object_id": "4",
+    "object_repr": "abluea (abluea)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Click ID Parameter\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 158,
+  "fields": {
+    "action_time": "2025-08-18T16:57:45.844Z",
+    "user": 16,
+    "content_type": 12,
+    "object_id": "4",
+    "object_repr": "abluea (abluea)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Click ID Parameter\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 159,
+  "fields": {
+    "action_time": "2025-08-18T16:58:39.756Z",
+    "user": 16,
+    "content_type": 12,
+    "object_id": "4",
+    "object_repr": "adbluemedia (adbluemedia)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Network Key\", \"Network Name\", \"Click ID Parameter\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 160,
+  "fields": {
+    "action_time": "2025-08-18T17:02:04.009Z",
+    "user": 16,
+    "content_type": 12,
+    "object_id": "4",
+    "object_repr": "abluea (abluea)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Network Key\", \"Network Name\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 161,
+  "fields": {
+    "action_time": "2025-08-19T03:21:48.983Z",
+    "user": 16,
+    "content_type": 7,
+    "object_id": "17",
+    "object_repr": "Great Jobs - Kelly Services - CPL(US) (aomsa)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 162,
+  "fields": {
+    "action_time": "2025-08-19T05:10:13.547Z",
+    "user": 16,
+    "content_type": 7,
+    "object_id": "18",
+    "object_repr": "StartACareerToday - Work From Home - (US) (aminea)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 163,
+  "fields": {
+    "action_time": "2025-08-19T06:32:51.248Z",
+    "user": 16,
+    "content_type": 7,
+    "object_id": "19",
+    "object_repr": "Google Jobs (anexa)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 1,
+  "fields": {
+    "name": "Can add log entry",
+    "content_type": 1,
+    "codename": "add_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 2,
+  "fields": {
+    "name": "Can change log entry",
+    "content_type": 1,
+    "codename": "change_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 3,
+  "fields": {
+    "name": "Can delete log entry",
+    "content_type": 1,
+    "codename": "delete_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 4,
+  "fields": {
+    "name": "Can view log entry",
+    "content_type": 1,
+    "codename": "view_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 5,
+  "fields": {
+    "name": "Can add permission",
+    "content_type": 2,
+    "codename": "add_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 6,
+  "fields": {
+    "name": "Can change permission",
+    "content_type": 2,
+    "codename": "change_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 7,
+  "fields": {
+    "name": "Can delete permission",
+    "content_type": 2,
+    "codename": "delete_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 8,
+  "fields": {
+    "name": "Can view permission",
+    "content_type": 2,
+    "codename": "view_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 9,
+  "fields": {
+    "name": "Can add group",
+    "content_type": 3,
+    "codename": "add_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 10,
+  "fields": {
+    "name": "Can change group",
+    "content_type": 3,
+    "codename": "change_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 11,
+  "fields": {
+    "name": "Can delete group",
+    "content_type": 3,
+    "codename": "delete_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 12,
+  "fields": {
+    "name": "Can view group",
+    "content_type": 3,
+    "codename": "view_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 13,
+  "fields": {
+    "name": "Can add content type",
+    "content_type": 4,
+    "codename": "add_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 14,
+  "fields": {
+    "name": "Can change content type",
+    "content_type": 4,
+    "codename": "change_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 15,
+  "fields": {
+    "name": "Can delete content type",
+    "content_type": 4,
+    "codename": "delete_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 16,
+  "fields": {
+    "name": "Can view content type",
+    "content_type": 4,
+    "codename": "view_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 17,
+  "fields": {
+    "name": "Can add session",
+    "content_type": 5,
+    "codename": "add_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 18,
+  "fields": {
+    "name": "Can change session",
+    "content_type": 5,
+    "codename": "change_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 19,
+  "fields": {
+    "name": "Can delete session",
+    "content_type": 5,
+    "codename": "delete_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 20,
+  "fields": {
+    "name": "Can view session",
+    "content_type": 5,
+    "codename": "view_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 21,
+  "fields": {
+    "name": "Can add user",
+    "content_type": 6,
+    "codename": "add_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 22,
+  "fields": {
+    "name": "Can change user",
+    "content_type": 6,
+    "codename": "change_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 23,
+  "fields": {
+    "name": "Can delete user",
+    "content_type": 6,
+    "codename": "delete_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 24,
+  "fields": {
+    "name": "Can view user",
+    "content_type": 6,
+    "codename": "view_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 25,
+  "fields": {
+    "name": "Can add Offer",
+    "content_type": 7,
+    "codename": "add_offer"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 26,
+  "fields": {
+    "name": "Can change Offer",
+    "content_type": 7,
+    "codename": "change_offer"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 27,
+  "fields": {
+    "name": "Can delete Offer",
+    "content_type": 7,
+    "codename": "delete_offer"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 28,
+  "fields": {
+    "name": "Can view Offer",
+    "content_type": 7,
+    "codename": "view_offer"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 29,
+  "fields": {
+    "name": "Can add User Offer Request",
+    "content_type": 8,
+    "codename": "add_userofferrequest"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 30,
+  "fields": {
+    "name": "Can change User Offer Request",
+    "content_type": 8,
+    "codename": "change_userofferrequest"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 31,
+  "fields": {
+    "name": "Can delete User Offer Request",
+    "content_type": 8,
+    "codename": "delete_userofferrequest"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 32,
+  "fields": {
+    "name": "Can view User Offer Request",
+    "content_type": 8,
+    "codename": "view_userofferrequest"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 33,
+  "fields": {
+    "name": "Can add Click Tracking",
+    "content_type": 9,
+    "codename": "add_clicktracking"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 34,
+  "fields": {
+    "name": "Can change Click Tracking",
+    "content_type": 9,
+    "codename": "change_clicktracking"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 35,
+  "fields": {
+    "name": "Can delete Click Tracking",
+    "content_type": 9,
+    "codename": "delete_clicktracking"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 36,
+  "fields": {
+    "name": "Can view Click Tracking",
+    "content_type": 9,
+    "codename": "view_clicktracking"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 37,
+  "fields": {
+    "name": "Can add Conversion",
+    "content_type": 10,
+    "codename": "add_conversion"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 38,
+  "fields": {
+    "name": "Can change Conversion",
+    "content_type": 10,
+    "codename": "change_conversion"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 39,
+  "fields": {
+    "name": "Can delete Conversion",
+    "content_type": 10,
+    "codename": "delete_conversion"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 40,
+  "fields": {
+    "name": "Can view Conversion",
+    "content_type": 10,
+    "codename": "view_conversion"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 41,
+  "fields": {
+    "name": "Can add Site Settings",
+    "content_type": 11,
+    "codename": "add_sitesettings"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 42,
+  "fields": {
+    "name": "Can change Site Settings",
+    "content_type": 11,
+    "codename": "change_sitesettings"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 43,
+  "fields": {
+    "name": "Can delete Site Settings",
+    "content_type": 11,
+    "codename": "delete_sitesettings"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 44,
+  "fields": {
+    "name": "Can view Site Settings",
+    "content_type": 11,
+    "codename": "view_sitesettings"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 45,
+  "fields": {
+    "name": "Can add CPA Network",
+    "content_type": 12,
+    "codename": "add_cpanetwork"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 46,
+  "fields": {
+    "name": "Can change CPA Network",
+    "content_type": 12,
+    "codename": "change_cpanetwork"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 47,
+  "fields": {
+    "name": "Can delete CPA Network",
+    "content_type": 12,
+    "codename": "delete_cpanetwork"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 48,
+  "fields": {
+    "name": "Can view CPA Network",
+    "content_type": 12,
+    "codename": "view_cpanetwork"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 49,
+  "fields": {
+    "name": "Can add Manager",
+    "content_type": 13,
+    "codename": "add_manager"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 50,
+  "fields": {
+    "name": "Can change Manager",
+    "content_type": 13,
+    "codename": "change_manager"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 51,
+  "fields": {
+    "name": "Can delete Manager",
+    "content_type": 13,
+    "codename": "delete_manager"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 52,
+  "fields": {
+    "name": "Can view Manager",
+    "content_type": 13,
+    "codename": "view_manager"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 53,
+  "fields": {
+    "name": "Can add Payment Method",
+    "content_type": 14,
+    "codename": "add_paymentmethod"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 54,
+  "fields": {
+    "name": "Can change Payment Method",
+    "content_type": 14,
+    "codename": "change_paymentmethod"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 55,
+  "fields": {
+    "name": "Can delete Payment Method",
+    "content_type": 14,
+    "codename": "delete_paymentmethod"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 56,
+  "fields": {
+    "name": "Can view Payment Method",
+    "content_type": 14,
+    "codename": "view_paymentmethod"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 57,
+  "fields": {
+    "name": "Can add Invoice",
+    "content_type": 15,
+    "codename": "add_invoice"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 58,
+  "fields": {
+    "name": "Can change Invoice",
+    "content_type": 15,
+    "codename": "change_invoice"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 59,
+  "fields": {
+    "name": "Can delete Invoice",
+    "content_type": 15,
+    "codename": "delete_invoice"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 60,
+  "fields": {
+    "name": "Can view Invoice",
+    "content_type": 15,
+    "codename": "view_invoice"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 61,
+  "fields": {
+    "name": "Can add Referral Earning",
+    "content_type": 16,
+    "codename": "add_referralearning"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 62,
+  "fields": {
+    "name": "Can change Referral Earning",
+    "content_type": 16,
+    "codename": "change_referralearning"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 63,
+  "fields": {
+    "name": "Can delete Referral Earning",
+    "content_type": 16,
+    "codename": "delete_referralearning"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 64,
+  "fields": {
+    "name": "Can view Referral Earning",
+    "content_type": 16,
+    "codename": "view_referralearning"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 65,
+  "fields": {
+    "name": "Can add Referral Link",
+    "content_type": 17,
+    "codename": "add_referrallink"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 66,
+  "fields": {
+    "name": "Can change Referral Link",
+    "content_type": 17,
+    "codename": "change_referrallink"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 67,
+  "fields": {
+    "name": "Can delete Referral Link",
+    "content_type": 17,
+    "codename": "delete_referrallink"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 68,
+  "fields": {
+    "name": "Can view Referral Link",
+    "content_type": 17,
+    "codename": "view_referrallink"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 69,
+  "fields": {
+    "name": "Can add Referral",
+    "content_type": 18,
+    "codename": "add_referral"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 70,
+  "fields": {
+    "name": "Can change Referral",
+    "content_type": 18,
+    "codename": "change_referral"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 71,
+  "fields": {
+    "name": "Can delete Referral",
+    "content_type": 18,
+    "codename": "delete_referral"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 72,
+  "fields": {
+    "name": "Can view Referral",
+    "content_type": 18,
+    "codename": "view_referral"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 73,
+  "fields": {
+    "name": "Can add Notice",
+    "content_type": 19,
+    "codename": "add_noticeboard"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 74,
+  "fields": {
+    "name": "Can change Notice",
+    "content_type": 19,
+    "codename": "change_noticeboard"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 75,
+  "fields": {
+    "name": "Can delete Notice",
+    "content_type": 19,
+    "codename": "delete_noticeboard"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 76,
+  "fields": {
+    "name": "Can view Notice",
+    "content_type": 19,
+    "codename": "view_noticeboard"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 77,
+  "fields": {
+    "name": "Can add Notification",
+    "content_type": 20,
+    "codename": "add_notification"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 78,
+  "fields": {
+    "name": "Can change Notification",
+    "content_type": 20,
+    "codename": "change_notification"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 79,
+  "fields": {
+    "name": "Can delete Notification",
+    "content_type": 20,
+    "codename": "delete_notification"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 80,
+  "fields": {
+    "name": "Can view Notification",
+    "content_type": 20,
+    "codename": "view_notification"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 81,
+  "fields": {
+    "name": "Can add Email Verification",
+    "content_type": 21,
+    "codename": "add_emailverification"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 82,
+  "fields": {
+    "name": "Can change Email Verification",
+    "content_type": 21,
+    "codename": "change_emailverification"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 83,
+  "fields": {
+    "name": "Can delete Email Verification",
+    "content_type": 21,
+    "codename": "delete_emailverification"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 84,
+  "fields": {
+    "name": "Can view Email Verification",
+    "content_type": 21,
+    "codename": "view_emailverification"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 1,
+  "fields": {
+    "app_label": "admin",
+    "model": "logentry"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 2,
+  "fields": {
+    "app_label": "auth",
+    "model": "permission"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 3,
+  "fields": {
+    "app_label": "auth",
+    "model": "group"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 4,
+  "fields": {
+    "app_label": "contenttypes",
+    "model": "contenttype"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 5,
+  "fields": {
+    "app_label": "sessions",
+    "model": "session"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 6,
+  "fields": {
+    "app_label": "user",
+    "model": "user"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 7,
+  "fields": {
+    "app_label": "offers",
+    "model": "offer"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 8,
+  "fields": {
+    "app_label": "offers",
+    "model": "userofferrequest"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 9,
+  "fields": {
+    "app_label": "offers",
+    "model": "clicktracking"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 10,
+  "fields": {
+    "app_label": "offers",
+    "model": "conversion"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 11,
+  "fields": {
+    "app_label": "offers",
+    "model": "sitesettings"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 12,
+  "fields": {
+    "app_label": "offers",
+    "model": "cpanetwork"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 13,
+  "fields": {
+    "app_label": "offers",
+    "model": "manager"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 14,
+  "fields": {
+    "app_label": "offers",
+    "model": "paymentmethod"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 15,
+  "fields": {
+    "app_label": "offers",
+    "model": "invoice"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 16,
+  "fields": {
+    "app_label": "offers",
+    "model": "referralearning"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 17,
+  "fields": {
+    "app_label": "offers",
+    "model": "referrallink"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 18,
+  "fields": {
+    "app_label": "offers",
+    "model": "referral"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 19,
+  "fields": {
+    "app_label": "offers",
+    "model": "noticeboard"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 20,
+  "fields": {
+    "app_label": "offers",
+    "model": "notification"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 21,
+  "fields": {
+    "app_label": "user",
+    "model": "emailverification"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "1viyf3imar2p6gg3f589x0ufa38n4msk",
+  "fields": {
+    "session_data": ".eJxVjEEOwiAQRe_C2pAOFJi6dO8ZyJQZpGpoUtqV8e7apAvd_vfef6lI21ri1mSJE6uzAqdOv-NI6SF1J3ynept1muu6TKPeFX3Qpq8zy_NyuH8HhVr51sHlHq3jIQVh27HkHlKGTKMBS2kQZItIyVgXGAg8ew_CRjB3aFDU-wMhYzih:1up48K:fKu5KIPncc20IoQrjvk41a6QRUUaRq9A7imKfqDKfAU",
+    "expire_date": "2025-09-04T12:11:08.292Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "2cm4w29d004kxmspeqftgnvda0wcwck5",
+  "fields": {
+    "session_data": "e30:1ultF8:mKQHDwcRxohpgtrmNbZmsFHFBuUgD7tZOTrvQi3FicU",
+    "expire_date": "2025-08-26T17:57:02.635Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "2h7ytfbpfr3p6mfiy1gfv6m458a1eodr",
+  "fields": {
+    "session_data": "e30:1upN7X:bATzxbm7oW2_EiJmgsOTxj9nz7niR7gah5ljJiXmCNw",
+    "expire_date": "2025-09-05T08:27:35.016Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "4butsipdb7o8cetkquxi88f004ukv9zv",
+  "fields": {
+    "session_data": "eyJyZWZlcnJhbF9jb2RlIjoiOEQ5Qjg4M0IiLCJyZWZlcnJlcl9pZCI6MTV9:1up7b4:_0clKm-dZL1rFiK2ANPLp3tTUAV-Zb4pQoM1msRIn7w",
+    "expire_date": "2025-09-04T15:53:02.090Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "4byorouwkqlxnhnyequmxn1zvx9jwc09",
+  "fields": {
+    "session_data": ".eJxVjEEOwiAQRe_C2hBgBmlduu8ZmgEGqRpISrsy3l1JutDte-__l5hp3_K8N17nJYqLMOL0yzyFB5cu4p3KrcpQy7YuXvZEHrbJqUZ-Xo_27yBTy9-1JrQWALQ2JhhvHCKRBhzYKCTgqBI6sB3ElNTICIopaD2qwbszi_cHr6828Q:1ulVIk:YkcW4uvULdYYiFHGPJFF7Ubl7jRj2vjFgAyyRnt-cHI",
+    "expire_date": "2025-08-25T16:23:10.369Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "58a67xduq7y712ywv39mp72i5wxkulkm",
+  "fields": {
+    "session_data": ".eJxVjEEOwiAQRe_C2pACwlCX7j0DGZhBqgaS0q6MdzckXej2v_f-WwTctxL2zmtYSFyEMuL0O0ZMT66D0APrvcnU6rYuUQ5FHrTLWyN-XQ_376BgL6NGjGCUn40n0GSJnQaHKp-ZOSnnEd2UNWib0RtGpAwASfNsNZGaxOcLIcs4yQ:1ulqbE:sTljHsYyns6m_wy423rRobTs-2ku9AoJ6vIEgqsoUXU",
+    "expire_date": "2025-08-26T15:07:40.390Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "5bz25mrbde6zwnmy2rkhk28olw7dheqk",
+  "fields": {
+    "session_data": ".eJxVjEEOwiAQRe_C2hBgBmlduu8ZmgEGqRpISrsy3l1JutDte-__l5hp3_K8N17nJYqLMOL0yzyFB5cu4p3KrcpQy7YuXvZEHrbJqUZ-Xo_27yBTy9-1JrQWALQ2JhhvHCKRBhzYKCTgqBI6sB3ElNTICIopaD2qwbszi_cHr6828Q:1unAAn:Y1OGEg48Wd3-WfWmmwl8LzMrXs01pRkmlfOXfFjcu3k",
+    "expire_date": "2025-08-30T06:13:49.784Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "61dsj22snolkx63mypgu9bh0n3p1dibi",
+  "fields": {
+    "session_data": ".eJxVjDsOwjAQBe_iGlnrX7Ap6XMGa-1dkwCypTipEHeHSCmgfTPzXiLitk5x67zEmcRFKCVOv2PC_OC6E7pjvTWZW12XOcldkQftcmzEz-vh_h1M2KdvDUVpR8rajMklMIMxtgB7Cq5YZ7UfiAA1awpnpsyALhj2xcJgEjgW7w_7mTf2:1ul7Ll:6xuJY8rvEDhTzw7z16Ahf465xPVUGm_LHfg-OX1uMZI",
+    "expire_date": "2025-08-24T14:48:41.673Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "82ny79csl8xj7v6i4i1qkqvyzmdiq11i",
+  "fields": {
+    "session_data": ".eJxVjEEOwiAQRe_C2hBgBmlduu8ZmgEGqRpISrsy3l1JutDte-__l5hp3_K8N17nJYqLMOL0yzyFB5cu4p3KrcpQy7YuXvZEHrbJqUZ-Xo_27yBTy9-1JrQWALQ2JhhvHCKRBhzYKCTgqBI6sB3ElNTICIopaD2qwbszi_cHr6828Q:1ulVLG:YCoxbWG3hXbT8_5BaOovewftpU4frYpbhSHJ2zzROWA",
+    "expire_date": "2025-08-25T16:25:46.943Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "a5zawcpunamj53ij0afi06p4qacci65c",
+  "fields": {
+    "session_data": "eyJyZWZlcnJhbF9jb2RlIjoiOEQ5Qjg4M0IiLCJyZWZlcnJlcl9pZCI6MTV9:1up7c0:Fd8XTZovgSeGBinBFMMBpo3WGBVV9VXcBD2qHWgwEJE",
+    "expire_date": "2025-09-04T15:54:00.795Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "ax8d45kpnjmn27thv5ydw7o63sbzzex7",
+  "fields": {
+    "session_data": "eyJyZWZlcnJhbF9jb2RlIjoiOEQ5Qjg4M0IiLCJyZWZlcnJlcl9pZCI6MTV9:1up7bc:rkyk3unDotAGD9T3VPjp0eNQDwW6EWOmI_sJZ8xtx-c",
+    "expire_date": "2025-09-04T15:53:36.147Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "c18ke9ooxprlxudb2ak54eod0ncy0b6u",
+  "fields": {
+    "session_data": ".eJxVjEEOwiAQRe_C2hBgBmlduu8ZmgEGqRpISrsy3l1JutDte-__l5hp3_K8N17nJYqLMOL0yzyFB5cu4p3KrcpQy7YuXvZEHrbJqUZ-Xo_27yBTy9-1JrQWALQ2JhhvHCKRBhzYKCTgqBI6sB3ElNTICIopaD2qwbszi_cHr6828Q:1ulVYo:RgNCKF3hxK5vWn4RODczJGFXfj25_qHhvU8G1jVqrNQ",
+    "expire_date": "2025-08-25T16:39:46.675Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "es7tq35qgcw11cft78s8o283rzb9kchu",
+  "fields": {
+    "session_data": ".eJxVjEEOwiAQRe_C2hBgBmlduu8ZmgEGqRpISrsy3l1JutDte-__l5hp3_K8N17nJYqLMOL0yzyFB5cu4p3KrcpQy7YuXvZEHrbJqUZ-Xo_27yBTy9-1JrQWALQ2JhhvHCKRBhzYKCTgqBI6sB3ElNTICIopaD2qwbszi_cHr6828Q:1ul9CG:FbjmlCJpTVP-f1agoENCV0HL24-9SHPjltgpOyeM92o",
+    "expire_date": "2025-08-24T16:47:00.881Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "fggeeexvdmk2dbuz3066cdbqejpohb47",
+  "fields": {
+    "session_data": ".eJxVjMsOwiAQRf-FtSHlDS7d-w1kBgapGpqUdmX8dyXpQrfnnHtfLMK-1bh3WuOc2ZkJy06_ECE9qA2T79BuC09L29YZ-Uj4YTu_Lpmel6P9O6jQ63ftAxQCYSYC71TR2emJjARpih7AUShK5EReSyGkhYJgEQMGWYLyir0_FIw4SA:1unWP4:magiBzErwQgygAMgwrmJmdorbKn9akRCSlpeuVEpXqE",
+    "expire_date": "2025-08-31T05:58:02.906Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "fktrjkotkbhd2rce33ynzplsqsla7rht",
+  "fields": {
+    "session_data": "eyJyZWZlcnJhbF9jb2RlIjoiOEQ5Qjg4M0IiLCJyZWZlcnJlcl9pZCI6MTV9:1up7cs:iecoR9vWopsZN1pTCXg8yVrNLPjZTTJPVEuRM8mh4oo",
+    "expire_date": "2025-09-04T15:54:54.197Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "gb47oqofdor0jlrxybmv5rh8vsrq1bql",
+  "fields": {
+    "session_data": "eyJyZWZlcnJhbF9jb2RlIjoiOEQ5Qjg4M0IiLCJyZWZlcnJlcl9pZCI6MTV9:1up7cm:dtAfnWWlCTV8BYvPyUYKzzLqg4NqB1Cicpg-8hYyrHQ",
+    "expire_date": "2025-09-04T15:54:48.889Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "gt9radlmthq6zziicmczy0a5k4bkk0g5",
+  "fields": {
+    "session_data": ".eJxVjEEOwiAQRe_C2pAOFJi6dO8ZyJQZpGpoUtqV8e7apAvd_vfef6lI21ri1mSJE6uzAqdOv-NI6SF1J3ynept1muu6TKPeFX3Qpq8zy_NyuH8HhVr51sHlHq3jIQVh27HkHlKGTKMBS2kQZItIyVgXGAg8ew_CRjB3aFDU-wMhYzih:1upSVc:RAGyefIdE8Ccoj5eGQ-ju0G1J4I2JokbCHlQdVbofGg",
+    "expire_date": "2025-09-05T14:12:48.267Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "hx7iw3tcm61gwvpcve0h1s7ratmkh6cb",
+  "fields": {
+    "session_data": "e30:1up8iB:xco-ABhQUIoLCOT36v9w7ypedPyWETAMNMUWLrcNCdA",
+    "expire_date": "2025-09-04T17:04:27.800Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "i8zzisovicif4h2bx2d6vmz47iet8ign",
+  "fields": {
+    "session_data": "e30:1up8oZ:Uk1kCgBeHM1xbcWh7Ja9sX42tt1SFbBT_C719WYsvwQ",
+    "expire_date": "2025-09-04T17:11:03.248Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "ilx91knplsb8b0raroyizkngfu1xfasq",
+  "fields": {
+    "session_data": ".eJxVjEEOwiAQRe_C2pAOFJi6dO8ZyJQZpGpoUtqV8e7apAvd_vfef6lI21ri1mSJE6uzAqdOv-NI6SF1J3ynept1muu6TKPeFX3Qpq8zy_NyuH8HhVr51sHlHq3jIQVh27HkHlKGTKMBS2kQZItIyVgXGAg8ew_CRjB3aFDU-wMhYzih:1upSvy:tQ59gphR2cAKwge2qQqmxxwCarrVXlLEARoqKpGl8ZI",
+    "expire_date": "2025-09-05T14:40:02.018Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "j5euk4y6yzu3miacm12mtw6hrrmhrg08",
+  "fields": {
+    "session_data": ".eJxVjMsOwiAQRf-FtSHlDS7d-w1kBgapGpqUdmX8dyXpQrfnnHtfLMK-1bh3WuOc2ZkJy06_ECE9qA2T79BuC09L29YZ-Uj4YTu_Lpmel6P9O6jQ63ftAxQCYSYC71TR2emJjARpih7AUShK5EReSyGkhYJgEQMGWYLyir0_FIw4SA:1ultNH:RYZ7htfekHd93Udg4M4iFoSGSrMQV5PWxdO11UiDt-E",
+    "expire_date": "2025-08-26T18:05:27.699Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "mfg67seyihgd3uk8y9rrw619ryn3gdh8",
+  "fields": {
+    "session_data": ".eJxVjDsOwjAQBe_iGlley19Kes5g7dprHECOFCcV4u4QKQW0b2beSyTc1pa2wUuaijgLL06_G2F-cN9BuWO_zTLPfV0mkrsiDzrkdS78vBzu30HD0b61CqaitaFoAuAatY8E5DQFyNEHokxcgE026KFiRKvJVRdIqeCqMuL9AfD5ODU:1ukliQ:Bbm-UfAFqkuvU8V_1hg6-Wb2Q3fjui7NpHgefXSqxmg",
+    "expire_date": "2025-08-23T15:42:38.530Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "nkneilmy1ssts0b38tzhisce4d3u3qcu",
+  "fields": {
+    "session_data": ".eJxVjEEOwiAQRe_C2pAOFJi6dO8ZyJQZpGpoUtqV8e7apAvd_vfef6lI21ri1mSJE6uzAqdOv-NI6SF1J3ynept1muu6TKPeFX3Qpq8zy_NyuH8HhVr51sHlHq3jIQVh27HkHlKGTKMBS2kQZItIyVgXGAg8ew_CRjB3aFDU-wMhYzih:1un8HJ:14Adoi7G70XevhLclGSzWfjRi5KokTzuCL5cBc_Rtqw",
+    "expire_date": "2025-08-30T04:12:25.272Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "okvhajyazljkbsghfpailru2w4dgwm7g",
+  "fields": {
+    "session_data": ".eJxVjEEOwiAQRe_C2hBgBmlduu8ZmgEGqRpISrsy3l1JutDte-__l5hp3_K8N17nJYqLMOL0yzyFB5cu4p3KrcpQy7YuXvZEHrbJqUZ-Xo_27yBTy9-1JrQWALQ2JhhvHCKRBhzYKCTgqBI6sB3ElNTICIopaD2qwbszi_cHr6828Q:1ulVFq:6x4keJrTfP6REZvndFnbwSywLXxHIPVHgh9GHREaIjw",
+    "expire_date": "2025-08-25T16:20:10.649Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "os0z3rh74klt0frdlbe6lz57ay0cr7xb",
+  "fields": {
+    "session_data": "eyJyZWZlcnJhbF9jb2RlIjoiOEQ5Qjg4M0IiLCJyZWZlcnJlcl9pZCI6MTV9:1upHSn:Zk526xykwvCtmQwIUQEUEuWYaWmWPuP9OsI-6zZUSUo",
+    "expire_date": "2025-09-05T02:25:09.478Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "pf7dl9pq7oyruhd5ifvyvsvphzsoa2qv",
+  "fields": {
+    "session_data": "e30:1ukm53:dA6wWWvJfXCBXsOatYBbms7bVnq-SIr0J59P069tb7M",
+    "expire_date": "2025-08-23T16:06:01.075Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "qurxx98cw917t1bvdn7oizaka4oeq6ae",
+  "fields": {
+    "session_data": ".eJxVjEEOwiAQRe_C2hCgWAaX7nsGMjNMpWrapLQr492VpAvdvvf-f6mE-1bSXmVNU1YXZdXplxHyQ-Ym8h3n26J5mbd1It0SfdiqhyXL83q0fwcFa_mumaKMdsy9i8bHM3h0HWQDjNSHiG4kExqMPnTRAbNIsADEvjdWKKj3B-OoN7c:1ugOun:jtUjeMgy6A_7g29lKGCSkKUARHIX9f4h8bOz_6707Sg",
+    "expire_date": "2025-08-11T14:33:21.321Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "wotxz2bvetxuk4c36tznykp09hbja2sa",
+  "fields": {
+    "session_data": ".eJxVjEEOwiAQRe_C2pAOFJi6dO8ZyJQZpGpoUtqV8e7apAvd_vfef6lI21ri1mSJE6uzAqdOv-NI6SF1J3ynept1muu6TKPeFX3Qpq8zy_NyuH8HhVr51sHlHq3jIQVh27HkHlKGTKMBS2kQZItIyVgXGAg8ew_CRjB3aFDU-wMhYzih:1umyxh:oapTraGkNtEAUywpRoolT5pfXuH3inhUXoZngPsAIZ8",
+    "expire_date": "2025-08-29T18:15:33.706Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "yx30xlkfmft0dxr3xd6towc1itxcxwvl",
+  "fields": {
+    "session_data": ".eJxVjEEOwiAQRe_C2hBgBmlduu8ZmgEGqRpISrsy3l1JutDte-__l5hp3_K8N17nJYqLMOL0yzyFB5cu4p3KrcpQy7YuXvZEHrbJqUZ-Xo_27yBTy9-1JrQWALQ2JhhvHCKRBhzYKCTgqBI6sB3ElNTICIopaD2qwbszi_cHr6828Q:1ulVc0:B544s5hJJiyRpVosat82Q4_7hwhrrgoHYswfoyej6Do",
+    "expire_date": "2025-08-25T16:43:04.791Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "z04wvhnbm0n4d1kjofe1u238ptnd0adk",
+  "fields": {
+    "session_data": ".eJxVjEEOwiAQRe_C2pAOFJi6dO8ZyJQZpGpoUtqV8e7apAvd_vfef6lI21ri1mSJE6uzAqdOv-NI6SF1J3ynept1muu6TKPeFX3Qpq8zy_NyuH8HhVr51sHlHq3jIQVh27HkHlKGTKMBS2kQZItIyVgXGAg8ew_CRjB3aFDU-wMhYzih:1uoD1d:oFbi3lcgr8wHWPSvm3Lwyop_EWIj9l9xRP48jKaBF_w",
+    "expire_date": "2025-09-02T03:28:41.400Z"
+  }
+},
+{
+  "model": "user.emailverification",
+  "pk": 1,
+  "fields": {
+    "user": 9,
+    "token": "f7999298-1d9d-41d9-9b2e-3a37acd176df",
+    "created_at": "2025-08-10T14:14:47.125Z",
+    "expires_at": "2025-08-11T14:14:47.124Z",
+    "is_used": true
+  }
+},
+{
+  "model": "user.emailverification",
+  "pk": 3,
+  "fields": {
+    "user": 11,
+    "token": "79cd41ca-7ba1-40ed-852a-4b58520540ef",
+    "created_at": "2025-08-10T14:32:07.190Z",
+    "expires_at": "2025-08-11T14:32:07.190Z",
+    "is_used": true
+  }
+},
+{
+  "model": "user.emailverification",
+  "pk": 4,
+  "fields": {
+    "user": 12,
+    "token": "181b5482-4586-40ff-a200-8eff93fb9cbf",
+    "created_at": "2025-08-10T14:35:14.679Z",
+    "expires_at": "2025-08-11T14:35:14.678Z",
+    "is_used": true
+  }
+},
+{
+  "model": "user.emailverification",
+  "pk": 6,
+  "fields": {
+    "user": 15,
+    "token": "9e1ee2e3-44ed-4903-8178-aff2b676c22f",
+    "created_at": "2025-08-12T17:57:00.369Z",
+    "expires_at": "2025-08-13T17:57:00.367Z",
+    "is_used": true
+  }
+},
+{
+  "model": "user.emailverification",
+  "pk": 7,
+  "fields": {
+    "user": 17,
+    "token": "bf40c8dc-cbb8-4a88-9724-538580fec46f",
+    "created_at": "2025-08-21T17:04:25.311Z",
+    "expires_at": "2025-08-22T17:04:25.310Z",
+    "is_used": true
+  }
+},
+{
+  "model": "user.emailverification",
+  "pk": 8,
+  "fields": {
+    "user": 18,
+    "token": "0a64ac53-9392-4458-8c35-84572392987a",
+    "created_at": "2025-08-21T17:11:01.099Z",
+    "expires_at": "2025-08-22T17:11:01.099Z",
+    "is_used": true
+  }
+},
+{
+  "model": "user.emailverification",
+  "pk": 9,
+  "fields": {
+    "user": 19,
+    "token": "2d6d09e1-e2fa-4471-9a38-37aeb61f2d0f",
+    "created_at": "2025-08-21T18:39:43.356Z",
+    "expires_at": "2025-08-22T18:39:43.355Z",
+    "is_used": false
+  }
+},
+{
+  "model": "user.emailverification",
+  "pk": 10,
+  "fields": {
+    "user": 20,
+    "token": "3cc1f435-b9ab-490a-ba25-f7d60a454743",
+    "created_at": "2025-08-21T19:28:59.824Z",
+    "expires_at": "2025-08-22T19:28:59.822Z",
+    "is_used": true
+  }
+},
+{
+  "model": "user.emailverification",
+  "pk": 11,
+  "fields": {
+    "user": 21,
+    "token": "45f8a746-6dab-4e1d-87bd-5d62087235f2",
+    "created_at": "2025-08-21T19:37:45.383Z",
+    "expires_at": "2025-08-22T19:37:45.383Z",
+    "is_used": false
+  }
+},
+{
+  "model": "user.emailverification",
+  "pk": 12,
+  "fields": {
+    "user": 22,
+    "token": "cf5d4c10-88ab-4e54-b135-fd626cec27fe",
+    "created_at": "2025-08-22T08:27:32.672Z",
+    "expires_at": "2025-08-23T08:27:32.670Z",
+    "is_used": true
+  }
+},
+{
+  "model": "user.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$q1sGxGko4R5fdxLjc4DX0B$cwDHLaoQ3D7rK18OEYCMT9JXWdJWjSMnm4nGznL7JT8=",
+    "last_login": "2025-08-12T15:02:23.940Z",
+    "is_superuser": true,
+    "full_name": "shakibul islam",
+    "email": "iamshakibulislam@gmail.com",
+    "phone_number": "",
+    "telegram_username": "",
+    "address": "",
+    "city": "",
+    "state": "",
+    "zip_code": "",
+    "country": "",
+    "niches": "",
+    "promotion_description": "",
+    "heard_about_us": "",
+    "balance": "0.00",
+    "conversion_counter": 0,
+    "manager": 1,
+    "is_verified": true,
+    "is_active": true,
+    "is_staff": true,
+    "date_joined": "2025-07-28T14:32:46.141Z",
+    "last_activated": null,
+    "previous_is_active": true,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "user.user",
+  "pk": 2,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$enLdWIo8Me8qtvczCBUii8$54V/bHdkS9asNqK1NfSEFceWOmPhv1d+zhEj/LdXlYQ=",
+    "last_login": "2025-08-16T06:13:49.754Z",
+    "is_superuser": false,
+    "full_name": "md shakibul islam",
+    "email": "uparjitobd@gmail.com",
+    "phone_number": "01908399067",
+    "telegram_username": "@testtelegram",
+    "address": "benipur,simla,muktagacha, mymensingha",
+    "city": "muktagachaa",
+    "state": "california",
+    "zip_code": "2210",
+    "country": "Bangladesh",
+    "niches": "dating",
+    "promotion_description": "fb ads promote way",
+    "heard_about_us": "friends",
+    "balance": "5.15",
+    "conversion_counter": 1,
+    "manager": 1,
+    "is_verified": true,
+    "is_active": true,
+    "is_staff": false,
+    "date_joined": "2025-07-28T14:42:43.846Z",
+    "last_activated": null,
+    "previous_is_active": true,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "user.user",
+  "pk": 3,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$xD9SLDbWc1kMNfhx9jWXSE$6sBUKjZ1SkRPhW175q8+0H7UmhrK91+XH0YV9ed/hDc=",
+    "last_login": "2025-08-08T14:46:13.323Z",
+    "is_superuser": false,
+    "full_name": "test name",
+    "email": "testemail@gmail.com",
+    "phone_number": "01716175836",
+    "telegram_username": "notele",
+    "address": "benipur shimla",
+    "city": "muktagacha",
+    "state": "mymensingh",
+    "zip_code": "2210",
+    "country": "Bangladesh",
+    "niches": "finance",
+    "promotion_description": "facebook ads",
+    "heard_about_us": "youtube",
+    "balance": "6.00",
+    "conversion_counter": 0,
+    "manager": 1,
+    "is_verified": false,
+    "is_active": true,
+    "is_staff": false,
+    "date_joined": "2025-08-08T14:42:27.950Z",
+    "last_activated": null,
+    "previous_is_active": true,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "user.user",
+  "pk": 4,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$vQqfU61ESxxnvMF2k9spKp$+lBop8TL7XGtqecDkwkKAA+6mTZ5teKmbCEJycoKC2Y=",
+    "last_login": null,
+    "is_superuser": false,
+    "full_name": "testname",
+    "email": "test@gmail.com",
+    "phone_number": "0189366432",
+    "telegram_username": "teste",
+    "address": "benpur shimla",
+    "city": "muktagacha",
+    "state": "dhaka",
+    "zip_code": "2210",
+    "country": "Bangladesh",
+    "niches": "health",
+    "promotion_description": "facebook page",
+    "heard_about_us": "google",
+    "balance": "0.00",
+    "conversion_counter": 0,
+    "manager": 1,
+    "is_verified": false,
+    "is_active": true,
+    "is_staff": false,
+    "date_joined": "2025-08-08T15:32:53.928Z",
+    "last_activated": null,
+    "previous_is_active": true,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "user.user",
+  "pk": 5,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$9ihGOIFkloKCMqujMr2Lo2$mGx0qNd9u3R8cLdGq8LH6KXcmvlWvuYc9ByUh2CN0R4=",
+    "last_login": "2025-08-09T06:55:49.250Z",
+    "is_superuser": false,
+    "full_name": "sk shakil",
+    "email": "shakil@gmail.com",
+    "phone_number": "01716175833",
+    "telegram_username": "ssss",
+    "address": "benipur shimla",
+    "city": "muktagacha",
+    "state": "dhaka",
+    "zip_code": "2210",
+    "country": "Bangladesh",
+    "niches": "finance",
+    "promotion_description": "facebook ads",
+    "heard_about_us": "google",
+    "balance": "0.00",
+    "conversion_counter": 0,
+    "manager": 1,
+    "is_verified": false,
+    "is_active": true,
+    "is_staff": false,
+    "date_joined": "2025-08-09T06:54:52.562Z",
+    "last_activated": null,
+    "previous_is_active": true,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "user.user",
+  "pk": 6,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$GTe18og7c8RvCslch41hsd$aQzhKeCzfJooxoIYFt5TeyO8R1oho3vrPcx424giEb4=",
+    "last_login": "2025-08-09T15:27:11.899Z",
+    "is_superuser": false,
+    "full_name": "another name",
+    "email": "another@gmail.com",
+    "phone_number": "0189366433",
+    "telegram_username": "telegram",
+    "address": "benpur shimla",
+    "city": "muktagacha",
+    "state": "dhaka",
+    "zip_code": "2210",
+    "country": "Bahamas",
+    "niches": "health",
+    "promotion_description": "landing page",
+    "heard_about_us": "google ads",
+    "balance": "0.00",
+    "conversion_counter": 0,
+    "manager": 1,
+    "is_verified": false,
+    "is_active": true,
+    "is_staff": false,
+    "date_joined": "2025-08-09T15:22:36.885Z",
+    "last_activated": null,
+    "previous_is_active": true,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "user.user",
+  "pk": 7,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$OTZFEmtLF79jOjkBj7HYMX$NPfCsG4z9nkIrLubJjHUKEdaLMRZ5J2sqfnW+g824NY=",
+    "last_login": "2025-08-09T15:42:38.509Z",
+    "is_superuser": false,
+    "full_name": "sofia khatun",
+    "email": "sofia@gmail.com",
+    "phone_number": "0189366431",
+    "telegram_username": "telegram",
+    "address": "benpur shimla",
+    "city": "muktagacha",
+    "state": "dhaka",
+    "zip_code": "2210",
+    "country": "Bangladesh",
+    "niches": "health",
+    "promotion_description": "via facebook ads",
+    "heard_about_us": "youtube ",
+    "balance": "4.00",
+    "conversion_counter": 0,
+    "manager": 1,
+    "is_verified": false,
+    "is_active": true,
+    "is_staff": false,
+    "date_joined": "2025-08-09T15:41:17.890Z",
+    "last_activated": null,
+    "previous_is_active": true,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "user.user",
+  "pk": 8,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$Em4kBJeMzcvvTwQcduNFsW$EPfIdf/zuDulI83KmtvAS+5FtKNXfOf4wLLqvRvrq60=",
+    "last_login": null,
+    "is_superuser": false,
+    "full_name": "test accocunt ref",
+    "email": "testref@gmail.com",
+    "phone_number": "01883767334",
+    "telegram_username": "testusernamete",
+    "address": "full address of mine",
+    "city": "muktagacha",
+    "state": "dhaka",
+    "zip_code": "2210",
+    "country": "Australia",
+    "niches": "finance",
+    "promotion_description": "facebook ads",
+    "heard_about_us": "social media",
+    "balance": "0.00",
+    "conversion_counter": 0,
+    "manager": 1,
+    "is_verified": false,
+    "is_active": false,
+    "is_staff": false,
+    "date_joined": "2025-08-09T16:06:00.974Z",
+    "last_activated": null,
+    "previous_is_active": true,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "user.user",
+  "pk": 9,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$ZKz4uF4MrIdTUS5QQ11T0Q$xC1wmdANhyAc1xdccL2gENWuZgb27KrcN+AD3lJmnpU=",
+    "last_login": null,
+    "is_superuser": false,
+    "full_name": "shakibu islam",
+    "email": "shakil4business@gmail.com",
+    "phone_number": "01716175833",
+    "telegram_username": "ssss",
+    "address": "benipur shimla",
+    "city": "muktagacha",
+    "state": "mymensingh",
+    "zip_code": "2210",
+    "country": "Bangladesh",
+    "niches": "finance",
+    "promotion_description": "facebook ads",
+    "heard_about_us": "google",
+    "balance": "0.00",
+    "conversion_counter": 0,
+    "manager": 1,
+    "is_verified": true,
+    "is_active": true,
+    "is_staff": false,
+    "date_joined": "2025-08-10T14:14:47.002Z",
+    "last_activated": null,
+    "previous_is_active": true,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "user.user",
+  "pk": 11,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$X326Eg3mkMi8C7hPOXpaBR$Yh08qkb7S9k3OZsBUHDm5QcWfbzO4UD3Qd/zhKH8Dn4=",
+    "last_login": "2025-08-10T14:48:41.645Z",
+    "is_superuser": false,
+    "full_name": "test name",
+    "email": "shakibulislamban@gmail.com",
+    "phone_number": "01716175831",
+    "telegram_username": "sss",
+    "address": "benipur shimla",
+    "city": "muktagacha",
+    "state": "mymensingh",
+    "zip_code": "2210",
+    "country": "Bangladesh",
+    "niches": "finance",
+    "promotion_description": "test",
+    "heard_about_us": "yyssa",
+    "balance": "28.00",
+    "conversion_counter": 6,
+    "manager": 1,
+    "is_verified": true,
+    "is_active": true,
+    "is_staff": false,
+    "date_joined": "2025-08-10T14:32:07.133Z",
+    "last_activated": null,
+    "previous_is_active": true,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "user.user",
+  "pk": 12,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$LoxFxLICRYSujD6pnei2T6$kdh42I3n8PHEOv9sK6KfKwLob3yh4ppvqkJskTDXQ20=",
+    "last_login": null,
+    "is_superuser": false,
+    "full_name": "MD SHAKIBUL ISLAM",
+    "email": "shakibulislamagency@gmail.com",
+    "phone_number": "01908399067",
+    "telegram_username": "@testtelegrams",
+    "address": "benipur,shimla,muktagacha",
+    "city": "muktagacha",
+    "state": "california",
+    "zip_code": "2210",
+    "country": "Bangladesh",
+    "niches": "dating",
+    "promotion_description": "tset project",
+    "heard_about_us": "friends",
+    "balance": "0.00",
+    "conversion_counter": 0,
+    "manager": 1,
+    "is_verified": true,
+    "is_active": true,
+    "is_staff": false,
+    "date_joined": "2025-08-10T14:35:14.618Z",
+    "last_activated": null,
+    "previous_is_active": true,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "user.user",
+  "pk": 15,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$ZWHvpaNPIHnlpu9IZoQGxB$SVMchfltIi3oXM1ITQGgnSjhgXdCdEQeJ7eUnlzWy/Y=",
+    "last_login": "2025-08-22T14:40:01.992Z",
+    "is_superuser": false,
+    "full_name": "Azmir Hossain",
+    "email": "mdsanzar260@gmail.com",
+    "phone_number": "01776492845",
+    "telegram_username": "advadva",
+    "address": "Bahirchar 16dag munshipara Bheramara kushtia",
+    "city": "Kushtia",
+    "state": "xc",
+    "zip_code": "7040",
+    "country": "Bangladesh",
+    "niches": "dsvgs",
+    "promotion_description": "vdsdvc",
+    "heard_about_us": "czcvz",
+    "balance": "6.79",
+    "conversion_counter": 7,
+    "manager": 4,
+    "is_verified": true,
+    "is_active": true,
+    "is_staff": false,
+    "date_joined": "2025-08-12T17:57:00.312Z",
+    "last_activated": "2025-08-12T17:58:05Z",
+    "previous_is_active": false,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "user.user",
+  "pk": 16,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$45ce1I7DJ8h1Zx6AtxOWS5$y3TEaE0fTiGfuOu0f1WWjfkopSoT3eI/xXIkh7Irgbk=",
+    "last_login": "2025-08-17T05:58:02.885Z",
+    "is_superuser": true,
+    "full_name": "Azmir Hossain",
+    "email": "azmirhossaina411@gmail.com",
+    "phone_number": "",
+    "telegram_username": "",
+    "address": "",
+    "city": "",
+    "state": "",
+    "zip_code": "",
+    "country": "",
+    "niches": "",
+    "promotion_description": "",
+    "heard_about_us": "",
+    "balance": "0.00",
+    "conversion_counter": 0,
+    "manager": null,
+    "is_verified": true,
+    "is_active": true,
+    "is_staff": true,
+    "date_joined": "2025-08-12T18:05:16.132Z",
+    "last_activated": null,
+    "previous_is_active": false,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "user.user",
+  "pk": 17,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$nADbqdOsyN8Ul7awJAKN7M$GlMLZGFgJxJ/4TCYNJad7GtqTugr7bJ8cIOVtYUEn00=",
+    "last_login": null,
+    "is_superuser": false,
+    "full_name": "Sabbir Hasan",
+    "email": "sabbirhasan36095@gmail.com",
+    "phone_number": " 01307946739",
+    "telegram_username": "https://t.me/himel3389",
+    "address": "Khulna, Kushtia. Bheramara",
+    "city": "Kushtia",
+    "state": "Khulna",
+    "zip_code": "7040",
+    "country": "Bangladesh",
+    "niches": "I am interested on email submit and survey offers",
+    "promotion_description": "I primarily drive traffic through leading social media platforms including Facebook, Pinterest,\r\n Instagram, Reddit, and Twitter. Additionally, based on the specific requirements of each offer.\r\n(https://sites.google.com/view/cleaninggreat-jobs5675/home) ",
+    "heard_about_us": "Azmir Hossain",
+    "balance": "0.00",
+    "conversion_counter": 0,
+    "manager": 2,
+    "is_verified": true,
+    "is_active": false,
+    "is_staff": false,
+    "date_joined": "2025-08-21T17:04:25.110Z",
+    "last_activated": null,
+    "previous_is_active": false,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "user.user",
+  "pk": 18,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$bUzriGuAAGXaqoEZP7SZlV$Sety3N+Qcgp9UYwWXI3yENb+gOhrvMl+OEv6vbC50+0=",
+    "last_login": null,
+    "is_superuser": false,
+    "full_name": "Sabbir Hasan",
+    "email": "sabbirhassn014@gmail.com",
+    "phone_number": "01307946739",
+    "telegram_username": "https://t.me/himel3389",
+    "address": "Khulna, Kushtia. Bheramara",
+    "city": "Kushtia",
+    "state": "Khulna",
+    "zip_code": "7040",
+    "country": "Bangladesh",
+    "niches": "I am interested on email submit and survey offers",
+    "promotion_description": "I will promote offers across various social media platforms, including Facebook, Instagram, Pinterest, Reddit, Twitter, and more.\r\nLanding page URL : https://sites.google.com/view/cleaninggreat-jobs5675/home",
+    "heard_about_us": "Azmir Hossain",
+    "balance": "0.00",
+    "conversion_counter": 0,
+    "manager": 3,
+    "is_verified": true,
+    "is_active": false,
+    "is_staff": false,
+    "date_joined": "2025-08-21T17:11:01.047Z",
+    "last_activated": null,
+    "previous_is_active": false,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "user.user",
+  "pk": 19,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$q2ptSd1RIXMOoEO0v4UO3k$z+puM1EcWza9+/Yrq5jyWdsld76eoYqmfCFj/a1KyA4=",
+    "last_login": null,
+    "is_superuser": false,
+    "full_name": "Elite mode lights up balance &#x26A1;&#x1F511; TG go888best 54wsekjmtjhte43ty",
+    "email": "fedorpa0c@gmx.com",
+    "phone_number": "Elite mode lights up balance &#x26A1;&#x1F511; TG go888best 54wsekjmtjhte43ty",
+    "telegram_username": "Elite mode lights up balance &#x26A1;&#x1F511; TG go888best 54wsekjmtjhte43ty",
+    "address": "Fdsafsafsadfasdf",
+    "city": 

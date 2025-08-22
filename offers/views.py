@@ -749,15 +749,8 @@ def daily_reports(request):
     total_earnings = sum(stats['earnings'] for stats in daily_stats.values())
     avg_conversion_rate = (total_conversions / total_clicks * 100) if total_clicks > 0 else 0
     
-    # Get available offers for filter (offers the user has access to)
-    user_approved_requests = UserOfferRequest.objects.filter(
-        user=request.user, 
-        status='approved'
-    ).values_list('offer_id', flat=True)
-    user_offers = Offer.objects.filter(
-        id__in=user_approved_requests,
-        is_active=True
-    )
+    # Get available offers for filter (show all active offers)
+    user_offers = Offer.objects.filter(is_active=True).order_by('offer_name')
     
     # Get available subids for filter
     subids = set()
@@ -1102,12 +1095,8 @@ def conversion_reports(request):
             Q(click_tracking__subid3=subid)
         )
     
-    # Get unique offers for filter dropdown
-    offers = Offer.objects.filter(
-        userofferrequest__user=request.user,
-        userofferrequest__status='approved',
-        is_active=True
-    ).distinct()
+    # Get unique offers for filter dropdown (show all active offers)
+    offers = Offer.objects.filter(is_active=True).order_by('offer_name')
     
     # Get unique subids for filter dropdown
     subids = ClickTracking.objects.filter(
