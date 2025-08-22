@@ -98,6 +98,47 @@
 				border: 1px solid #e9ecef;
 			}
 			
+			/* HIDE ALL LOGOS ON MOBILE - ULTRA HIGH PRIORITY */
+			@media (max-width: 600px) {
+				.side-header .header-brand1,
+				.app-header .header-brand1,
+				.header-brand1,
+				.header-brand-img,
+				.header-brand1 img,
+				.header-brand-img img,
+				.app-sidebar .header-brand1,
+				.app-header .header-brand1,
+				.mobile-header .header-brand1,
+				.side-header a[href*="index.html"],
+				.app-header a[href*="index.html"],
+				.app-sidebar .side-header a,
+				.app-header .header-brand1.d-flex.d-md-none,
+				.app-sidebar .side-header .header-brand1,
+				.app-header .header-brand1,
+				.header-brand-img.desktop-logo,
+				.header-brand-img.toggle-logo,
+				.header-brand-img.light-logo,
+				.header-brand-img.light-logo1,
+				.app-sidebar .side-header,
+				.app-header .header-brand1,
+				.side-header,
+				.app-sidebar .side-header,
+				.app-header .header-brand1.d-flex.d-md-none {
+					display: none !important;
+					visibility: hidden !important;
+					opacity: 0 !important;
+					width: 0 !important;
+					height: 0 !important;
+					margin: 0 !important;
+					padding: 0 !important;
+					overflow: hidden !important;
+					position: absolute !important;
+					left: -9999px !important;
+					top: -9999px !important;
+					clip: rect(0, 0, 0, 0) !important;
+				}
+			}
+			
 			.manager-avatar {
 				position: relative;
 			}
