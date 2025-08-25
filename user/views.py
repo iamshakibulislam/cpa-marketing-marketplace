@@ -9,11 +9,47 @@ from django.contrib.auth.decorators import login_required
 from offers.models import ReferralLink, Referral
 from .utils import send_verification_email, generate_verification_url
 from django.utils import timezone
+import requests
+import json
 
 from datetime import datetime, timedelta
 
+def verify_recaptcha(recaptcha_response):
+    """
+    Verify Google reCAPTCHA response
+    """
+    secret_key = '6LfS8bErAAAAAB5qYtdBMYEOn4w_KLfbDRXDWlHU'
+    verify_url = 'https://www.google.com/recaptcha/api/siteverify'
+    
+    data = {
+        'secret': secret_key,
+        'response': recaptcha_response
+    }
+    
+    try:
+        response = requests.post(verify_url, data=data, timeout=10)
+        result = response.json()
+        return result.get('success', False)
+    except Exception as e:
+        # Log the error for debugging
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"reCAPTCHA verification error: {str(e)}")
+        return False
+
 def signup(request):
     if request.method == 'POST':
+        # Verify reCAPTCHA first
+        recaptcha_response = request.POST.get('g-recaptcha-response')
+        if not recaptcha_response:
+            messages.error(request, 'Please complete the reCAPTCHA verification.')
+            return render(request, 'home/signup.html', request.POST)
+        
+        # Verify reCAPTCHA with Google
+        if not verify_recaptcha(recaptcha_response):
+            messages.error(request, 'reCAPTCHA verification failed. Please try again.')
+            return render(request, 'home/signup.html', request.POST)
+        
         full_name = request.POST.get('full_name')
         email = request.POST.get('email')
         password = request.POST.get('password')

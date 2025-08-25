@@ -7,6 +7,7 @@
     <title>Sign Up | Ultimate CPA Network</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <style>
         body {
             background: linear-gradient(135deg, #f7fafc 0%, #e3e6f3 100%);
@@ -61,6 +62,23 @@
         .signup-btn:hover {
             background: linear-gradient(90deg, #48c6ef 0%, #6c63ff 100%);
         }
+        .recaptcha-container {
+            display: flex;
+            justify-content: center;
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: rgba(241, 243, 247, 0.5);
+            border-radius: 8px;
+            border: 1px solid rgba(108, 99, 255, 0.1);
+        }
+        .recaptcha-container .g-recaptcha {
+            transform: scale(0.9);
+        }
+        @media (max-width: 767px) {
+            .recaptcha-container .g-recaptcha {
+                transform: scale(0.8);
+            }
+        }
         @media (max-width: 767px) {
             .signup-card { padding: 1.5rem 0.5rem; }
         }
@@ -82,7 +100,7 @@
                 </div>
               {% endfor %}
             {% endif %}
-            <form method="post">
+            <form method="post" id="signupForm">
                 {% csrf_token %}
                 <div class="row g-3">
                     <div class="col-md-6">
@@ -391,6 +409,12 @@
                         </div>
                     </div>
                 </div>
+                
+                <!-- Google reCAPTCHA v2 -->
+                <div class="recaptcha-container">
+                    <div class="g-recaptcha" data-sitekey="6LfS8bErAAAAACJKkmKNsY66jEgW9guFa20prqzA"></div>
+                </div>
+                
                 <div class="text-center mt-4">
                     <button type="submit" class="signup-btn">Sign Up</button>
                 </div>
@@ -401,5 +425,16 @@
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Form validation to ensure reCAPTCHA is completed
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            var recaptchaResponse = grecaptcha.getResponse();
+            if (!recaptchaResponse) {
+                e.preventDefault();
+                alert('Please complete the reCAPTCHA verification.');
+                return false;
+            }
+        });
+    </script>
 </body>
 </html>
