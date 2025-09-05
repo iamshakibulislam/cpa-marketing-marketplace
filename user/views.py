@@ -329,6 +329,11 @@ def dashboard(request):
     if total_clicks > 0:
         conversion_rate = (total_conversions / total_clicks) * 100
     
+    # EPC (Earnings Per Click) calculation
+    epc = 0.00
+    if total_clicks > 0:
+        epc = total_earnings / total_clicks
+    
     # Get datewise data for the chart
     chart_data = []
     current_date = start_date
@@ -369,6 +374,7 @@ def dashboard(request):
         'total_conversions': total_conversions,
         'total_earnings': total_earnings,
         'conversion_rate': conversion_rate,
+        'epc': epc,
         'chart_data': chart_data,
         'latest_offers': latest_offers,
     }

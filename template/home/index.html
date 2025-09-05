@@ -155,5 +155,57 @@
 	</div>
 </section>
 
+<!-- Partners Section -->
+<section class="section position-relative bg-color-light border-0 pt-5 pb-5 mb-5 m-0">
+	<div class="container position-relative z-index-1">
+		<div class="row justify-content-center mb-4">
+			<div class="col-md-10 col-lg-8 text-center">
+				<div class="overflow-hidden">
+					<span class="d-block appear-animation" data-appear-animation="maskUp" data-appear-animation-delay="250">TRUSTED BY</span>
+				</div>
+				<div class="overflow-hidden mb-2">
+					<h2 class="font-weight-bold text-color-dark text-6 mb-0 appear-animation" data-appear-animation="maskUp" data-appear-animation-delay="400">Our Partners</h2>
+				</div>
+				<p class="appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="550">We're proud to partner with industry-leading platforms that help affiliates and advertisers succeed.</p>
+			</div>
+		</div>
+		<div class="row justify-content-center align-items-center">
+			<div class="col-md-6 col-lg-4 text-center mb-4 mb-lg-0">
+				<div class="partner-logo-container appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="600">
+					<a href="https://affpaying.com" target="_blank" rel="noopener noreferrer" class="partner-link">
+						<img src="{% static 'homepage/img/affpaying.png' %}" class="img-fluid partner-logo" alt="AffPaying" style="max-height: 50px; transition: transform 0.3s ease;" />
+					</a>
+					<h5 class="mt-3 mb-0 text-color-dark font-weight-semibold">AffPaying</h5>
+					<p class="text-muted small mb-0">Leading affiliate network directory</p>
+				</div>
+			</div>
+			<div class="col-md-6 col-lg-4 text-center">
+				<div class="partner-logo-container appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="750">
+					<a href="https://affplus.com" target="_blank" rel="noopener noreferrer" class="partner-link">
+						<img src="{% static 'homepage/img/affplus.png' %}" class="img-fluid partner-logo" alt="AffPlus" style="max-height: 50px; transition: transform 0.3s ease;" />
+					</a>
+					<h5 class="mt-3 mb-0 text-color-dark font-weight-semibold">AffPlus</h5>
+					<p class="text-muted small mb-0">Comprehensive affiliate marketing platform</p>
+				</div>
+			</div>
+		</div>
+		<div class="spacer" style="height: 50px;"></div>
+	</div>
+</section>
+
+<style>
+.partner-link:hover .partner-logo {
+	transform: scale(1.05);
+}
+.partner-link {
+	text-decoration: none;
+	color: inherit;
+}
+.partner-link:hover {
+	text-decoration: none;
+	color: inherit;
+}
+</style>
+
 </div>
 {% endblock %}
